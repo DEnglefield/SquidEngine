@@ -31,20 +31,20 @@ int main()
 
 	glEnable(GL_SCISSOR_TEST);
 
+
+	ViewPort view1(0.0f, 0.5f,0.5f,1.0f);
+	ViewPort view2(0.5f, 0.5f, 1.0f, 1.0f);
+
 	while (!mainWindow.closing())
 	{
 		processInput(mainWindow);
-		int w, h;
-		mainWindow.getWindowSize(&w,&h);
-
-		glViewport(0, h/2, w/2, h);
-		glScissor(0, h/2, w/2, h);
+		
+		view1.use();
 
 		glClearColor(0.43f, 0.71f, 0.92f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
-		glViewport(w/2, h/2, w, h);
-		glScissor(w/2, h/2, w, h);
+		view2.use();
 
 		glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);

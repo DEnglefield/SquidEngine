@@ -29,5 +29,8 @@
     <ClInclude Include="SquidEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ViewPort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -2,6 +2,17 @@
 
 #include "SquidEngine.h"
 
+struct ViewPort {
+	float xPos, yPos, width, height;
+	//Create the viewport area using percentage positions on the window
+	ViewPort(float xPercent, float yPercent, float widthPercent, float heightPercent);
+	//Set this viewport as the active viewport meaning all future draw commands
+	//will be directed to this viewport
+	//Also scales the viewport with the active window
+	void use();
+};
+
+
 //Window object acting as a container for viewports
 class Window {
 protected:
@@ -32,3 +43,6 @@ public:
 	//Subscribe to a resize event with the given function
 	void setResizeEvent(void* resizeFunc);
 };
+
+
+
