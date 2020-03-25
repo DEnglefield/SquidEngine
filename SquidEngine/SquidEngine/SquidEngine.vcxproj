@@ -155,6 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Primitives.cpp" />
     <ClCompile Include="SampleShapes.cpp" />
@@ -164,12 +165,12 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="SampleShapes.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="SquidEngine.h" />
     <ClInclude Include="Primitives.h" />
-    <ClInclude Include="ViewPort.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>

@@ -7,6 +7,9 @@ using namespace std;
 bool glfwInitialized = false;
 int activeWindows = 0;
 
+//Pointer to currently active viewport
+ViewPort* activeViewPort;
+
 //Create the window object and initialize if needed
 Window::Window(int width, int height, const char* name) {
 	if (!glfwInitialized) {
@@ -76,5 +79,19 @@ void ViewPort::use() {
 	glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
 	glViewport(winWidth * xPos, winHeight * yPos, winWidth * width, winHeight * height);
 	glScissor(winWidth * xPos, winHeight * yPos, winWidth * width, winHeight * height);
+	activeViewPort = this;
+}
+
+//Get the current active viewport
+ViewPort& getCurrentViewPort() {
+	return *activeViewPort;
+}
+
+//Get the pixel size of the given viewport
+void getViewPortSize(ViewPort &viewPort, int* width, int* height) {
+	int winWidth, winHeight;
+	glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
+	*width = ceil(winWidth * viewPort.width);
+	*height = ceil(winHeight * viewPort.height);
 }
 

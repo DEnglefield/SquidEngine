@@ -10,6 +10,7 @@ Shape::Shape(float x, float y, float z) {
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
+	modelMatrix = glm::mat4(1.0f);
 	setPosition(x, y, z);
 }
 
@@ -23,6 +24,7 @@ Shape::~Shape() {
 
 //Draw the shape on the screen
 void Shape::draw(ShaderProgram& shader) {
+	shader.setMat4("modelMatrix", modelMatrix);
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, shapeIndices.size(), GL_UNSIGNED_INT, 0);
 }
@@ -45,11 +47,6 @@ void Shape::computeNormals(vector<Vertex> &vertices, vector<unsigned int> &indic
 //Add the vertices and indices to the vertex buffer
 void Shape::createBuffer(vector<Vertex> &vertices, vector<unsigned int> &indices) {
 
-
-	for(int i=0; i < vertices.size(); ++i){
-		cout << vertices[i].pos.x <<  ", " << vertices[i].pos.y << ", " << vertices[i].pos.z << endl;
-	}
-	;
 	glBindVertexArray(VAO);
 
 	//Populate vertex buffer

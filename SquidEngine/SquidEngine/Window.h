@@ -2,6 +2,7 @@
 
 #include "SquidEngine.h"
 
+
 struct ViewPort {
 	float xPos, yPos, width, height;
 	//Create the viewport area using percentage positions on the window
@@ -43,6 +44,12 @@ public:
 	//Subscribe to a resize event with the given function
 	void setResizeEvent(void* resizeFunc);
 };
+
+
+//Get the current active viewport
+ViewPort& getCurrentViewPort();
+//Get the pixel size of the given viewport
+void getViewPortSize(ViewPort &viewPort, int* width, int* height);
 
 
 
