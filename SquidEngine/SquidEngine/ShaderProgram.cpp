@@ -138,3 +138,37 @@ unsigned int ShaderProgram::createShaderProgram(unsigned int vert, unsigned int 
 	cout << "Program Created" << endl;
 	return shaderProgram;
 }
+
+//Send a boolean value represetned by an integer to the shader
+void ShaderProgram::setBool(const char* attr, bool value) {
+	glUniform1i(glGetUniformLocation(ID, attr), (int)value);
+}
+
+//Send a float value to the shader
+void ShaderProgram::setFloat(const char* attr, float value) {
+	glUniform1f(glGetUniformLocation(ID, attr), value);
+}
+
+//Send an integer value to the shader
+void ShaderProgram::setInt(const char* attr, int value) {
+	glUniform1i(glGetUniformLocation(ID, attr), value);
+}
+
+
+//Send a 3D vector to the shader
+void ShaderProgram::setVec3(const char* attr, glm::vec3 value) {
+	unsigned int vec3 = glGetUniformLocation(ID, attr);
+	glUniform3fv(vec3, 1, glm::value_ptr(value));
+}
+
+//Send a 4D vector to the shader
+void ShaderProgram::setVec4(const char* attr, glm::vec4 value) {
+	unsigned int vec4 = glGetUniformLocation(ID, attr);
+	glUniform4fv(vec4, 1, glm::value_ptr(value));
+}
+
+//Send a 4x4 matrix to the shader
+void ShaderProgram::setMat4(const char* attr, glm::mat4 value) {
+	unsigned int mat4 = glGetUniformLocation(ID, attr);
+	glUniformMatrix4fv(mat4, 1, GL_FALSE, glm::value_ptr(value));
+}

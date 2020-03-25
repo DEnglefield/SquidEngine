@@ -48,6 +48,9 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_SCISSOR_TEST);
 
+	shader.use();
+	shader.setVec4("col", glm::vec4(0.3, 0.5, 0.2, 1));
+
 
 	while (!mainWindow.closing())
 	{
@@ -58,8 +61,6 @@ int main()
 		glClearColor(0.43f, 0.71f, 0.92f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		shader.use();
-		
 		square.draw(shader);
 
 		glfwSwapBuffers(glfwGetCurrentContext());
