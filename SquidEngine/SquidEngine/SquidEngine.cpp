@@ -3,6 +3,7 @@
 #include "SquidEngine.h"
 #include "Window.h"
 #include "ShaderProgram.h"
+#include "SampleShapes.h"
 
 
 using namespace std;
@@ -19,29 +20,7 @@ void processInput(Window& window)
 		window.close();
 }
 
-#include "Shape.h"
 
-class Square : public Shape {
-public:
-	Square(float x, float y, float z) : Shape(x, y, z) {}
-
-	void build() {
-
-		vertices = {
-			 Vertex(0.5f,  0.5f, 0.0f, 0.0f,1.0f,0.0f,0.0f,0.0f,0.0f),  // top right
-			 Vertex(0.5f, -0.5f, 0.0f, 0.0f,1.0f,0.0f,0.0f,0.0f,0.0f),  // bottom right
-			 Vertex(-0.5f, -0.5f, 0.0f, 0.0f,1.0f,0.0f,0.0f,0.0f,0.0f),  // bottom left
-			 Vertex(-0.5f,  0.5f, 0.0f, 0.0f,1.0f,0.0f,0.0f,0.0f,0.0f)   // top left 
-		};
-
-		indices = {
-			0, 1, 3,
-			1, 2, 3
-		};
-
-		createBuffer();
-	}
-};
 
 int main()
 {

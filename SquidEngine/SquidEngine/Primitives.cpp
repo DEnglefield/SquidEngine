@@ -2,16 +2,25 @@
 #include "Primitives.h"
 
 //Create vertex using a vector for each attribute
-Vertex::Vertex(glm::vec3 position, glm::vec3 norm, glm::vec3 col) {
-	pos = position; normal = norm; colour = col;
+Vertex::Vertex(glm::vec3 position, glm::vec3 norm, glm::vec2 tex) {
+	pos = position; normal = norm; texture = tex;
 }
 
 //Create a vertex using a list of raw values
-Vertex::Vertex(float vX, float vY, float vZ, float nX, float nY, float nZ, float R, float G, float B) {
+Vertex::Vertex(float vX, float vY, float vZ, float nX, float nY, float nZ, float tU, float tV) {
 	pos = glm::vec3(vX, vY, vZ);
 	normal = glm::vec3(nX, nY, nZ);
-	colour = glm::vec3(R, G, B);
+	texture = glm::vec2(tU, tV);
 }
+
+//Print the vertex contents in string stream
+std::ostream& operator<<(std::ostream& os, const Vertex& vert) {
+	os << "((" << vert.pos.x << ", " << vert.pos.y << ", " << vert.pos.z << "), ";
+	os << "(" << vert.normal.x << ", " << vert.normal.y << ", " << vert.normal.z << "), ";
+	os << "(" << vert.texture.x << ", " << vert.texture.y << "))";
+	return os;
+}
+
 
 //Get a description of the location of each attribute in the vertex
 void Vertex::getAttributeDescription() {
@@ -24,7 +33,7 @@ void Vertex::getAttributeDescription() {
 	glEnableVertexAttribArray(1);
 
 	//Colour attribute
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(6 * sizeof(float)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 }
 

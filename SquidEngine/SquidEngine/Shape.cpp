@@ -1,5 +1,6 @@
 
 #include "Shape.h"
+#include "Primitives.h"
 
 using namespace std;
 
@@ -23,12 +24,32 @@ Shape::~Shape() {
 //Draw the shape on the screen
 void Shape::draw(ShaderProgram& shader) {
 	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, shapeIndices.size(), GL_UNSIGNED_INT, 0);
+}
+
+
+//Compute the normal vectors for all vertice in the shape
+void Shape::computeNormals(vector<Vertex> &vertices, vector<unsigned int> &indices) {
+	for (int i = 0; i < indices.size(); i+=3) {
+		glm::vec3 BA = vertices[indices[i+1]].pos - vertices[indices[i]].pos;
+		glm::vec3 CA = vertices[indices[i+2]].pos - vertices[indices[i]].pos;
+
+		glm::vec3 triNormal = glm::cross(BA, CA);
+		vertices[indices[i]].normal = triNormal;
+		vertices[indices[i+1]].normal = triNormal;
+		vertices[indices[i+2]].normal = triNormal;
+		cout << vertices[indices[i]] << endl;
+	}
 }
 
 //Add the vertices and indices to the vertex buffer
-void Shape::createBuffer() {
-	
+void Shape::createBuffer(vector<Vertex> &vertices, vector<unsigned int> &indices) {
+
+
+	for(int i=0; i < vertices.size(); ++i){
+		cout << vertices[i].pos.x <<  ", " << vertices[i].pos.y << ", " << vertices[i].pos.z << endl;
+	}
+	;
 	glBindVertexArray(VAO);
 
 	//Populate vertex buffer
@@ -37,12 +58,16 @@ void Shape::createBuffer() {
 
 	//Populate Element buffer
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()*sizeof(unsigned int), indices.data(), GL_DYNAMIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_DYNAMIC_DRAW);
 
 	//Populate attribute buffer using vertex attributes
 	Vertex::getAttributeDescription();
 
 	glBindVertexArray(0);
+
+	shapeVertices = vertices;
+	shapeIndices = indices;
+
 }
 
 

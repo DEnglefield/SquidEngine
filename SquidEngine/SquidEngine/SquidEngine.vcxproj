@@ -157,12 +157,14 @@
   <ItemGroup>
     <ClCompile Include="glad.c" />
     <ClCompile Include="Primitives.cpp" />
+    <ClCompile Include="SampleShapes.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="SquidEngine.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="SampleShapes.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="SquidEngine.h" />

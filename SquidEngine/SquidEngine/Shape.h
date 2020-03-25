@@ -7,6 +7,10 @@
 
 //Base class for any shape capable of being rendered in the scene
 class Shape {
+private:
+	//List of vertices and indices that make the shape
+	std::vector<Vertex> shapeVertices;
+	std::vector<unsigned int> shapeIndices;
 protected:
 	//Create IDs for 
 	//Vertex buffer object(VBO)
@@ -17,12 +21,11 @@ protected:
 	//Model matrix to hold shape transformations
 	glm::mat4 modelMatrix;
 
-	//List of vertices and indices that make the shape
-	std::vector<Vertex> vertices;
-	std::vector<unsigned int> indices;
+	//Compute the normal vectors using the list of vertices and indices
+	void computeNormals(std::vector<Vertex> &vertices, std::vector<unsigned int> &indices);
 
 	//Add the vertices and indices to the vertex buffer
-	void createBuffer();
+	void createBuffer(std::vector<Vertex> &vertices, std::vector<unsigned int> &indices);
 
 public:
 	//Create a shape at the given position
