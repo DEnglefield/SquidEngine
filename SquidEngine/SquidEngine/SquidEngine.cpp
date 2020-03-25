@@ -6,9 +6,9 @@
 #include "SampleShapes.h"
 #include "Camera.h"
 #include "CameraFPS.h"
+#include "Texture.h"
 
 using namespace std;
-
 
 glm::mat4 worldMatrix(1.0f);
 glm::mat4 viewMatrix(1.0f);
@@ -102,11 +102,16 @@ int main()
 
 	ShaderProgram shader("VertexShader.vert", nullptr, "FragmentShader.frag");
 
-	Square square(0,0,0);
+	Texture moon("Resources/Textures/moon.jpg");
+	Texture star("Resources/Textures/star.png");
+
+	Cube square(0,0,0);
 	square.build();
+	square.addTexture(star.getID());
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_SCISSOR_TEST);
+
 
 	shader.use();
 	shader.setMat4("worldMatrix", worldMatrix);
@@ -116,11 +121,13 @@ int main()
 	double frameStart = glfwGetTime();;
 	float FPS = 60;
 
+
+
 	while (!mainWindow.closing())
 	{
 		processCameraInput(mainWindow,cam);
 
-		vector<ViewPort> viewList = viewsMain;
+		vector<ViewPort> viewList = views;
 
 		for (int i = 0; i < viewList.size(); ++i) {
 			viewList[i].use();

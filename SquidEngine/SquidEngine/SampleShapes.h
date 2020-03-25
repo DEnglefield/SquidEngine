@@ -8,3 +8,11 @@ public:
 	Square(float x, float y, float z);
 	void build();
 };
+
+//Simple Cube
+class Cube : public Shape {
+public:
+	Cube(float x, float y, float z);
+	void build();
+};
+

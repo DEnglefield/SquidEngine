@@ -3,6 +3,7 @@
 #include "SquidEngine.h"
 #include "Primitives.h"
 #include "ShaderProgram.h"
+#include "Texture.h"
 #include <vector>
 
 //Base class for any shape capable of being rendered in the scene
@@ -11,6 +12,7 @@ private:
 	//List of vertices and indices that make the shape
 	std::vector<Vertex> shapeVertices;
 	std::vector<unsigned int> shapeIndices;
+	std::vector<unsigned int> textureLayers;
 protected:
 	//Create IDs for 
 	//Vertex buffer object(VBO)
@@ -50,4 +52,7 @@ public:
 	void rotate(float angle, float x, float y, float z);
 	//Move the shape along the given axis
 	void translate(float x, float y, float z);
+
+	//Add a texture forming the next layer
+	void addTexture(unsigned int textureID);
 };

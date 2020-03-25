@@ -1,6 +1,6 @@
 
 #include "Shape.h"
-#include "Primitives.h"
+
 
 using namespace std;
 
@@ -25,8 +25,22 @@ Shape::~Shape() {
 //Draw the shape on the screen
 void Shape::draw(ShaderProgram& shader) {
 	shader.setMat4("modelMatrix", modelMatrix);
+
+	for (int i = 0; i < textureLayers.size(); ++i) {
+		glActiveTexture(GL_TEXTURE0+i);
+		glBindTexture(GL_TEXTURE_2D, textureLayers[i]);
+	}
+	
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, shapeIndices.size(), GL_UNSIGNED_INT, 0);
+
+	glBindTexture(GL_TEXTURE_2D, DEFAULT_TEXTURE);
+}
+
+
+//Add a texture forming the next layer
+void Shape::addTexture(unsigned int textureID) {
+	textureLayers.push_back(textureID);
 }
 
 
