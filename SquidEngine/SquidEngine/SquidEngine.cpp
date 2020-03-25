@@ -5,7 +5,7 @@
 #include "ShaderProgram.h"
 #include "SampleShapes.h"
 #include "Camera.h"
-
+#include "CameraFPS.h"
 
 using namespace std;
 
@@ -14,18 +14,63 @@ glm::mat4 worldMatrix(1.0f);
 glm::mat4 viewMatrix(1.0f);
 glm::mat4 projMatrix(1.0f);
 
+
+CameraFPS cam(0, 0, 3, 0, 0, -1);
+
 void mainResizeEvent(GLFWwindow* window, int width, int height)
 {
-	glViewport(0,0,width,height);
 	cout << "Resized to :" << width << ", " << height << endl;
-	projMatrix = glm::perspective(glm::radians(45.0f), (float)width/(float)height, 0.01f, 100.0f);
 }
 
 
-void processInput(Window& window)
+
+void cursorCallBack(GLFWwindow* window, double xpos, double ypos) {
+	if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED) {
+		cam.updateCursorPos(xpos, ypos, true);
+	}
+	else {
+		cam.updateCursorPos(xpos, ypos, false);
+	}
+	
+}
+
+void mouseBtnCallBack(GLFWwindow* window, int button, int action, int mods) {
+	if (glfwGetWindowAttrib(window, GLFW_HOVERED)) {
+		if (button == GLFW_MOUSE_BUTTON_1) {
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		}
+	}
+}
+
+void processCameraInput(Window& window, CameraFPS& cam) //Cant get current context with wrapper
 {
-	if (window.getKey(GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		window.close();
+	if (window.getKey(GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+		glfwSetInputMode(window.form, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
+
+	if (window.getKey(GLFW_KEY_W) == GLFW_PRESS) {
+		cam.moveForward();
+	}
+
+	if (window.getKey(GLFW_KEY_S) == GLFW_PRESS) {
+		cam.moveBackward();
+	}
+
+	if (window.getKey(GLFW_KEY_A) == GLFW_PRESS) {
+		cam.moveLeft();
+	}
+
+	if (window.getKey(GLFW_KEY_D) == GLFW_PRESS) {
+		cam.moveRight();
+	}
+
+	if (window.getKey(GLFW_KEY_SPACE) == GLFW_PRESS) {
+		cam.moveUp();
+	}
+
+	if (window.getKey(GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+		cam.moveDown();
+	}
 }
 
 
@@ -37,7 +82,9 @@ int main()
 	Window mainWindow(800, 600, "SquidEngine");
 
 	mainWindow.show();
-	mainWindow.setResizeEvent(mainResizeEvent);
+	glfwSetFramebufferSizeCallback(mainWindow.form, mainResizeEvent);
+	glfwSetCursorPosCallback(mainWindow.form, cursorCallBack);
+	glfwSetMouseButtonCallback(mainWindow.form, mouseBtnCallBack);
 	mainWindow.setActive();
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -66,21 +113,21 @@ int main()
 
 	shader.setVec4("col", glm::vec4(0.3, 0.5, 0.2, 1));
 
-	Camera cam(0,0,3,0,0,-1);
+	double frameStart = glfwGetTime();;
+	float FPS = 60;
 
-	shader.setMat4("viewMatrix",cam.viewMatrix);
-	
 	while (!mainWindow.closing())
 	{
-		processInput(mainWindow);
+		processCameraInput(mainWindow,cam);
 
-		vector<ViewPort> viewList = views;
+		vector<ViewPort> viewList = viewsMain;
 
 		for (int i = 0; i < viewList.size(); ++i) {
 			viewList[i].use();
 
 			cam.setView(viewList[i]);
-			shader.setMat4("projMatrix", cam.projMatrix);
+			shader.setMat4("viewMatrix", cam.getViewMatrix());
+			shader.setMat4("projMatrix", cam.getProjectionMatrix());
 
 			glClearColor(0.43f, 0.71f, (1.0f / views.size()) * (i+1), 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -88,9 +135,16 @@ int main()
 			square.draw(shader);
 		}
 
+		cam.updateFPS(FPS);
 
+		glfwSwapInterval(1);
 		glfwSwapBuffers(glfwGetCurrentContext());
 		glfwPollEvents();
+
+		FPS = 1 / (glfwGetTime() - frameStart);
+		
+		//std::cout << "FPS: " << FPS << " Frame Time: " << (glfwGetTime() - frameStart) << std::endl;
+		frameStart = glfwGetTime();
 	}	
 
 	return 0;

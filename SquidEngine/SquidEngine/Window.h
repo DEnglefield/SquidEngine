@@ -40,9 +40,6 @@ public:
 	void swapBuffers();
 	//Updates the given values with the window's current width and height
 	void getWindowSize(int* width, int* height);
-
-	//Subscribe to a resize event with the given function
-	void setResizeEvent(void* resizeFunc);
 };
 
 

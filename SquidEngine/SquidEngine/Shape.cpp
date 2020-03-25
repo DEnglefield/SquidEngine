@@ -37,10 +37,11 @@ void Shape::computeNormals(vector<Vertex> &vertices, vector<unsigned int> &indic
 		glm::vec3 CA = vertices[indices[i+2]].pos - vertices[indices[i]].pos;
 
 		glm::vec3 triNormal = glm::cross(BA, CA);
+		triNormal = glm::normalize(triNormal);
 		vertices[indices[i]].normal = triNormal;
 		vertices[indices[i+1]].normal = triNormal;
 		vertices[indices[i+2]].normal = triNormal;
-		cout << vertices[indices[i]] << endl;
+		
 	}
 }
 

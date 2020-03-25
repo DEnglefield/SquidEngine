@@ -56,11 +56,6 @@ void Window::swapBuffers() { glfwSwapBuffers(form); }
 //Update the width and height values with the windows current values
 void Window::getWindowSize(int* width, int* height) { glfwGetWindowSize(form, width, height); }
 
-//Subscribe to a resize event with the given function
-void Window::setResizeEvent(void* resizeFunc) {
-	glfwSetFramebufferSizeCallback(form, (GLFWframebuffersizefun)resizeFunc);
-}
-
 
 //Create the viewport area using percentage positions on the window
 ViewPort::ViewPort(float xPercent, float yPercent, float widthPercent, float heightPercent) {

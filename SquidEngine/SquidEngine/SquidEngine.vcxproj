@@ -156,6 +156,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CameraFPS.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Primitives.cpp" />
     <ClCompile Include="SampleShapes.cpp" />
@@ -166,6 +167,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CameraFPS.h" />
     <ClInclude Include="SampleShapes.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="Shape.h" />
