@@ -104,10 +104,7 @@ int main()
 
 	Texture moon("Resources/Textures/moon.jpg");
 	Texture star("Resources/Textures/star.png");
-
-	Cube square(0,0,0);
-	square.build();
-	square.addTexture(star.getID());
+	Texture cubeMap("Resources/Textures/floor.bmp");
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_SCISSOR_TEST);
@@ -127,7 +124,7 @@ int main()
 	{
 		processCameraInput(mainWindow,cam);
 
-		vector<ViewPort> viewList = views;
+		vector<ViewPort> viewList = viewsMain;
 
 		for (int i = 0; i < viewList.size(); ++i) {
 			viewList[i].use();
@@ -136,10 +133,24 @@ int main()
 			shader.setMat4("viewMatrix", cam.getViewMatrix());
 			shader.setMat4("projMatrix", cam.getProjectionMatrix());
 
-			glClearColor(0.43f, 0.71f, (1.0f / views.size()) * (i+1), 1.0f);
+			glClearColor(0.43f, 0.71f, 0.86 - ((0.86f / views.size()) * (i)), 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			square.draw(shader);
+			int terrainSize = 12;
+
+			for (int terrainX = 0; terrainX < terrainSize; ++terrainX) {
+				for (int terrainZ = 0; terrainZ < terrainSize; ++terrainZ) {
+					Cube terrainCube(terrainX-5, -1, terrainZ-5);
+					terrainCube.build();
+					terrainCube.addTexture(cubeMap.getID());
+					terrainCube.draw(shader);
+				}
+			}
+
+			Cube square(0, 0, 0);
+			square.build();
+			square.addTexture(star.getID());
+
 		}
 
 		cam.updateFPS(FPS);

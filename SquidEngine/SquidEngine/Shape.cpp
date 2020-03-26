@@ -111,3 +111,8 @@ void Shape::setScale(float x, float y, float z) {
 glm::vec3 Shape::getScale() {
 	return glm::vec3(modelMatrix[0][0], modelMatrix[1][1], modelMatrix[2][2]);
 }
+
+//Move the shape along the given axis
+void Shape::translate(float x, float y, float z) {
+	modelMatrix = glm::translate(modelMatrix,glm::vec3(x,y,z));
+}

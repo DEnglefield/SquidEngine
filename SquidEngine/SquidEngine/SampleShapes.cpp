@@ -44,40 +44,40 @@ void Cube::build() {
 	vector<Vertex> vertices = {	
 
 		//Front
-		Vertex(frontTopLeft, glm::vec3(0,0,-1), glm::vec2(0,1)), // top left 
-		Vertex(frontTopRight, glm::vec3(0,0,-1), glm::vec2(1,1)),  // top right
-		Vertex(frontBottomRight, glm::vec3(0,0,-1), glm::vec2(1,0)),  // bottom right
-		Vertex(frontBottomLeft, glm::vec3(0,0,-1), glm::vec2(0,0)), // bottom left
-			
+		Vertex(frontTopLeft, glm::vec3(0,0,-1), glm::vec2(0.25,0.66)), // top left 
+		Vertex(frontTopRight, glm::vec3(0,0,-1), glm::vec2(0.5,0.66)),  // top right
+		Vertex(frontBottomRight, glm::vec3(0,0,-1), glm::vec2(0.5,0.34)),  // bottom right
+		Vertex(frontBottomLeft, glm::vec3(0,0,-1), glm::vec2(0.25,0.34)), // bottom left
+
 		//Back
-		Vertex(backTopLeft, glm::vec3(0,0,1), glm::vec2(0,1)), // top left 
-		Vertex(backTopRight, glm::vec3(0,0,1), glm::vec2(1,1)),  // top right
-		Vertex(backBottomRight, glm::vec3(0,0,1), glm::vec2(1,0)),  // bottom right
-		Vertex(backBottomLeft, glm::vec3(0,0,1), glm::vec2(0,0)), // bottom left
+		Vertex(backTopLeft, glm::vec3(0,0,1), glm::vec2(0.75,0.66)), // top left 
+		Vertex(backTopRight, glm::vec3(0,0,1), glm::vec2(1,0.66)),  // top right
+		Vertex(backBottomRight, glm::vec3(0,0,1), glm::vec2(1,0.34)),  // bottom right
+		Vertex(backBottomLeft, glm::vec3(0,0,1), glm::vec2(0.75,0.34)), // bottom left
 		
 		//Top
-		Vertex(frontTopLeft, glm::vec3(0,1,0), glm::vec2(0,1)),
-		Vertex(frontTopRight, glm::vec3(0,1,0), glm::vec2(1,1)),
-		Vertex(backTopRight, glm::vec3(0,1,0), glm::vec2(1,0)),
-		Vertex(backTopLeft, glm::vec3(0,1,0), glm::vec2(0,0)),
+		Vertex(frontTopLeft, glm::vec3(0,1,0), glm::vec2(0.255,0.995)),
+		Vertex(frontTopRight, glm::vec3(0,1,0), glm::vec2(0.495,0.995)),
+		Vertex(backTopRight, glm::vec3(0,1,0), glm::vec2(0.495,0.675)),
+		Vertex(backTopLeft, glm::vec3(0,1,0), glm::vec2(0.255,0.675)),
 
 		//Bottom
-		Vertex(frontBottomLeft, glm::vec3(0,-1,0), glm::vec2(0,1)),
-		Vertex(frontBottomRight, glm::vec3(0,-1,0), glm::vec2(1,1)),
-		Vertex(backBottomRight, glm::vec3(0,-1,0), glm::vec2(1,0)),
-		Vertex(backBottomLeft, glm::vec3(0,-1,0), glm::vec2(0,0)),
+		Vertex(frontBottomLeft, glm::vec3(0,-1,0), glm::vec2(0.255,0.05)),
+		Vertex(frontBottomRight, glm::vec3(0,-1,0), glm::vec2(0.495,0.05)),
+		Vertex(backBottomRight, glm::vec3(0,-1,0), glm::vec2(0.495,0.34)),
+		Vertex(backBottomLeft, glm::vec3(0,-1,0), glm::vec2(0.255,0.34)),
 
 		//Left
-		Vertex(frontTopLeft, glm::vec3(1,0,0), glm::vec2(0,1)),
-		Vertex(backTopLeft, glm::vec3(1,0,0), glm::vec2(1,1)),
-		Vertex(backBottomLeft, glm::vec3(1,0,0), glm::vec2(1,0)),
-		Vertex(frontBottomLeft, glm::vec3(1,0,0), glm::vec2(0,0)),
+		Vertex(frontTopLeft, glm::vec3(1,0,0), glm::vec2(0,0.66)),
+		Vertex(backTopLeft, glm::vec3(1,0,0), glm::vec2(0.25,0.66)),
+		Vertex(backBottomLeft, glm::vec3(1,0,0), glm::vec2(0.25,0.34)),
+		Vertex(frontBottomLeft, glm::vec3(1,0,0), glm::vec2(0,0.34)),
 
 		//Right
-		Vertex(frontTopRight, glm::vec3(-1,0,0), glm::vec2(0,1)),
-		Vertex(backTopRight, glm::vec3(-1,0,0), glm::vec2(1,1)),
-		Vertex(backBottomRight, glm::vec3(-1,0,0), glm::vec2(1,0)),
-		Vertex(frontBottomRight, glm::vec3(-1,0,0), glm::vec2(0,0))
+		Vertex(frontTopRight, glm::vec3(-1,0,0), glm::vec2(0.5,0.66)),
+		Vertex(backTopRight, glm::vec3(-1,0,0), glm::vec2(0.75,0.66)),
+		Vertex(backBottomRight, glm::vec3(-1,0,0), glm::vec2(0.75,0.34)),
+		Vertex(frontBottomRight, glm::vec3(-1,0,0), glm::vec2(0.5,0.34))
 		
 	};
 
@@ -103,3 +103,5 @@ void Cube::build() {
 
 	createBuffer(vertices, indices);
 }
+
+

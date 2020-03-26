@@ -15,4 +15,3 @@ public:
 	Cube(float x, float y, float z);
 	void build();
 };
-
