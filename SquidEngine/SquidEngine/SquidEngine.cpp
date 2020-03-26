@@ -34,6 +34,17 @@ void cursorCallBack(GLFWwindow* window, double xpos, double ypos) {
 	
 }
 
+void scrollCallBack(GLFWwindow* window, double scrollX, double scrollY) {
+
+	if (cam.moveSpeed + scrollY < 0) {
+		cam.moveSpeed = 0;
+	}
+	else {
+		cam.moveSpeed += scrollY;
+	}
+	
+}
+
 void mouseBtnCallBack(GLFWwindow* window, int button, int action, int mods) {
 	if (glfwGetWindowAttrib(window, GLFW_HOVERED)) {
 		if (button == GLFW_MOUSE_BUTTON_1) {
@@ -85,6 +96,7 @@ int main()
 	glfwSetFramebufferSizeCallback(mainWindow.form, mainResizeEvent);
 	glfwSetCursorPosCallback(mainWindow.form, cursorCallBack);
 	glfwSetMouseButtonCallback(mainWindow.form, mouseBtnCallBack);
+	glfwSetScrollCallback(mainWindow.form, scrollCallBack);
 	mainWindow.setActive();
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
