@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{650f9927-45a1-4ea9-a005-58428eb0e97e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\BasicShader">
+      <UniqueIdentifier>{36e58ffa-5eb6-4794-8075-87d1434072ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\LightingShader">
+      <UniqueIdentifier>{1d6bfd15-1181-45a8-84fa-8842463d9e06}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SquidEngine.cpp">
@@ -79,7 +88,17 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="FragmentShader.frag" />
-    <None Include="VertexShader.vert" />
+    <None Include="Shaders\BasicShader\BasicShader.vert">
+      <Filter>Shaders\BasicShader</Filter>
+    </None>
+    <None Include="Shaders\BasicShader\BasicShader.frag">
+      <Filter>Shaders\BasicShader</Filter>
+    </None>
+    <None Include="Shaders\LightingShader\LightingShader.vert">
+      <Filter>Shaders\LightingShader</Filter>
+    </None>
+    <None Include="Shaders\LightingShader\LightingShader.frag">
+      <Filter>Shaders\LightingShader</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -65,3 +65,6 @@ glm::mat4 Camera::getProjectionMatrix() {
 	setProjection(viewWidth, viewHeight, minRender, maxRender);
 	return projMatrix;
 }
+
+//Get the camera eye position
+glm::vec3 Camera::getPosition() { return eyePos; }

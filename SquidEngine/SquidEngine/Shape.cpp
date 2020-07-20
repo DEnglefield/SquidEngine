@@ -11,6 +11,9 @@ Shape::Shape(float x, float y, float z) {
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
 	modelMatrix = glm::mat4(1.0f);
+
+	glm::vec4 baseColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	setColour(baseColour);
 	setPosition(x, y, z);
 }
 
@@ -23,8 +26,7 @@ Shape::~Shape() {
 
 
 //Draw the shape on the screen
-void Shape::draw(ShaderProgram& shader) {
-	shader.setMat4("modelMatrix", modelMatrix);
+void Shape::draw() {
 
 	for (int i = 0; i < textureLayers.size(); ++i) {
 		glActiveTexture(GL_TEXTURE0+i);
@@ -41,6 +43,12 @@ void Shape::draw(ShaderProgram& shader) {
 //Add a texture forming the next layer
 void Shape::addTexture(unsigned int textureID) {
 	textureLayers.push_back(textureID);
+}
+
+
+//Set the colour of the shape
+void Shape::setColour(glm::vec4 &newColour) {
+	shapeColour = newColour;
 }
 
 
@@ -116,3 +124,9 @@ glm::vec3 Shape::getScale() {
 void Shape::translate(float x, float y, float z) {
 	modelMatrix = glm::translate(modelMatrix,glm::vec3(x,y,z));
 }
+
+//Return the shape's model matrix
+glm::mat4 Shape::getModelMatrix() { return modelMatrix; }
+
+//Get the shape's colour
+glm::vec4 Shape::getColour() { return shapeColour; }

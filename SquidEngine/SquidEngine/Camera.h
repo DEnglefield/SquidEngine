@@ -56,4 +56,7 @@ public:
 	glm::mat4 getViewMatrix();
 	//Update and return the projection matrix
 	glm::mat4 getProjectionMatrix();
+
+	//Get the camera eye position
+	glm::vec3 getPosition();
 };

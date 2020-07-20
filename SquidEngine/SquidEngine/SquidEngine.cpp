@@ -112,7 +112,10 @@ int main()
 	vector<ViewPort> viewsMain = { viewMain };
 	vector<ViewPort> views = { view1, view2, view3, view4 };
 
-	ShaderProgram shader("VertexShader.vert", nullptr, "FragmentShader.frag");
+	ShaderProgram basicShader("Shaders/BasicShader/BasicShader.vert", nullptr, "Shaders/BasicShader/BasicShader.frag");
+	ShaderProgram lightingShader("Shaders/LightingShader/LightingShader.vert", nullptr, "Shaders/LightingShader/LightingShader.frag");
+
+	ShaderProgram shader = lightingShader;
 
 	Texture moon("Resources/Textures/moon.jpg");
 	Texture star("Resources/Textures/star.png");
@@ -145,6 +148,10 @@ int main()
 			shader.setMat4("viewMatrix", cam.getViewMatrix());
 			shader.setMat4("projMatrix", cam.getProjectionMatrix());
 
+			shader.setMat4("worldMatrix", worldMatrix);
+			shader.setVec3("cameraPos", cam.getPosition());
+			shader.setVec3("lightPos", glm::vec3(0,5,0));
+
 			glClearColor(0.43f, 0.71f, 0.86 - ((0.86f / views.size()) * (i)), 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -155,7 +162,15 @@ int main()
 					Cube terrainCube(terrainX-5, -1, terrainZ-5);
 					terrainCube.build();
 					terrainCube.addTexture(cubeMap.getID());
-					terrainCube.draw(shader);
+
+					shader.setMat4("modelMatrix", terrainCube.getModelMatrix());
+					shader.setVec4("material.colour", terrainCube.getColour());
+					shader.setVec3("material.ambient", glm::vec3(0.1f,0.1f,0.1f));
+					shader.setVec3("material.diffuse", glm::vec3(0.6f,0.6f,0.6f));
+					shader.setVec3("material.specular", glm::vec3(0.5f,0.5f,0.5f));
+					shader.setFloat("material.reflectivity", 32.0f);
+					terrainCube.draw();
+
 				}
 			}
 
