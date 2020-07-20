@@ -139,7 +139,7 @@ int main()
 	{
 		processCameraInput(mainWindow,cam);
 
-		vector<ViewPort> viewList = viewsMain;
+		vector<ViewPort> viewList = views;
 
 		for (int i = 0; i < viewList.size(); ++i) {
 			viewList[i].use();
@@ -165,10 +165,40 @@ int main()
 
 					shader.setMat4("modelMatrix", terrainCube.getModelMatrix());
 					shader.setVec4("material.colour", terrainCube.getColour());
-					shader.setVec3("material.ambient", glm::vec3(0.1f,0.1f,0.1f));
-					shader.setVec3("material.diffuse", glm::vec3(0.6f,0.6f,0.6f));
-					shader.setVec3("material.specular", glm::vec3(0.5f,0.5f,0.5f));
-					shader.setFloat("material.reflectivity", 32.0f);
+					if (i == 0) {
+						//Green Rubber
+						shader.setVec3("material.ambient", glm::vec3(0.0f, 0.05f, 0.0f));
+						shader.setVec3("material.diffuse", glm::vec3(0.4f, 0.5f, 0.4f));
+						shader.setVec3("material.specular", glm::vec3(0.04f, 0.7f, 0.04f));
+						shader.setFloat("material.reflectivity", 10);
+						
+					}
+
+					if (i == 1) {
+						//Chrome
+						shader.setVec3("material.ambient", glm::vec3(0.25f, 0.25f, 0.25f));
+						shader.setVec3("material.diffuse", glm::vec3(0.4f,0.4f,0.4f));
+						shader.setVec3("material.specular", glm::vec3(0.774597f, 0.774597f, 0.774597f));
+						shader.setFloat("material.reflectivity", 78.0f);
+					}
+
+
+					if (i == 2) {
+						//Emerald
+						shader.setVec3("material.ambient", glm::vec3(0.0215f, 0.1745f, 0.0215f));
+						shader.setVec3("material.diffuse", glm::vec3(0.07568f, 0.61424f, 0.07568f));
+						shader.setVec3("material.specular", glm::vec3(0.633f, 0.727811f, 0.633f));
+						shader.setFloat("material.reflectivity", 78.0f);
+					}
+
+					if (i == 3) {
+						//Red Plastic
+						shader.setVec3("material.ambient", glm::vec3(0.0f, 0.0f, 0.0f));
+						shader.setVec3("material.diffuse", glm::vec3(0.5f, 0.0f, 0.0f));
+						shader.setVec3("material.specular", glm::vec3(0.7f, 0.6f, 0.6f));
+						shader.setFloat("material.reflectivity", 32.0f);
+					}
+					
 					terrainCube.draw();
 
 				}

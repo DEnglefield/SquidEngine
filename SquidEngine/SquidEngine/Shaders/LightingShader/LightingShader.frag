@@ -30,11 +30,11 @@ void main() {
     vec3 diffuseLight = lightAngle * lightColour;
 
     vec3 viewVec = normalize(cameraPos - fragPos);
-    vec3 reflectDir = reflect(-viewVec, fragNormal);
+    vec3 reflectDir = reflect(-lightVec, fragNormal);
     float specValue = max(dot(viewVec, reflectDir), 0.0);
     vec3 specularLight = pow(specValue, material.reflectivity) * material.specular * lightColour; 
 
     vec3 blinnPhong = ambientLight + diffuseLight + specularLight;
 
-	FragColor = vec4(blinnPhong,1) * material.colour * texture(textureIn, texUV);
+	FragColor = vec4(blinnPhong,1) * vec4(0.8,0.8,0.8,1.0);//material.colour * texture(textureIn, texUV);
 } 
