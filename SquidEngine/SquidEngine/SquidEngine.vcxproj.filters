@@ -86,6 +86,12 @@
     <ClInclude Include="Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Colours.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Materials.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\BasicShader\BasicShader.vert">

@@ -133,7 +133,7 @@ int main()
 	double frameStart = glfwGetTime();;
 	float FPS = 60;
 
-
+	MaterialList Materials;
 
 	while (!mainWindow.closing())
 	{
@@ -150,7 +150,7 @@ int main()
 
 			shader.setMat4("worldMatrix", worldMatrix);
 			shader.setVec3("cameraPos", cam.getPosition());
-			shader.setVec3("lightPos", glm::vec3(0,5,0));
+			shader.setVec3("lightPos", glm::vec3(0,10,10));
 
 			glClearColor(0.43f, 0.71f, 0.86 - ((0.86f / views.size()) * (i)), 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -166,37 +166,38 @@ int main()
 					shader.setMat4("modelMatrix", terrainCube.getModelMatrix());
 					shader.setVec4("material.colour", terrainCube.getColour());
 					if (i == 0) {
-						//Green Rubber
-						shader.setVec3("material.ambient", glm::vec3(0.0f, 0.05f, 0.0f));
-						shader.setVec3("material.diffuse", glm::vec3(0.4f, 0.5f, 0.4f));
-						shader.setVec3("material.specular", glm::vec3(0.04f, 0.7f, 0.04f));
-						shader.setFloat("material.reflectivity", 10);
+						Material mat = Materials.obsidian;
+						shader.setVec3("material.ambient", mat.ambient);
+						shader.setVec3("material.diffuse", mat.diffuse);
+						shader.setVec3("material.specular", mat.specular);
+						shader.setFloat("material.reflectivity", mat.highlight);
 						
 					}
 
 					if (i == 1) {
 						//Chrome
-						shader.setVec3("material.ambient", glm::vec3(0.25f, 0.25f, 0.25f));
-						shader.setVec3("material.diffuse", glm::vec3(0.4f,0.4f,0.4f));
-						shader.setVec3("material.specular", glm::vec3(0.774597f, 0.774597f, 0.774597f));
-						shader.setFloat("material.reflectivity", 78.0f);
+						Material mat = Materials.water;
+						shader.setVec3("material.ambient", mat.ambient);
+						shader.setVec3("material.diffuse", mat.diffuse);
+						shader.setVec3("material.specular", mat.specular);
+						shader.setFloat("material.reflectivity", mat.highlight);
 					}
 
 
 					if (i == 2) {
-						//Emerald
-						shader.setVec3("material.ambient", glm::vec3(0.0215f, 0.1745f, 0.0215f));
-						shader.setVec3("material.diffuse", glm::vec3(0.07568f, 0.61424f, 0.07568f));
-						shader.setVec3("material.specular", glm::vec3(0.633f, 0.727811f, 0.633f));
-						shader.setFloat("material.reflectivity", 78.0f);
+						Material mat = Materials.ruby;
+						shader.setVec3("material.ambient", mat.ambient);
+						shader.setVec3("material.diffuse", mat.diffuse);
+						shader.setVec3("material.specular", mat.specular);
+						shader.setFloat("material.reflectivity", mat.highlight);
 					}
 
 					if (i == 3) {
-						//Red Plastic
-						shader.setVec3("material.ambient", glm::vec3(0.0f, 0.0f, 0.0f));
-						shader.setVec3("material.diffuse", glm::vec3(0.5f, 0.0f, 0.0f));
-						shader.setVec3("material.specular", glm::vec3(0.7f, 0.6f, 0.6f));
-						shader.setFloat("material.reflectivity", 32.0f);
+						Material mat = Materials.gold;
+						shader.setVec3("material.ambient", mat.ambient);
+						shader.setVec3("material.diffuse", mat.diffuse);
+						shader.setVec3("material.specular", mat.specular);
+						shader.setFloat("material.reflectivity", mat.highlight);
 					}
 					
 					terrainCube.draw();

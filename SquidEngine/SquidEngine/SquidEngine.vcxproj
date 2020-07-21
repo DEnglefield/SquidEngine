@@ -169,6 +169,8 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraFPS.h" />
+    <ClInclude Include="Colours.h" />
+    <ClInclude Include="Materials.h" />
     <ClInclude Include="SampleShapes.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="Shape.h" />

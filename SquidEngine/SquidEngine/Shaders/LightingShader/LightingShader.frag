@@ -36,5 +36,5 @@ void main() {
 
     vec3 blinnPhong = ambientLight + diffuseLight + specularLight;
 
-	FragColor = vec4(blinnPhong,1) * vec4(0.8,0.8,0.8,1.0);//material.colour * texture(textureIn, texUV);
+	FragColor = vec4(blinnPhong,1);// * material.colour * texture(textureIn, texUV);
 } 

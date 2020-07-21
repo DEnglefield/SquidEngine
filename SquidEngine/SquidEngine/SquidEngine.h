@@ -7,3 +7,5 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <exception>
+#include "Materials.h"
+#include "Colours.h"
