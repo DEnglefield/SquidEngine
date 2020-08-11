@@ -14,6 +14,9 @@ struct Vertex {
 	//Get a description of the location of each attribute in the vertex
 	static void getAttributeDescription();
 
+	//Calculate vertex triangle normal
+	glm::vec3 calculateNormal(Vertex &other, Vertex &other2);
+
 	//Print the vertex contents in string stream
 	friend std::ostream& operator<<(std::ostream& os, const Vertex &vert);
 };

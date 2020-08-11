@@ -37,3 +37,16 @@ void Vertex::getAttributeDescription() {
 	glEnableVertexAttribArray(2);
 }
 
+
+//Calculate vertex triangle normal
+glm::vec3 Vertex::calculateNormal(Vertex& other, Vertex& other2) {
+	glm::vec3 side1 = other.pos - pos;
+	glm::vec3 side2 = other2.pos - pos;
+
+	return normalize(cross(side1, side2));
+
+}
+
+
+
+

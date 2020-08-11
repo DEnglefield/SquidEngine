@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "CameraFPS.h"
 #include "Texture.h"
+#include "Voxel.h"
 
 using namespace std;
 
@@ -135,11 +136,33 @@ int main()
 
 	MaterialList Materials;
 
+	Voxel voxelArea(0,0,0);
+	voxelArea.setSeed(427942);
+	voxelArea.setSurfaceLevel(0.4f);
+	voxelArea.setFrequency(1.0f);
+	voxelArea.setOctaves(8.0f);
+	voxelArea.outputNoise("debugImages/voxel.png",256,256);
+	voxelArea.populatePoints(100, 50, 100);
+	voxelArea.setScale(20.0f, 10.0f, 20.0f);
+	voxelArea.build();
+
 	while (!mainWindow.closing())
 	{
+		if (mainWindow.getKey(GLFW_KEY_PERIOD) == GLFW_PRESS) {
+			voxelArea.setSurfaceLevel(voxelArea.getSurfaceLevel() + 0.05f);
+			std::cout <<" Surface Level: " <<  voxelArea.getSurfaceLevel() << std::endl;
+			voxelArea.build();
+		}
+
+		if (mainWindow.getKey(GLFW_KEY_COMMA) == GLFW_PRESS) {
+			voxelArea.setSurfaceLevel(voxelArea.getSurfaceLevel() - 0.05f);
+			std::cout << " Surface Level: " << voxelArea.getSurfaceLevel() << std::endl;
+			voxelArea.build();
+		}
+
 		processCameraInput(mainWindow,cam);
 
-		vector<ViewPort> viewList = views;
+		vector<ViewPort> viewList = viewsMain;
 
 		for (int i = 0; i < viewList.size(); ++i) {
 			viewList[i].use();
@@ -150,65 +173,19 @@ int main()
 
 			shader.setMat4("worldMatrix", worldMatrix);
 			shader.setVec3("cameraPos", cam.getPosition());
-			shader.setVec3("lightPos", glm::vec3(0,10,10));
+			shader.setVec3("lightPos", glm::vec3(10,10,10));
 
 			glClearColor(0.43f, 0.71f, 0.86 - ((0.86f / views.size()) * (i)), 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			int terrainSize = 12;
-
-			for (int terrainX = 0; terrainX < terrainSize; ++terrainX) {
-				for (int terrainZ = 0; terrainZ < terrainSize; ++terrainZ) {
-					Cube terrainCube(terrainX-5, -1, terrainZ-5);
-					terrainCube.build();
-					terrainCube.addTexture(cubeMap.getID());
-
-					shader.setMat4("modelMatrix", terrainCube.getModelMatrix());
-					shader.setVec4("material.colour", terrainCube.getColour());
-					if (i == 0) {
-						Material mat = Materials.obsidian;
-						shader.setVec3("material.ambient", mat.ambient);
-						shader.setVec3("material.diffuse", mat.diffuse);
-						shader.setVec3("material.specular", mat.specular);
-						shader.setFloat("material.reflectivity", mat.highlight);
-						
-					}
-
-					if (i == 1) {
-						//Chrome
-						Material mat = Materials.water;
-						shader.setVec3("material.ambient", mat.ambient);
-						shader.setVec3("material.diffuse", mat.diffuse);
-						shader.setVec3("material.specular", mat.specular);
-						shader.setFloat("material.reflectivity", mat.highlight);
-					}
-
-
-					if (i == 2) {
-						Material mat = Materials.ruby;
-						shader.setVec3("material.ambient", mat.ambient);
-						shader.setVec3("material.diffuse", mat.diffuse);
-						shader.setVec3("material.specular", mat.specular);
-						shader.setFloat("material.reflectivity", mat.highlight);
-					}
-
-					if (i == 3) {
-						Material mat = Materials.gold;
-						shader.setVec3("material.ambient", mat.ambient);
-						shader.setVec3("material.diffuse", mat.diffuse);
-						shader.setVec3("material.specular", mat.specular);
-						shader.setFloat("material.reflectivity", mat.highlight);
-					}
-					
-					terrainCube.draw();
-
-				}
-			}
-
-			Cube square(0, 0, 0);
-			square.build();
-			square.addTexture(star.getID());
-
+			shader.setMat4("modelMatrix", voxelArea.getModelMatrix());
+			shader.setVec4("material.colour", voxelArea.getColour());
+			Material mat = Materials.obsidian;
+			shader.setVec3("material.ambient", mat.ambient);
+			shader.setVec3("material.diffuse", mat.diffuse);
+			shader.setVec3("material.specular", mat.specular);
+			shader.setFloat("material.reflectivity", mat.highlight);
+			voxelArea.draw();
 		}
 
 		cam.updateFPS(FPS);

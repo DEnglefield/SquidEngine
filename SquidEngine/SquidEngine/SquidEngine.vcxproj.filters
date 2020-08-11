@@ -54,6 +54,12 @@
     <ClCompile Include="Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Voxel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MarchingCubeLookup.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -90,6 +96,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Materials.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Voxel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image_write.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PerlinNoise.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

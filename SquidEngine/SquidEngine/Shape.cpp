@@ -1,7 +1,6 @@
 
 #include "Shape.h"
 
-
 using namespace std;
 
 //Create a shape at the given position

@@ -108,7 +108,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -158,12 +158,14 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraFPS.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="MarchingCubeLookup.h" />
     <ClCompile Include="Primitives.cpp" />
     <ClCompile Include="SampleShapes.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="SquidEngine.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="Voxel.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -171,13 +173,16 @@
     <ClInclude Include="CameraFPS.h" />
     <ClInclude Include="Colours.h" />
     <ClInclude Include="Materials.h" />
+    <ClInclude Include="PerlinNoise.hpp" />
     <ClInclude Include="SampleShapes.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="SquidEngine.h" />
     <ClInclude Include="Primitives.h" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="stb_image_write.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="Voxel.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
