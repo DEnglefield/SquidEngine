@@ -8,6 +8,7 @@ struct Material {
 	glm::vec3 diffuse = glm::vec3(0.6f, 0.06f, 0.6f);
 	glm::vec3 specular = glm::vec3(0.4f, 0.04f, 0.4f);
 	float highlight = 32.0f;
+	Material() {};
 	Material(glm::vec3 matAmbient, glm::vec3 matDiffuse, glm::vec3 matSpecular, float matHighlight)
 		: ambient(matAmbient), diffuse(matDiffuse), specular(matSpecular), highlight(matHighlight) {};
 };

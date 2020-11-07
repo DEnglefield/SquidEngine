@@ -4,7 +4,6 @@ out vec4 FragColor;
 uniform sampler2D textureIn;
 
 struct Material {
-    vec4 colour;
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -27,7 +26,7 @@ void main() {
 
     vec3 lightVec = normalize(lightPos - fragPos);
     float lightAngle = clamp(dot(fragNormal, lightVec),0.0,1.0);
-    vec3 diffuseLight = lightAngle * lightColour;
+    vec3 diffuseLight = lightAngle * material.diffuse * lightColour;
 
     vec3 viewVec = normalize(cameraPos - fragPos);
     vec3 reflectDir = reflect(-lightVec, fragNormal);
@@ -36,5 +35,5 @@ void main() {
 
     vec3 blinnPhong = ambientLight + diffuseLight + specularLight;
 
-	FragColor = vec4(blinnPhong,1);// * material.colour * texture(textureIn, texUV);
+	FragColor = vec4(blinnPhong,1);// * texture(textureIn, texUV);
 } 

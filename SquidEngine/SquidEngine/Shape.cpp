@@ -10,9 +10,6 @@ Shape::Shape(float x, float y, float z) {
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
 	modelMatrix = glm::mat4(1.0f);
-
-	glm::vec4 baseColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	setColour(baseColour);
 	setPosition(x, y, z);
 }
 
@@ -25,18 +22,28 @@ Shape::~Shape() {
 
 
 //Draw the shape on the screen
-void Shape::draw() {
+void Shape::draw(ShaderProgram& shader) {
 
 	for (int i = 0; i < textureLayers.size(); ++i) {
 		glActiveTexture(GL_TEXTURE0+i);
 		glBindTexture(GL_TEXTURE_2D, textureLayers[i]);
 	}
 	
+	shader.setMat4(MODEL_MATRIX_UNIFORM, modelMatrix);
+	shader.setMaterial(material);
+
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, shapeIndices.size(), GL_UNSIGNED_INT, 0);
 
 	glBindTexture(GL_TEXTURE_2D, DEFAULT_TEXTURE);
 }
+
+
+//Set the material for this shape
+void Shape::setMaterial(Material shapeMaterial) { material = shapeMaterial; }
+
+//get this shape's material
+Material Shape::getMaterial() { return material; }
 
 
 //Add a texture forming the next layer
@@ -45,13 +52,8 @@ void Shape::addTexture(unsigned int textureID) {
 }
 
 
-//Set the colour of the shape
-void Shape::setColour(glm::vec4 &newColour) {
-	shapeColour = newColour;
-}
-
-
 //Compute the normal vectors for all vertice in the shape
+//Slow and not smooth, use one-ring in geom or compute shader
 void Shape::computeNormals(vector<Vertex> &vertices, vector<unsigned int> &indices) {
 	for (int i = 0; i < indices.size(); i+=3) {
 		glm::vec3 BA = vertices[indices[i+1]].pos - vertices[indices[i]].pos;
@@ -126,6 +128,3 @@ void Shape::translate(float x, float y, float z) {
 
 //Return the shape's model matrix
 glm::mat4 Shape::getModelMatrix() { return modelMatrix; }
-
-//Get the shape's colour
-glm::vec4 Shape::getColour() { return shapeColour; }

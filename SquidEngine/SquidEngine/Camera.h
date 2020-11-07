@@ -19,10 +19,12 @@ protected:
 	glm::mat4 viewMatrix;
 
 public:
+	//Camera position and target vectors
 	glm::vec3 eyePos;
 	glm::vec3 lookVec;
 	glm::vec3 upVec;
 
+	//Camera properties
 	float minRender = 0.01f;
 	float maxRender = 100.0f;
 	float fieldOfView = 45;
@@ -31,6 +33,9 @@ public:
 	Camera(float eyeX, float eyeY, float eyeZ,
 		float lookX, float lookY, float lookZ);
 	Camera(glm::vec3 eye, glm::vec3 look);
+
+	//Set this camera as the active camera
+	void use(ShaderProgram& shader);
 
 	//Set the type of projection being CAMERA_ORTHOGRAPHIC or CAMERA_PERSPECTIVE
 	void setPerspective(int viewType);

@@ -4,10 +4,10 @@
 
 //Create a camera using eye and look target vector
 CameraFPS::CameraFPS(float eyeX, float eyeY, float eyeZ,float lookX, float lookY, float lookZ)
-	: Camera(eyeX, eyeY, eyeZ, lookX, lookY, lookZ) {}
+	: Camera(eyeX, eyeY, eyeZ, lookX, lookY, lookZ) { updateFPS(60); }
 
 //Create a camera using eye position and look/target vector as vectors
-CameraFPS::CameraFPS(glm::vec3 eye, glm::vec3 look) : Camera(eye, look) {}
+CameraFPS::CameraFPS(glm::vec3 eye, glm::vec3 look) : Camera(eye, look) { updateFPS(60); }
 
 //Move the camera forward
 void CameraFPS::moveForward() { eyePos += adjustedSpeed * lookVec; }

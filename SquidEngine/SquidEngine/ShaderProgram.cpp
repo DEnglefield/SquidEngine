@@ -7,42 +7,33 @@
 using namespace std;
 
 //Shader Program used to load GLSL code to run on the GPU
-ShaderProgram::ShaderProgram(const char* vertexFile, const char* geometryFile, const char* fragmentFile) {
-	//Make sure vertex and fragment shader files have been provided
-	if (vertexFile == nullptr || fragmentFile == nullptr) {
-		throw invalid_argument("Vertex and Fragment shader are not optional");
-	}
+ShaderProgram::ShaderProgram(const char* vertexFile, const char* fragmentFile) {
 
 	//Load vertex shader
-	unsigned int vertexID = loadShader(vertexFile, GL_VERTEX_SHADER);
+	vertexID = loadShader(vertexFile, GL_VERTEX_SHADER);
 	if (vertexID != -1) {
 		cout << "Vertex Shader Loaded Successfully" << endl;
 	}
 
 	//Load fragment shader
-	unsigned int fragmentID = loadShader(fragmentFile, GL_FRAGMENT_SHADER);
+	fragmentID = loadShader(fragmentFile, GL_FRAGMENT_SHADER);
 	if (fragmentID != -1) {
 		cout << "Fragment Shader Loaded Successfully" << endl;
-	}
-
-	//Load geometry shader is requested
-	unsigned int geometryID = -1;
-	if (geometryFile != nullptr) {
-		geometryID = loadShader(geometryFile, GL_GEOMETRY_SHADER);
-		if (geometryID != -1) {
-			cout << "Geometry Shader Loaded Successfully" << endl;
-		}
-	}
-
-	//Link the shaders to form the render pipeline
-	ID = createShaderProgram(vertexID, geometryID, fragmentID);
-
-	//Delete each shader as they have been linked
-	//and are no longer needed
-	glDeleteShader(vertexID);
-	glDeleteShader(fragmentID);
-	if (geometryID != -1) { glDeleteShader(geometryID); }
+	} 
 }
+
+
+bool ShaderProgram::attachGeometryShader(const char* geometryFile) {
+	//Load geometry shader
+	geometryID = loadShader(geometryFile, GL_GEOMETRY_SHADER);
+	if (geometryID != -1) {
+		cout << "Geometry Shader Loaded Successfully" << endl;
+	}
+	
+	return (geometryID != -1);
+}
+
+
 
 //Set this program as the active program for rendering
 void ShaderProgram::use() { glUseProgram(ID); }
@@ -88,20 +79,20 @@ unsigned int ShaderProgram::loadShader(const char* fileName, int shaderType) {
 
 	//Check if compile failed
 	if (!success) {
+		cout << infoLog << endl;
 		glGetShaderInfoLog(shaderID, 512, NULL, infoLog);
 		if (shaderType == GL_VERTEX_SHADER) {
-			cout << "Failed to compile vertex shader:" << endl;
+			throw exception("Failed to compile vertex shader");
 		}
 
 		if (shaderType == GL_GEOMETRY_SHADER) {
-			cout << "Failed to compile geometry shader:" << endl;
+			throw exception("Failed to compile geometry shader");
 		}
 
 		if (shaderType == GL_FRAGMENT_SHADER) {
-			cout << "Failed to compile fragment shader:" << endl;
+			throw exception("Failed to compile fragment shader");
 		}
 		
-		cout << infoLog << endl;
 		return -1;
 	}
 	
@@ -109,34 +100,39 @@ unsigned int ShaderProgram::loadShader(const char* fileName, int shaderType) {
 }
 
 //Link the shader stages to form a shader program
-//Geom should be -1 if not using geometry shader
-unsigned int ShaderProgram::createShaderProgram(unsigned int vert, unsigned int geom, unsigned int frag) {
+bool ShaderProgram::createShaderProgram() {
 	//Create ID for the shader program
-	unsigned int shaderProgram;
-	shaderProgram = glCreateProgram();
+	ID = glCreateProgram();
 
 	//Attach Shaders
-	glAttachShader(shaderProgram, vert);
-	glAttachShader(shaderProgram, frag);
-	if (geom != -1) { glAttachShader(shaderProgram, geom); }
+	glAttachShader(ID, vertexID);
+	glAttachShader(ID, fragmentID);
+	if (geometryID != -1) { glAttachShader(ID, geometryID); }
 
 	//Link the program to the application
-	glLinkProgram(shaderProgram);
+	glLinkProgram(ID);
 
 	int success;
 	char infoLog[512];
 
 	//Check if link was successful
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+	glGetProgramiv(ID, GL_LINK_STATUS, &success);
 	if (!success) {
-		glGetShaderInfoLog(shaderProgram, 512, NULL, infoLog);
+		glGetShaderInfoLog(ID, 512, NULL, infoLog);
 		cout << "Failed to link shaders:" << endl;
 		cout << infoLog << endl;
-		return -1;
+		return false;
 	}
 
 	cout << "Program Created" << endl;
-	return shaderProgram;
+
+	//Delete each shader as they have been linked and are no longer needed
+	glDeleteShader(vertexID);
+	glDeleteShader(fragmentID);
+	if (geometryID != -1) {
+		glDeleteShader(geometryID);
+	}
+	return true;
 }
 
 //Send a boolean value represetned by an integer to the shader
@@ -171,4 +167,39 @@ void ShaderProgram::setVec4(const char* attr, glm::vec4 value) {
 void ShaderProgram::setMat4(const char* attr, glm::mat4 value) {
 	unsigned int mat4 = glGetUniformLocation(ID, attr);
 	glUniformMatrix4fv(mat4, 1, GL_FALSE, glm::value_ptr(value));
+}
+
+
+//Apply all properties of a material to the shader
+void ShaderProgram::setMaterial(Material& material) {
+	setMaterialProperty(MATERIAL_AMBIENT_UNIFORM, material.ambient);
+	setMaterialProperty(MATERIAL_DIFFUSE_UNIFORM, material.diffuse);
+	setMaterialProperty(MATERIAL_SPECULAR_UNIFORM, material.specular);
+	setMaterialProperty(MATERIAL_REFLECTIVITY_UNIFORM, glm::vec3(material.highlight));
+}
+
+
+//Change a specific material property
+void ShaderProgram::setMaterialProperty(const char* property, glm::vec3 value) {
+	string propertyName = string(MATERIAL_UNIFORM);
+	propertyName.append(".");
+	propertyName.append(property);
+	
+	if (property != MATERIAL_REFLECTIVITY_UNIFORM) {
+		setVec3(propertyName.c_str(), value);
+	} else {
+		setFloat(propertyName.c_str(), value.x);
+	}
+}
+
+
+//Send the active camera position to the shader
+void ShaderProgram::setCameraPosition(glm::vec3 value) {
+	setVec3(CAMERA_POSITION_UNIFORM, value);
+}
+
+
+//Get the location ID for a uniform name
+int ShaderProgram::getUniformLocation(const char* attr) {
+	return glGetUniformLocation(ID, attr);
 }

@@ -20,11 +20,11 @@ protected:
 	//Vertex Attribute buffer(VAO)
 	unsigned int VBO, EBO, VAO;
 
-	//Shape Colour
-	glm::vec4 shapeColour;
-
 	//Model matrix to hold shape transformations
 	glm::mat4 modelMatrix;
+
+	//Attached material for this shape
+	Material material;
 
 	//Compute the normal vectors using the list of vertices and indices
 	void computeNormals(std::vector<Vertex> &vertices, std::vector<unsigned int> &indices);
@@ -40,7 +40,12 @@ public:
 	//Build the shape populating its vertices
 	virtual void build() = 0;
 	//Draw the shape on the screen
-	void draw();
+	void draw(ShaderProgram& shader);
+
+	//Set the material for this shape
+	void setMaterial(Material shapeMaterial);
+	//get this shape's material
+	Material getMaterial();
 
 	//Set the position of the shape
 	void setPosition(float x, float y, float z);
@@ -59,10 +64,6 @@ public:
 	//Add a texture forming the next layer
 	void addTexture(unsigned int textureID);
 
-	//Set the shape's colour
-	void setColour(glm::vec4 &newColour);
-	//Get the shape's colour
-	glm::vec4 getColour();
 	//Return the shape's model matrix
 	glm::mat4 getModelMatrix();
 };

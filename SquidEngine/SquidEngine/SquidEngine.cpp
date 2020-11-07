@@ -11,11 +11,6 @@
 
 using namespace std;
 
-glm::mat4 worldMatrix(1.0f);
-glm::mat4 viewMatrix(1.0f);
-glm::mat4 projMatrix(1.0f);
-
-
 CameraFPS cam(0, 0, 3, 0, 0, -1);
 
 void mainResizeEvent(GLFWwindow* window, int width, int height)
@@ -113,10 +108,11 @@ int main()
 	vector<ViewPort> viewsMain = { viewMain };
 	vector<ViewPort> views = { view1, view2, view3, view4 };
 
-	ShaderProgram basicShader("Shaders/BasicShader/BasicShader.vert", nullptr, "Shaders/BasicShader/BasicShader.frag");
-	ShaderProgram lightingShader("Shaders/LightingShader/LightingShader.vert", nullptr, "Shaders/LightingShader/LightingShader.frag");
+	ShaderProgram basicShader("Shaders/BasicShader/BasicShader.vert", "Shaders/BasicShader/BasicShader.frag");
+	ShaderProgram lightingShader("Shaders/LightingShader/LightingShader.vert", "Shaders/LightingShader/LightingShader.frag");
 
 	ShaderProgram shader = lightingShader;
+	shader.createShaderProgram();
 
 	Texture moon("Resources/Textures/moon.jpg");
 	Texture star("Resources/Textures/star.png");
@@ -125,18 +121,15 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_SCISSOR_TEST);
 
-
 	shader.use();
-	shader.setMat4("worldMatrix", worldMatrix);
 
-	shader.setVec4("col", glm::vec4(0.3, 0.5, 0.2, 1));
-
-	double frameStart = glfwGetTime();;
-	float FPS = 60;
+	double frameStart = glfwGetTime();
 
 	MaterialList Materials;
 
+	/*
 	Voxel voxelArea(0,0,0);
+	voxelArea.setMaterial(Materials.obsidian);
 	voxelArea.setSeed(427942);
 	voxelArea.setSurfaceLevel(0.4f);
 	voxelArea.setFrequency(1.0f);
@@ -145,20 +138,18 @@ int main()
 	voxelArea.populatePoints(100, 50, 100);
 	voxelArea.setScale(20.0f, 10.0f, 20.0f);
 	voxelArea.build();
+	*/
+
+	glm::mat4 worldMatrix(1.0f);
+	shader.setMat4(WORLD_MATRIX_UNIFORM, worldMatrix);
+
+	Cube testCube(0.0f, 0.0f, 0.0f);
+	testCube.setMaterial(Materials.emerald);
+	testCube.addTexture(star.getID());
+	testCube.build();
 
 	while (!mainWindow.closing())
 	{
-		if (mainWindow.getKey(GLFW_KEY_PERIOD) == GLFW_PRESS) {
-			voxelArea.setSurfaceLevel(voxelArea.getSurfaceLevel() + 0.05f);
-			std::cout <<" Surface Level: " <<  voxelArea.getSurfaceLevel() << std::endl;
-			voxelArea.build();
-		}
-
-		if (mainWindow.getKey(GLFW_KEY_COMMA) == GLFW_PRESS) {
-			voxelArea.setSurfaceLevel(voxelArea.getSurfaceLevel() - 0.05f);
-			std::cout << " Surface Level: " << voxelArea.getSurfaceLevel() << std::endl;
-			voxelArea.build();
-		}
 
 		processCameraInput(mainWindow,cam);
 
@@ -167,36 +158,26 @@ int main()
 		for (int i = 0; i < viewList.size(); ++i) {
 			viewList[i].use();
 
+			cam.use(shader);
 			cam.setView(viewList[i]);
-			shader.setMat4("viewMatrix", cam.getViewMatrix());
-			shader.setMat4("projMatrix", cam.getProjectionMatrix());
-
-			shader.setMat4("worldMatrix", worldMatrix);
-			shader.setVec3("cameraPos", cam.getPosition());
+			
 			shader.setVec3("lightPos", glm::vec3(10,10,10));
 
 			glClearColor(0.43f, 0.71f, 0.86 - ((0.86f / views.size()) * (i)), 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-			shader.setMat4("modelMatrix", voxelArea.getModelMatrix());
-			shader.setVec4("material.colour", voxelArea.getColour());
-			Material mat = Materials.obsidian;
-			shader.setVec3("material.ambient", mat.ambient);
-			shader.setVec3("material.diffuse", mat.diffuse);
-			shader.setVec3("material.specular", mat.specular);
-			shader.setFloat("material.reflectivity", mat.highlight);
-			voxelArea.draw();
+			
+			//voxelArea.draw(shader);
+			testCube.draw(shader);
 		}
 
-		cam.updateFPS(FPS);
+		
+		
 
 		glfwSwapInterval(1);
 		glfwSwapBuffers(glfwGetCurrentContext());
 		glfwPollEvents();
 
-		FPS = 1 / (glfwGetTime() - frameStart);
-		
-		//std::cout << "FPS: " << FPS << " Frame Time: " << (glfwGetTime() - frameStart) << std::endl;
+		cam.updateFPS(1 / (glfwGetTime() - frameStart));
 		frameStart = glfwGetTime();
 	}	
 
