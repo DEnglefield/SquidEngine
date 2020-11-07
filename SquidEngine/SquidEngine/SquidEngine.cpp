@@ -170,8 +170,6 @@ int main()
 			testCube.draw(shader);
 		}
 
-		
-		
 
 		glfwSwapInterval(1);
 		glfwSwapBuffers(glfwGetCurrentContext());
