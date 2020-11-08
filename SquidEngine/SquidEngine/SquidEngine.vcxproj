@@ -172,6 +172,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraFPS.h" />
     <ClInclude Include="Colours.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="Materials.h" />
     <ClInclude Include="PerlinNoise.hpp" />
     <ClInclude Include="SampleShapes.h" />

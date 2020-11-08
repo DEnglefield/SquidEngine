@@ -1,6 +1,8 @@
 #pragma once
 
 #include "SquidEngine.h"
+#include "Light.h"
+#include <vector>
 
 #define MODEL_MATRIX_UNIFORM "modelMatrix"
 #define WORLD_MATRIX_UNIFORM "worldMatrix"
@@ -12,6 +14,27 @@
 #define MATERIAL_SPECULAR_UNIFORM "specular"
 #define MATERIAL_REFLECTIVITY_UNIFORM "reflectivity"
 #define CAMERA_POSITION_UNIFORM "cameraPos"
+
+#define LIGHT_AMBIENT_UNIFORM "ambient"
+#define LIGHT_DIFFUSE_UNIFORM "diffuse"
+#define LIGHT_SPECULAR_UNIFORM "specular"
+#define LIGHT_LINEAR_FALL_OFF_UNIFORM "linearFallOff"
+#define LIGHT_QUADRATIC_FALL_OFF_UNIFORM "quadraticFallOff"
+#define LIGHT_INNER_CUT_OFF_UNIFORM "innerCutOff"
+#define LIGHT_OUTER_CUT_OFF_UNIFORM "outerCutOff"
+#define LIGHT_POSITION_UNIFORM "position"
+#define LIGHT_DIRECTION_UNIFORM "direction"
+
+#define POINT_LIGHT_UNIFORM "pointLights"
+#define ENABLED_POINT_LIGHTS_UNIFORM "enabledPointLights"
+#define SPOT_LIGHT_UNIFORM "spotLights"
+#define ENABLED_SPOT_LIGHTS_UNIFORM "enabledSpotLights"
+#define DIRECTIONAL_LIGHT_UNIFORM "directionalLights"
+#define ENABLED_DIRECTIONAL_LIGHTS_UNIFORM "enabledDirectionalLights"
+
+#define MAX_POINT_LIGHTS 8
+#define MAX_SPOT_LIGHTS 8
+#define MAX_DIRECTIONAL_LIGHTS 8
 
 //Shader Program used to load GLSL code to run on the GPU
 class ShaderProgram {
@@ -25,6 +48,14 @@ private:
 	unsigned int vertexID = -1;
 	unsigned int fragmentID = -1;
 	unsigned int geometryID = -1;
+
+	//Point light handle lists
+	std::vector<unsigned int> pointLightHandles;
+	std::vector<unsigned int> spotLightHandles;
+	std::vector<unsigned int> directionalLightHandles;
+
+	//Initialize light source tracking values
+	void initLightHandles();
 
 public:
 	//ID of the shader program
@@ -56,11 +87,29 @@ public:
 
 	//Apply all properties of a material to the shader
 	void setMaterial(Material& material);
-	//Change a specific material property
-	void setMaterialProperty(const char* property, glm::vec3 value);
+	//Get the uniform name of a chosen material property
+	const char* getMaterialPropertyName(const char* property);
 	//Send the active camera position to the shader
 	void setCameraPosition(glm::vec3 value);
 
+	//Add a point light to the scene and return its handle
+	unsigned int addPointLight(PointLight& pointLight);
+	//Remove a point light from the scene
+	void removePointLight(unsigned int handle);
+	//Add a spot light to the scene and return its handle
+	unsigned int addSpotLight(SpotLight& spotLight);
+	//Remove a spot light from the scene
+	void removeSpotLight(unsigned int handle);
+	//Add a directional light to the scene and return its handle
+	unsigned int addDirectionalLight(DirectionalLight& directionalLight);
+	//Remove a directional light from the scene
+	void removeDirectionalLight(unsigned int handle);
+	//Get the uniform name of the given property for a chosen light of the chosen type
+	const char* getLightPropertyName(const char* lightType, const char* property, unsigned int handle);
+
 	//Get the location ID for a uniform name
 	int getUniformLocation(const char* attr);
+
+	//Append a index string to a property uniform name
+	std::string getIndexedUniform(const char* property, int index);
 };

@@ -9,6 +9,8 @@ using namespace std;
 //Shader Program used to load GLSL code to run on the GPU
 ShaderProgram::ShaderProgram(const char* vertexFile, const char* fragmentFile) {
 
+	initLightHandles();
+
 	//Load vertex shader
 	vertexID = loadShader(vertexFile, GL_VERTEX_SHADER);
 	if (vertexID != -1) {
@@ -19,7 +21,7 @@ ShaderProgram::ShaderProgram(const char* vertexFile, const char* fragmentFile) {
 	fragmentID = loadShader(fragmentFile, GL_FRAGMENT_SHADER);
 	if (fragmentID != -1) {
 		cout << "Fragment Shader Loaded Successfully" << endl;
-	} 
+	}
 }
 
 
@@ -79,8 +81,9 @@ unsigned int ShaderProgram::loadShader(const char* fileName, int shaderType) {
 
 	//Check if compile failed
 	if (!success) {
-		cout << infoLog << endl;
+		
 		glGetShaderInfoLog(shaderID, 512, NULL, infoLog);
+		cout << infoLog << endl;
 		if (shaderType == GL_VERTEX_SHADER) {
 			throw exception("Failed to compile vertex shader");
 		}
@@ -137,7 +140,7 @@ bool ShaderProgram::createShaderProgram() {
 
 //Send a boolean value represetned by an integer to the shader
 void ShaderProgram::setBool(const char* attr, bool value) {
-	glUniform1i(glGetUniformLocation(ID, attr), (int)value);
+	glUniform1i(glGetUniformLocation(ID, attr), value);
 }
 
 //Send a float value to the shader
@@ -172,30 +175,160 @@ void ShaderProgram::setMat4(const char* attr, glm::mat4 value) {
 
 //Apply all properties of a material to the shader
 void ShaderProgram::setMaterial(Material& material) {
-	setMaterialProperty(MATERIAL_AMBIENT_UNIFORM, material.ambient);
-	setMaterialProperty(MATERIAL_DIFFUSE_UNIFORM, material.diffuse);
-	setMaterialProperty(MATERIAL_SPECULAR_UNIFORM, material.specular);
-	setMaterialProperty(MATERIAL_REFLECTIVITY_UNIFORM, glm::vec3(material.highlight));
+
+	string propertyName = string(MATERIAL_UNIFORM);
+	propertyName.append(".");
+
+	setVec3((propertyName + MATERIAL_AMBIENT_UNIFORM).c_str(), material.ambient);
+	setVec3((propertyName + MATERIAL_DIFFUSE_UNIFORM).c_str(), material.diffuse);
+	setVec3((propertyName + MATERIAL_SPECULAR_UNIFORM).c_str(), material.specular);
+	setFloat((propertyName + MATERIAL_REFLECTIVITY_UNIFORM).c_str(), material.highlight);
 }
 
 
-//Change a specific material property
-void ShaderProgram::setMaterialProperty(const char* property, glm::vec3 value) {
+//Get the uniform name of a chosen material property
+const char* ShaderProgram::getMaterialPropertyName(const char* property) {
 	string propertyName = string(MATERIAL_UNIFORM);
 	propertyName.append(".");
 	propertyName.append(property);
-	
-	if (property != MATERIAL_REFLECTIVITY_UNIFORM) {
-		setVec3(propertyName.c_str(), value);
-	} else {
-		setFloat(propertyName.c_str(), value.x);
-	}
+	return propertyName.c_str();
 }
 
 
 //Send the active camera position to the shader
 void ShaderProgram::setCameraPosition(glm::vec3 value) {
 	setVec3(CAMERA_POSITION_UNIFORM, value);
+}
+
+
+
+//Initialize light source tracking values
+void ShaderProgram::initLightHandles() {
+
+	pointLightHandles.resize(MAX_POINT_LIGHTS);
+	spotLightHandles.resize(MAX_SPOT_LIGHTS);
+	directionalLightHandles.resize(MAX_DIRECTIONAL_LIGHTS);
+
+	for (int i = 0; i < MAX_POINT_LIGHTS; ++i) {
+		pointLightHandles[i] = i;
+		//setBool(getIndexedUniform(ENABLED_POINT_LIGHTS_UNIFORM,i).c_str(),false);
+	}
+
+	for (int i = 0; i < MAX_SPOT_LIGHTS; ++i) {
+		spotLightHandles[i] = i;
+		//setBool(getIndexedUniform(ENABLED_SPOT_LIGHTS_UNIFORM, i).c_str(), false);
+	}
+
+	for (int i = 0; i < MAX_DIRECTIONAL_LIGHTS; ++i) {
+		directionalLightHandles[i] = i;
+		//setBool(getIndexedUniform(ENABLED_DIRECTIONAL_LIGHTS_UNIFORM, i).c_str(), false);
+	}
+}
+
+
+
+//Add a point light to the scene taking the given slot
+unsigned int ShaderProgram::addPointLight(PointLight& pointLight) {
+
+	unsigned int newHandle = pointLightHandles.back();
+	pointLightHandles.pop_back();
+
+	string lightUniform = getIndexedUniform(POINT_LIGHT_UNIFORM,newHandle) + ".";
+
+	setVec3((lightUniform + LIGHT_POSITION_UNIFORM).c_str(), pointLight.position);
+	setVec3((lightUniform + LIGHT_AMBIENT_UNIFORM).c_str(), pointLight.ambient);
+	setVec3((lightUniform + LIGHT_DIFFUSE_UNIFORM).c_str(), pointLight.diffuse);
+	setVec3((lightUniform + LIGHT_SPECULAR_UNIFORM).c_str(), pointLight.specular);
+	setFloat((lightUniform + LIGHT_LINEAR_FALL_OFF_UNIFORM).c_str(), pointLight.linearFallOff);
+	setFloat((lightUniform + LIGHT_QUADRATIC_FALL_OFF_UNIFORM).c_str(), pointLight.quadraticFallOff);
+
+	setBool(getIndexedUniform(ENABLED_POINT_LIGHTS_UNIFORM,newHandle).c_str(), true);
+
+	return newHandle;
+}
+
+
+//Remove a point light from the scene
+void ShaderProgram::removePointLight(unsigned int handle) {
+	pointLightHandles.push_back(handle);
+	setBool(getIndexedUniform(ENABLED_POINT_LIGHTS_UNIFORM, handle).c_str(), false);
+}
+
+
+//Add a spot light to the scene taking the given slot
+unsigned int ShaderProgram::addSpotLight(SpotLight& spotLight) {
+
+	unsigned int newHandle = pointLightHandles.back();
+	pointLightHandles.pop_back();
+
+	string lightUniform = getIndexedUniform(SPOT_LIGHT_UNIFORM, newHandle) + ".";
+
+	setVec3((lightUniform + LIGHT_POSITION_UNIFORM).c_str(), spotLight.position);
+	setVec3((lightUniform + LIGHT_DIRECTION_UNIFORM).c_str(), spotLight.direction);
+	setVec3((lightUniform + LIGHT_AMBIENT_UNIFORM).c_str(), spotLight.ambient);
+	setVec3((lightUniform + LIGHT_DIFFUSE_UNIFORM).c_str(), spotLight.diffuse);
+	setVec3((lightUniform + LIGHT_SPECULAR_UNIFORM).c_str(), spotLight.specular);
+	setFloat((lightUniform + LIGHT_LINEAR_FALL_OFF_UNIFORM).c_str(), spotLight.linearFallOff);
+	setFloat((lightUniform + LIGHT_QUADRATIC_FALL_OFF_UNIFORM).c_str(), spotLight.quadraticFallOff);
+	setFloat((lightUniform + LIGHT_INNER_CUT_OFF_UNIFORM).c_str(), spotLight.innerCutOff);
+	setFloat((lightUniform + LIGHT_OUTER_CUT_OFF_UNIFORM).c_str(), spotLight.outerCutOff);
+
+	setBool(getIndexedUniform(ENABLED_SPOT_LIGHTS_UNIFORM, newHandle).c_str(), true);
+
+	return newHandle;
+}
+
+
+//Remove a spot light from the scene
+void ShaderProgram::removeSpotLight(unsigned int handle) {
+	spotLightHandles.push_back(handle);
+	setBool(getIndexedUniform(ENABLED_SPOT_LIGHTS_UNIFORM, handle).c_str(), false);
+}
+
+
+//Add a directional light to the scene and return its handle
+unsigned int ShaderProgram::addDirectionalLight(DirectionalLight& directionalLight) {
+
+	unsigned int newHandle = pointLightHandles.back();
+	pointLightHandles.pop_back();
+
+	string lightUniform = getIndexedUniform(DIRECTIONAL_LIGHT_UNIFORM, newHandle) + ".";
+
+	setVec3((lightUniform + LIGHT_DIRECTION_UNIFORM).c_str(), directionalLight.direction);
+	setVec3((lightUniform + LIGHT_AMBIENT_UNIFORM).c_str(), directionalLight.ambient);
+	setVec3((lightUniform + LIGHT_DIFFUSE_UNIFORM).c_str(), directionalLight.diffuse);
+	setVec3((lightUniform + LIGHT_SPECULAR_UNIFORM).c_str(), directionalLight.specular);
+
+	setBool(getIndexedUniform(ENABLED_DIRECTIONAL_LIGHTS_UNIFORM, newHandle).c_str(), true);
+
+	return newHandle;
+}
+
+
+
+//Remove a directional light from the scene
+void ShaderProgram::removeDirectionalLight(unsigned int handle) {
+	directionalLightHandles.push_back(handle);
+	setBool(getIndexedUniform(ENABLED_DIRECTIONAL_LIGHTS_UNIFORM, handle).c_str(), false);
+}
+
+
+
+//Get the uniform name of the given property of the given spot light for the chosen light of the chosen light source type
+const char* ShaderProgram::getLightPropertyName(const char* lightType, const char* property, unsigned int handle) {
+	std::string propertyName = getIndexedUniform(lightType, handle);
+	propertyName.append(".");
+	propertyName.append(property);
+	return propertyName.c_str();
+}
+
+
+//Append a index string to a property uniform name
+std::string ShaderProgram::getIndexedUniform(const char* property, int index) {
+	std::string propertyName(property);
+	propertyName.append("[");
+	propertyName.append(std::to_string(index)+"]");
+	return propertyName;
 }
 
 

@@ -113,6 +113,7 @@ int main()
 
 	ShaderProgram shader = lightingShader;
 	shader.createShaderProgram();
+	shader.use();
 
 	Texture moon("Resources/Textures/moon.jpg");
 	Texture star("Resources/Textures/star.png");
@@ -120,10 +121,6 @@ int main()
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_SCISSOR_TEST);
-
-	shader.use();
-
-	double frameStart = glfwGetTime();
 
 	MaterialList Materials;
 
@@ -143,11 +140,26 @@ int main()
 	glm::mat4 worldMatrix(1.0f);
 	shader.setMat4(WORLD_MATRIX_UNIFORM, worldMatrix);
 
+	SpotLight spotLight(cam.eyePos.x, cam.eyePos.y, cam.eyePos.z-1, cam.lookVec.x, cam.lookVec.y, cam.lookVec.z);
+	//spotLight.innerCutOff = glm::cos(glm::radians(12.5f));
+	//spotLight.outerCutOff = glm::cos(glm::radians(15.5f));
+	unsigned int spotLightHandle = shader.addSpotLight(spotLight);
+
+	PointLight pointLight(0, 1.5f, 0);
+	shader.addPointLight(pointLight);
+
+	PointLight pointLight2(-1.5f, 1.5f, 0);
+	shader.addPointLight(pointLight2);
+
+	DirectionalLight dirLight(-0.5f, -0.5f, -0.5f);
+	shader.addDirectionalLight(dirLight);
+
 	Cube testCube(0.0f, 0.0f, 0.0f);
 	testCube.setMaterial(Materials.emerald);
 	testCube.addTexture(star.getID());
 	testCube.build();
 
+	double frameStart = glfwGetTime();
 	while (!mainWindow.closing())
 	{
 
@@ -157,19 +169,16 @@ int main()
 
 		for (int i = 0; i < viewList.size(); ++i) {
 			viewList[i].use();
-
-			cam.use(shader);
 			cam.setView(viewList[i]);
-			
-			shader.setVec3("lightPos", glm::vec3(10,10,10));
 
 			glClearColor(0.43f, 0.71f, 0.86 - ((0.86f / views.size()) * (i)), 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			
+
 			//voxelArea.draw(shader);
 			testCube.draw(shader);
 		}
 
+		cam.use(shader);
 
 		glfwSwapInterval(1);
 		glfwSwapBuffers(glfwGetCurrentContext());

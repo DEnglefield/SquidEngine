@@ -174,3 +174,4 @@ struct MaterialList {
 		glm::vec3(0.7f, 0.568627f, 0.13f),
 		glm::vec3(0.992157f, 0.86f, 0.7f), 30);
 };
+

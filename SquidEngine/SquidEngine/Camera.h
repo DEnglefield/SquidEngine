@@ -4,6 +4,8 @@
 #include "ShaderProgram.h"
 #include "Window.h"
 
+
+
 #define CAMERA_PERSPECTIVE 1
 #define CAMERA_ORTHOGRAPHIC 2
 
