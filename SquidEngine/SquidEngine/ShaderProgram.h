@@ -105,7 +105,7 @@ public:
 	//Remove a directional light from the scene
 	void removeDirectionalLight(unsigned int handle);
 	//Get the uniform name of the given property for a chosen light of the chosen type
-	const char* getLightPropertyName(const char* lightType, const char* property, unsigned int handle);
+	std::string getLightPropertyName(const char* lightType, const char* property, unsigned int handle);
 
 	//Get the location ID for a uniform name
 	int getUniformLocation(const char* attr);

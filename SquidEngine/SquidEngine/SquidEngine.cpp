@@ -3,11 +3,12 @@
 #include "SquidEngine.h"
 #include "Window.h"
 #include "ShaderProgram.h"
-#include "SampleShapes.h"
+#include "Cube.h"
 #include "Camera.h"
 #include "CameraFPS.h"
 #include "Texture.h"
 #include "Voxel.h"
+#include "Model.h"
 
 using namespace std;
 
@@ -86,6 +87,7 @@ int main()
 {
 	cout << "Hello World" << endl;
 
+
 	Window mainWindow(800, 600, "SquidEngine");
 
 	mainWindow.show();
@@ -115,6 +117,8 @@ int main()
 	shader.createShaderProgram();
 	shader.use();
 
+	Texture defaultTex();
+
 	Texture moon("Resources/Textures/moon.jpg");
 	Texture star("Resources/Textures/star.png");
 	Texture cubeMap("Resources/Textures/floor.bmp");
@@ -140,24 +144,39 @@ int main()
 	glm::mat4 worldMatrix(1.0f);
 	shader.setMat4(WORLD_MATRIX_UNIFORM, worldMatrix);
 
-	SpotLight spotLight(cam.eyePos.x, cam.eyePos.y, cam.eyePos.z-1, cam.lookVec.x, cam.lookVec.y, cam.lookVec.z);
-	//spotLight.innerCutOff = glm::cos(glm::radians(12.5f));
-	//spotLight.outerCutOff = glm::cos(glm::radians(15.5f));
-	unsigned int spotLightHandle = shader.addSpotLight(spotLight);
+	PointLight orbitLightX(0, -1, 0);
+	unsigned int orbitLightXHandle = shader.addPointLight(orbitLightX);
 
-	PointLight pointLight(0, 1.5f, 0);
-	shader.addPointLight(pointLight);
+	PointLight orbitLightZ(1.25f, 0, 0);
+	unsigned int orbitLightZHandle = shader.addPointLight(orbitLightZ);
 
-	PointLight pointLight2(-1.5f, 1.5f, 0);
-	shader.addPointLight(pointLight2);
+	PointLight orbitLightXZ(0, 1.5f, 0);
+	unsigned int orbitLightXZHandle = shader.addPointLight(orbitLightXZ);
 
-	DirectionalLight dirLight(-0.5f, -0.5f, -0.5f);
-	shader.addDirectionalLight(dirLight);
+	glm::mat4 lightOrbitMatrixX(1.0f);
+	lightOrbitMatrixX = glm::rotate(lightOrbitMatrixX, glm::radians(2.0f), glm::vec3(1, 0, 0));
+
+	glm::mat4 lightOrbitMatrixZ(1.0f);
+	lightOrbitMatrixZ = glm::rotate(lightOrbitMatrixZ, glm::radians(2.0f), glm::vec3(0, 0, 1));
+
+	glm::mat4 lightOrbitMatrixXZ(1.0f);
+	lightOrbitMatrixXZ = glm::rotate(lightOrbitMatrixXZ, glm::radians(2.0f), glm::vec3(1, 0, 1));
+
+	Cube orbitCubeX(orbitLightX.position.x, orbitLightX.position.y, orbitLightX.position.z);
+	Cube orbitCubeZ(orbitLightZ.position.x, orbitLightZ.position.y, orbitLightZ.position.z);
+	Cube orbitCubeXZ(orbitLightXZ.position.x, orbitLightXZ.position.y, orbitLightXZ.position.z);
+	orbitCubeX.setScale(0.25f, 0.25f, 0.25f);
+	orbitCubeZ.setScale(0.25f, 0.25f, 0.25f);
+	orbitCubeXZ.setScale(0.25f, 0.25f, 0.25f);
+	orbitCubeX.setMaterial(Materials.bronze);
+	orbitCubeZ.setMaterial(Materials.bronze);
+	orbitCubeXZ.setMaterial(Materials.bronze);
 
 	Cube testCube(0.0f, 0.0f, 0.0f);
-	testCube.setMaterial(Materials.emerald);
+	testCube.setMaterial(Materials.copper);
 	testCube.addTexture(star.getID());
-	testCube.build();
+
+	Model spaceShip(0,0,0,"C:/Users/dalet/OneDrive/Desktop/SpaceShip.obj");
 
 	double frameStart = glfwGetTime();
 	while (!mainWindow.closing())
@@ -175,8 +194,26 @@ int main()
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			//voxelArea.draw(shader);
-			testCube.draw(shader);
+			//testCube.draw(shader);
+			spaceShip.draw(shader);
 		}
+
+		orbitLightX.position = (lightOrbitMatrixX * glm::vec4(orbitLightX.position,1.0f));
+		shader.setVec3(shader.getLightPropertyName(POINT_LIGHT_UNIFORM,LIGHT_POSITION_UNIFORM,orbitLightXHandle).c_str(), orbitLightX.position);
+		orbitCubeX.setPosition(orbitLightX.position.x, orbitLightX.position.y, orbitLightX.position.z);
+
+		orbitLightZ.position = (lightOrbitMatrixZ * glm::vec4(orbitLightZ.position, 1.0f));
+		shader.setVec3(shader.getLightPropertyName(POINT_LIGHT_UNIFORM, LIGHT_POSITION_UNIFORM, orbitLightZHandle).c_str(), orbitLightZ.position);
+		orbitCubeZ.setPosition(orbitLightZ.position.x, orbitLightZ.position.y, orbitLightZ.position.z);
+
+		orbitLightXZ.position = (lightOrbitMatrixXZ * glm::vec4(orbitLightXZ.position, 1.0f));
+		shader.setVec3(shader.getLightPropertyName(POINT_LIGHT_UNIFORM, LIGHT_POSITION_UNIFORM, orbitLightXZHandle).c_str(), orbitLightXZ.position);
+		orbitCubeXZ.setPosition(orbitLightXZ.position.x, orbitLightXZ.position.y, orbitLightXZ.position.z);
+
+		//orbitCubeX.draw(shader);
+		//orbitCubeZ.draw(shader);
+		//orbitCubeXZ.draw(shader);
+		
 
 		cam.use(shader);
 

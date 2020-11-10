@@ -42,8 +42,8 @@ struct SpotLight : Light {
 	glm::vec3 direction = glm::vec3(-0.5f);
 	float linearFallOff = 0.22f;
 	float quadraticFallOff = 0.2f;
-	float innerCutOff = glm::cos(glm::radians(12.5f));
-	float outerCutOff = glm::cos(glm::radians(13.8f));
+	float innerCutOff = glm::cos(glm::radians(10.5f));
+	float outerCutOff = glm::cos(glm::radians(15.8f));
 
 	SpotLight(float posX, float posY, float posZ, float dirX, float dirY, float dirZ)
 		: position(glm::vec3(posX, posY, posZ)), direction(glm::vec3(dirX, dirY, dirZ)) {};

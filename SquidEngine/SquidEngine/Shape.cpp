@@ -3,18 +3,19 @@
 
 using namespace std;
 
-//Create a shape at the given position
-Shape::Shape(float x, float y, float z) {
-	//Generate unique IDs for buffer objects
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
-	modelMatrix = glm::mat4(1.0f);
-	setPosition(x, y, z);
+//Create a shape with mesh data
+Shape::Shape(std::vector<Vertex> vertices, std::vector<unsigned int> indices) : Object3D(0,0,0) {
+	createBuffer(vertices, indices);
 }
 
-//Destructor for shape to delete buffer objects
-Shape::~Shape() {
+//Create a shape with mesh data at the given position
+Shape::Shape(float x, float y, float z, std::vector<Vertex> vertices, std::vector<unsigned int> indices) 
+	: Object3D(x,y,z) {
+	createBuffer(vertices, indices);
+}
+
+//Destroy buffers for this shape
+void Shape::destroyShape() {
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
@@ -36,6 +37,7 @@ void Shape::draw(ShaderProgram& shader) {
 	glDrawElements(GL_TRIANGLES, shapeIndices.size(), GL_UNSIGNED_INT, 0);
 
 	glBindTexture(GL_TEXTURE_2D, DEFAULT_TEXTURE);
+
 }
 
 
@@ -68,8 +70,13 @@ void Shape::computeNormals(vector<Vertex> &vertices, vector<unsigned int> &indic
 	}
 }
 
+
 //Add the vertices and indices to the vertex buffer
 void Shape::createBuffer(vector<Vertex> &vertices, vector<unsigned int> &indices) {
+	//Generate unique IDs for buffer objects
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
 
 	glBindVertexArray(VAO);
 
@@ -88,43 +95,8 @@ void Shape::createBuffer(vector<Vertex> &vertices, vector<unsigned int> &indices
 
 	shapeVertices = vertices;
 	shapeIndices = indices;
-
 }
 
-
-//Add a rotation to the shape
-void Shape::rotate(float angle, float x, float y, float z) {
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(angle), glm::vec3(x,y,z));
-}
-
-
-//Set the position of the shape
-void Shape::setPosition(float x, float y, float z) {
-	modelMatrix[3][0] = x;
-	modelMatrix[3][1] = y;
-	modelMatrix[3][2] = z;
-	modelMatrix[3][3] = 1.0f;
-}
-
-//Get the position of the shape
-glm::vec3 Shape::getPosition() {
-	return glm::vec3(modelMatrix[3][0], modelMatrix[3][1], modelMatrix[3][2]);
-}
-
-//Scale the shape on the chosen axis
-void Shape::setScale(float x, float y, float z) {
-	modelMatrix = glm::scale(modelMatrix, glm::vec3(x, y, z));
-}
-
-//Get the current scale of the shape
-glm::vec3 Shape::getScale() {
-	return glm::vec3(modelMatrix[0][0], modelMatrix[1][1], modelMatrix[2][2]);
-}
-
-//Move the shape along the given axis
-void Shape::translate(float x, float y, float z) {
-	modelMatrix = glm::translate(modelMatrix,glm::vec3(x,y,z));
-}
 
 //Return the shape's model matrix
 glm::mat4 Shape::getModelMatrix() { return modelMatrix; }

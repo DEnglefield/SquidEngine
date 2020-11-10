@@ -315,11 +315,11 @@ void ShaderProgram::removeDirectionalLight(unsigned int handle) {
 
 
 //Get the uniform name of the given property of the given spot light for the chosen light of the chosen light source type
-const char* ShaderProgram::getLightPropertyName(const char* lightType, const char* property, unsigned int handle) {
+std::string ShaderProgram::getLightPropertyName(const char* lightType, const char* property, unsigned int handle) {
 	std::string propertyName = getIndexedUniform(lightType, handle);
 	propertyName.append(".");
 	propertyName.append(property);
-	return propertyName.c_str();
+	return propertyName;
 }
 
 

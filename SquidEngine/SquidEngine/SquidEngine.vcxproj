@@ -76,7 +76,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>C:\Libraries\VS_Libs\include;C:\VS Libs\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Libraries\VS_Libs\lib\GLFW;C:\VS Libs\lib\GLFW;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\Libraries\VS_Libs\lib\assimp;C:\Libraries\VS_Libs\lib\GLFW;C:\VS Libs\lib\GLFW;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -113,7 +113,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;assimpd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -159,8 +159,9 @@
     <ClCompile Include="CameraFPS.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="MarchingCubeLookup.h" />
+    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="Object3D.cpp" />
     <ClCompile Include="Primitives.cpp" />
-    <ClCompile Include="SampleShapes.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="SquidEngine.cpp" />
@@ -174,8 +175,10 @@
     <ClInclude Include="Colours.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Materials.h" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="Object3D.h" />
     <ClInclude Include="PerlinNoise.hpp" />
-    <ClInclude Include="SampleShapes.h" />
+    <ClInclude Include="Cube.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="SquidEngine.h" />

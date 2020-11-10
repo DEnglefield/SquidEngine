@@ -4,14 +4,12 @@
 #include "Primitives.h"
 #include "ShaderProgram.h"
 #include "Texture.h"
+#include "Object3D.h"
 #include <vector>
 
 //Base class for any shape capable of being rendered in the scene
-class Shape {
+class Shape : public Object3D{
 private:
-	//List of vertices and indices that make the shape
-	std::vector<Vertex> shapeVertices;
-	std::vector<unsigned int> shapeIndices;
 	std::vector<unsigned int> textureLayers;
 protected:
 	//Create IDs for 
@@ -20,25 +18,27 @@ protected:
 	//Vertex Attribute buffer(VAO)
 	unsigned int VBO, EBO, VAO;
 
-	//Model matrix to hold shape transformations
-	glm::mat4 modelMatrix;
-
 	//Attached material for this shape
 	Material material;
 
 	//Compute the normal vectors using the list of vertices and indices
 	void computeNormals(std::vector<Vertex> &vertices, std::vector<unsigned int> &indices);
 
-	//Add the vertices and indices to the vertex buffer
-	void createBuffer(std::vector<Vertex> &vertices, std::vector<unsigned int> &indices);
-
 public:
-	//Create a shape at the given position
-	Shape(float x, float y, float z);
-	~Shape();
 
-	//Build the shape populating its vertices
-	virtual void build() = 0;
+	//List of vertices and indices that make the shape
+	std::vector<Vertex> shapeVertices;
+	std::vector<unsigned int> shapeIndices;
+
+	Shape(float x, float y, float z) : Object3D(x,y,z){};
+	//Create a shape with mesh data
+	Shape(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
+	//Create a shape with mesh data at the given position
+	Shape(float x, float y, float z, std::vector<Vertex> vertices, std::vector<unsigned int> indices);
+
+	//Destroy buffers for this shape
+	void destroyShape();
+
 	//Draw the shape on the screen
 	void draw(ShaderProgram& shader);
 
@@ -47,23 +47,13 @@ public:
 	//get this shape's material
 	Material getMaterial();
 
-	//Set the position of the shape
-	void setPosition(float x, float y, float z);
-	//Get the position of the shape
-	glm::vec3 getPosition();
-	
-	//Scale the shape on the chosen axis
-	void setScale(float x, float y, float z);
-	//Get the current scale of the shape
-	glm::vec3 getScale();
-	//Add a rotation to the shape
-	void rotate(float angle, float x, float y, float z);
-	//Move the shape along the given axis
-	void translate(float x, float y, float z);
-
 	//Add a texture forming the next layer
 	void addTexture(unsigned int textureID);
 
 	//Return the shape's model matrix
 	glm::mat4 getModelMatrix();
+
+	//Add the vertices and indices to the vertex buffer
+	void createBuffer(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
+
 };

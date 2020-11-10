@@ -93,7 +93,7 @@ void main() {
     }  
 
    
-   FragColor = vec4(lighting,1);// * texture(textureIn,texUV);
+   FragColor = vec4(lighting,1) * texture(textureIn,texUV);
 } 
 
 
