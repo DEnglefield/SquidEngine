@@ -5,6 +5,7 @@
 #include "ShaderProgram.h"
 #include "Texture.h"
 #include "Object3D.h"
+#include "Materials.h"
 #include <vector>
 
 //Base class for any shape capable of being rendered in the scene

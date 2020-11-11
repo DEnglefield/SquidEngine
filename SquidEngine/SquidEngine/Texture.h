@@ -3,7 +3,8 @@
 #include "SquidEngine.h"
 
 #define TEXTURE_UNITS 32
-#define DEFAULT_TEXTURE 0
+
+extern int defaultTextureID;
 
 class Texture {
 protected:
@@ -32,3 +33,4 @@ public:
 	void setWrapping(int wrapX, int wrapY);
 	void setFiltering(int scaleUp, int scaleDown);
 };
+

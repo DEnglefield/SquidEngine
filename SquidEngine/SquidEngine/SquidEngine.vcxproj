@@ -159,6 +159,7 @@
     <ClCompile Include="CameraFPS.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="MarchingCubeLookup.h" />
+    <ClCompile Include="Materials.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Object3D.cpp" />
     <ClCompile Include="Primitives.cpp" />

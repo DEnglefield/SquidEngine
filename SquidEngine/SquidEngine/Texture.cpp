@@ -3,6 +3,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+int defaultTextureID = 0;
+
 Texture::Texture() { initTexture(); }
 Texture::Texture(const char* textureFile) {
 	initTexture();
@@ -24,7 +26,7 @@ bool Texture::openFile(const char* fileName) {
 		std::cout << "Failed to load texture" << std::endl;
 		success = false;
 	}
-	glBindTexture(GL_TEXTURE_2D, DEFAULT_TEXTURE);
+	glBindTexture(GL_TEXTURE_2D, defaultTextureID);
 	return success;
 }
 
@@ -36,7 +38,7 @@ void Texture::initTexture() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	setWrapping(GL_REPEAT, GL_REPEAT);
 	setFiltering(GL_NEAREST, GL_LINEAR);
-	glBindTexture(GL_TEXTURE_2D, DEFAULT_TEXTURE);
+	glBindTexture(GL_TEXTURE_2D, defaultTextureID);
 }
 
 void Texture::setWrapping(int wrapX, int wrapY) {
@@ -53,25 +55,25 @@ void Texture::setFiltering(int scaleUp, int scaleDown) {
 void Texture::setScaleUpFilter(int filter) {
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
-	glBindTexture(GL_TEXTURE_2D, DEFAULT_TEXTURE);
+	glBindTexture(GL_TEXTURE_2D, defaultTextureID);
 }
 
 void Texture::setScaleDownFilter(int filter) {
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
-	glBindTexture(GL_TEXTURE_2D, DEFAULT_TEXTURE);
+	glBindTexture(GL_TEXTURE_2D, defaultTextureID);
 }
 
 void Texture::setWrappingX(int wrapper) {
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapper);
-	glBindTexture(GL_TEXTURE_2D, DEFAULT_TEXTURE);
+	glBindTexture(GL_TEXTURE_2D, defaultTextureID);
 }
 
 void Texture::setWrappingY(int wrapper) {
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapper);
-	glBindTexture(1, DEFAULT_TEXTURE);
+	glBindTexture(1, defaultTextureID);
 }
 
 void Texture::setBorderColour(glm::vec4 borderColour) {
@@ -79,5 +81,5 @@ void Texture::setBorderColour(glm::vec4 borderColour) {
 
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, colour);
-	glBindTexture(GL_TEXTURE_2D, DEFAULT_TEXTURE);
+	glBindTexture(GL_TEXTURE_2D, defaultTextureID);
 }

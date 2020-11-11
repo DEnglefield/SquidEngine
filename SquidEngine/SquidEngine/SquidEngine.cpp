@@ -9,6 +9,7 @@
 #include "Texture.h"
 #include "Voxel.h"
 #include "Model.h"
+#include "Materials.h"
 
 using namespace std;
 
@@ -117,7 +118,8 @@ int main()
 	shader.createShaderProgram();
 	shader.use();
 
-	Texture defaultTex();
+	Texture defaultTexture("Resources/Textures/blank.png");
+	defaultTextureID = defaultTexture.getID();
 
 	Texture moon("Resources/Textures/moon.jpg");
 	Texture star("Resources/Textures/star.png");
@@ -125,8 +127,6 @@ int main()
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_SCISSOR_TEST);
-
-	MaterialList Materials;
 
 	/*
 	Voxel voxelArea(0,0,0);
@@ -168,12 +168,12 @@ int main()
 	orbitCubeX.setScale(0.25f, 0.25f, 0.25f);
 	orbitCubeZ.setScale(0.25f, 0.25f, 0.25f);
 	orbitCubeXZ.setScale(0.25f, 0.25f, 0.25f);
-	orbitCubeX.setMaterial(Materials.bronze);
-	orbitCubeZ.setMaterial(Materials.bronze);
-	orbitCubeXZ.setMaterial(Materials.bronze);
+	orbitCubeX.setMaterial(Materials::pearl);
+	orbitCubeZ.setMaterial(Materials::pearl);
+	orbitCubeXZ.setMaterial(Materials::pearl);
 
 	Cube testCube(0.0f, 0.0f, 0.0f);
-	testCube.setMaterial(Materials.copper);
+	testCube.setMaterial(Materials::brass);
 	testCube.addTexture(star.getID());
 
 	Model spaceShip(0,0,0,"C:/Users/dalet/OneDrive/Desktop/SpaceShip.obj");
@@ -194,8 +194,8 @@ int main()
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			//voxelArea.draw(shader);
-			//testCube.draw(shader);
-			spaceShip.draw(shader);
+			testCube.draw(shader);
+			//spaceShip.draw(shader);
 		}
 
 		orbitLightX.position = (lightOrbitMatrixX * glm::vec4(orbitLightX.position,1.0f));
@@ -210,9 +210,9 @@ int main()
 		shader.setVec3(shader.getLightPropertyName(POINT_LIGHT_UNIFORM, LIGHT_POSITION_UNIFORM, orbitLightXZHandle).c_str(), orbitLightXZ.position);
 		orbitCubeXZ.setPosition(orbitLightXZ.position.x, orbitLightXZ.position.y, orbitLightXZ.position.z);
 
-		//orbitCubeX.draw(shader);
-		//orbitCubeZ.draw(shader);
-		//orbitCubeXZ.draw(shader);
+		orbitCubeX.draw(shader);
+		orbitCubeZ.draw(shader);
+		orbitCubeXZ.draw(shader);
 		
 
 		cam.use(shader);

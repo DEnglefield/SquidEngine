@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SquidEngine.h"
+#include "Materials.h"
 #include "Light.h"
 #include <vector>
 

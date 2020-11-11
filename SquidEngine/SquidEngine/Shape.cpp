@@ -5,12 +5,14 @@ using namespace std;
 
 //Create a shape with mesh data
 Shape::Shape(std::vector<Vertex> vertices, std::vector<unsigned int> indices) : Object3D(0,0,0) {
+	setMaterial(Materials::pearl);
 	createBuffer(vertices, indices);
 }
 
 //Create a shape with mesh data at the given position
 Shape::Shape(float x, float y, float z, std::vector<Vertex> vertices, std::vector<unsigned int> indices) 
 	: Object3D(x,y,z) {
+	setMaterial(Materials::pearl);
 	createBuffer(vertices, indices);
 }
 
@@ -36,7 +38,7 @@ void Shape::draw(ShaderProgram& shader) {
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, shapeIndices.size(), GL_UNSIGNED_INT, 0);
 
-	glBindTexture(GL_TEXTURE_2D, DEFAULT_TEXTURE);
+	glBindTexture(GL_TEXTURE_2D, defaultTextureID);
 
 }
 
