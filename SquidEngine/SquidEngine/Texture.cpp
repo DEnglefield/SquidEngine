@@ -2,16 +2,52 @@
 #include "Texture.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#include <vector>
 
 int defaultTextureID = 0;
 
-Texture::Texture() { initTexture(); }
+Texture::Texture() { }
+
+Texture::Texture(float red, float green, float blue, int imgWidth, int imgHeight) {
+	initTexture();
+	width = imgWidth;
+	height = imgHeight;
+	createBlankTexture(red, green, blue);
+}
+
+
 Texture::Texture(const char* textureFile) {
 	initTexture();
 	openFile(textureFile);
 }
+
+
 unsigned char* Texture::getImage() { return imageData; }
 unsigned int Texture::getID() { return textureID; }
+
+
+void Texture::createBlankTexture(float red, float green, float blue) {
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	numColourChannels = 3;
+	
+	unsigned int imageSize = (width * height) * numColourChannels;
+
+	unsigned char pixel[3]{ (unsigned char)(255 * red), (unsigned char)(255 * green) , (unsigned char)(255 * blue) };
+
+	imageData = new unsigned char[imageSize];
+
+	for (int i = 0; i < imageSize; i+=numColourChannels) {
+		imageData[i] = pixel[0];
+		imageData[i+1] = pixel[1];
+		imageData[i+2] = pixel[2];
+	}
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
+	glBindTexture(GL_TEXTURE_2D, defaultTextureID);
+
+	delete[] (imageData);
+}
+
 
 bool Texture::openFile(const char* fileName) {
 	bool success = true;
@@ -29,6 +65,7 @@ bool Texture::openFile(const char* fileName) {
 	glBindTexture(GL_TEXTURE_2D, defaultTextureID);
 	return success;
 }
+
 
 void Texture::initTexture() {
 	glGenTextures(1, &textureID);

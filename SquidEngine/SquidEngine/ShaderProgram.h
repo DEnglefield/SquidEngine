@@ -10,9 +10,8 @@
 #define VIEW_MATRIX_UNIFORM "viewMatrix"
 #define PROJECTION_MATRIX_UNIFORM "projMatrix"
 #define MATERIAL_UNIFORM "material"
-#define MATERIAL_AMBIENT_UNIFORM "ambient"
-#define MATERIAL_DIFFUSE_UNIFORM "diffuse"
-#define MATERIAL_SPECULAR_UNIFORM "specular"
+#define MATERIAL_DIFFUSE_MAP_UNIFORM "diffuseMap"
+#define MATERIAL_SPECULAR_MAP_UNIFORM "specularMap"
 #define MATERIAL_REFLECTIVITY_UNIFORM "reflectivity"
 #define CAMERA_POSITION_UNIFORM "cameraPos"
 

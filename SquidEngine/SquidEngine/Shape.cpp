@@ -5,14 +5,14 @@ using namespace std;
 
 //Create a shape with mesh data
 Shape::Shape(std::vector<Vertex> vertices, std::vector<unsigned int> indices) : Object3D(0,0,0) {
-	setMaterial(Materials::pearl);
+	//setMaterial(Materials::pearl);
 	createBuffer(vertices, indices);
 }
 
 //Create a shape with mesh data at the given position
 Shape::Shape(float x, float y, float z, std::vector<Vertex> vertices, std::vector<unsigned int> indices) 
 	: Object3D(x,y,z) {
-	setMaterial(Materials::pearl);
+	//setMaterial(Materials::pearl);
 	createBuffer(vertices, indices);
 }
 
@@ -27,11 +27,13 @@ void Shape::destroyShape() {
 //Draw the shape on the screen
 void Shape::draw(ShaderProgram& shader) {
 
+	/*
 	for (int i = 0; i < textureLayers.size(); ++i) {
 		glActiveTexture(GL_TEXTURE0+i);
 		glBindTexture(GL_TEXTURE_2D, textureLayers[i]);
 	}
-	
+	*/
+
 	shader.setMat4(MODEL_MATRIX_UNIFORM, modelMatrix);
 	shader.setMaterial(material);
 
@@ -48,12 +50,6 @@ void Shape::setMaterial(Material shapeMaterial) { material = shapeMaterial; }
 
 //get this shape's material
 Material Shape::getMaterial() { return material; }
-
-
-//Add a texture forming the next layer
-void Shape::addTexture(unsigned int textureID) {
-	textureLayers.push_back(textureID);
-}
 
 
 //Compute the normal vectors for all vertice in the shape

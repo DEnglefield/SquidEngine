@@ -4,9 +4,8 @@ out vec4 FragColor;
 
 
 struct Material {
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    sampler2D diffuseMap;
+    sampler2D specularMap;
     float reflectivity;
 }; 
 
@@ -60,12 +59,17 @@ in vec3 fragPos;
 in vec3 fragNormal;
 in vec2 texUV;
 
-uniform sampler2D textureIn;
 uniform vec3 cameraPos;
+
+vec3 getAmbientLight();
+vec3 getDiffuseLight(vec3 lightVec);
+vec3 getSpecularLight(vec3 lightVec, vec3 viewVec);
+float getAttenuation(vec3 lightPos, float linearFallOff, float quadraticFallOff);
 
 vec3 applyPointLight(PointLight light, vec3 viewVec);
 vec3 applySpotLight(SpotLight light, vec3 viewVec);
 vec3 applyDirectionalLight(DirectionalLight light, vec3 viewVec); 
+
 
 void main() {
 
@@ -93,23 +97,19 @@ void main() {
     }  
 
    
-   FragColor = vec4(lighting,1) * texture(textureIn,texUV);
+   FragColor = vec4(lighting,1);
 } 
 
 
 vec3 applyPointLight(PointLight light, vec3 viewVec){
-    vec3 ambientLight = material.ambient * light.ambient;
 
     vec3 lightVec = normalize(light.position - fragPos);
-    float lightAngle = clamp(dot(fragNormal, lightVec),0.0,1.0);
-    vec3 diffuseLight = lightAngle * material.diffuse * light.diffuse;
+    
+    vec3 ambientLight = getAmbientLight() * light.ambient;
+    vec3 diffuseLight = getDiffuseLight(lightVec) * light.diffuse;
+    vec3 specularLight = getSpecularLight(lightVec,viewVec) * light.specular;
 
-    vec3 reflectDir = reflect(-lightVec, fragNormal);
-    float specValue = max(dot(viewVec, reflectDir), 0.0);
-    vec3 specularLight = pow(specValue, material.reflectivity) * material.specular * light.specular; 
-
-    float distance = length(light.position - fragPos);
-    float attenuation = 1.0 / (1.0f + light.linearFallOff * distance + light.quadraticFallOff * pow(distance,2));    
+    float attenuation = getAttenuation(light.position, light.linearFallOff, light.quadraticFallOff); 
     ambientLight *= attenuation;
     diffuseLight *= attenuation;
     specularLight *= attenuation;
@@ -121,20 +121,15 @@ vec3 applyPointLight(PointLight light, vec3 viewVec){
 vec3 applySpotLight(SpotLight light, vec3 viewVec){
 
     vec3 lightVec = normalize(light.position - fragPos);
-    float fragmentAngle = dot(lightVec, normalize(-light.direction));
-
-    vec3 ambientLight = material.ambient * light.ambient;
     
-    float lightAngle = clamp(dot(fragNormal, lightVec),0.0,1.0);
-    vec3 diffuseLight = lightAngle * material.diffuse * light.diffuse;
 
-    vec3 reflectDir = reflect(-lightVec, fragNormal);
-    float specValue = max(dot(viewVec, reflectDir), 0.0);
-    vec3 specularLight = pow(specValue, material.reflectivity) * material.specular * light.specular; 
+    vec3 ambientLight = getAmbientLight() * light.ambient;
+    vec3 diffuseLight = getDiffuseLight(lightVec) * light.diffuse;
+    vec3 specularLight = getSpecularLight(lightVec,viewVec) * light.specular;
+   
+    float attenuation = getAttenuation(light.position, light.linearFallOff, light.quadraticFallOff); 
 
-    float distance = length(light.position - fragPos);
-    float attenuation = 1.0 / (1.0f + light.linearFallOff * distance + light.quadraticFallOff * pow(distance,2));    
-
+    float fragmentAngle = dot(lightVec, normalize(-light.direction));
     float epsilon = light.innerCutOff - light.outerCutOff;
     float intensity = clamp((fragmentAngle - light.outerCutOff) / epsilon, 0.0, 1.0);
 
@@ -148,15 +143,32 @@ vec3 applySpotLight(SpotLight light, vec3 viewVec){
 
 
 vec3 applyDirectionalLight(DirectionalLight light, vec3 viewVec){
-    vec3 ambientLight = material.ambient * light.ambient;
-    
-    vec3 lightVec = normalize(-light.direction);
-    float lightAngle = clamp(dot(fragNormal, -light.direction),0.0,1.0);
-    vec3 diffuseLight = lightAngle * material.diffuse * light.diffuse;
 
-    vec3 reflectDir = reflect(-lightVec, fragNormal);
-    float specValue = max(dot(viewVec, reflectDir), 0.0);
-    vec3 specularLight = pow(specValue, material.reflectivity) * material.specular * light.specular; 
+    vec3 lightVec = normalize(-light.direction);
+
+    vec3 ambientLight = getAmbientLight() * light.ambient;
+    vec3 diffuseLight = getDiffuseLight(lightVec) * light.diffuse;
+    vec3 specularLight = getSpecularLight(lightVec,viewVec) * light.specular;
 
     return (ambientLight + diffuseLight + specularLight);
+}
+
+
+vec3 getAmbientLight() { return texture(material.diffuseMap,texUV).xyz; }
+
+vec3 getDiffuseLight(vec3 lightVec) {
+    float lightAngle = clamp(dot(fragNormal, lightVec),0.0,1.0);
+    return lightAngle * texture(material.diffuseMap,texUV).xyz;
+}
+
+vec3 getSpecularLight(vec3 lightVec, vec3 viewVec) {
+    vec3 reflectDir = reflect(-lightVec, fragNormal);
+    float specValue = max(dot(viewVec, reflectDir), 0.0);
+    return pow(specValue, material.reflectivity) * texture(material.specularMap,texUV).xyz; 
+}
+
+
+float getAttenuation(vec3 lightPos, float linearFallOff, float quadraticFallOff){
+    float fragDistance = length(lightPos - fragPos);
+    return 1.0 / (1.0f + linearFallOff * fragDistance + quadraticFallOff * pow(fragDistance,2)); 
 }

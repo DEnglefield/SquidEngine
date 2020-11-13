@@ -179,9 +179,12 @@ void ShaderProgram::setMaterial(Material& material) {
 	string propertyName = string(MATERIAL_UNIFORM);
 	propertyName.append(".");
 
-	setVec3((propertyName + MATERIAL_AMBIENT_UNIFORM).c_str(), material.ambient);
-	setVec3((propertyName + MATERIAL_DIFFUSE_UNIFORM).c_str(), material.diffuse);
-	setVec3((propertyName + MATERIAL_SPECULAR_UNIFORM).c_str(), material.specular);
+	glActiveTexture(GL_TEXTURE0 + DIFFUSE_MAP_TEXTURE_LAYER);
+	glBindTexture(GL_TEXTURE_2D, material.diffuseTexture.getID());
+
+	glActiveTexture(GL_TEXTURE0 + SPECULAR_MAP_TEXTURE_LAYER);
+	glBindTexture(GL_TEXTURE_2D, material.specularTexture.getID());
+
 	setFloat((propertyName + MATERIAL_REFLECTIVITY_UNIFORM).c_str(), material.highlight);
 }
 

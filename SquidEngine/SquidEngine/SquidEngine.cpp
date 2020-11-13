@@ -88,7 +88,6 @@ int main()
 {
 	cout << "Hello World" << endl;
 
-
 	Window mainWindow(800, 600, "SquidEngine");
 
 	mainWindow.show();
@@ -101,6 +100,8 @@ int main()
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		std::cout << "Failed to initialize GLAD" << std::endl;
 	}
+
+	Materials materials;
 
 	ViewPort viewMain(0.0f, 0.0f, 1.0f, 1.0f);
 	ViewPort view1(0.0f, 0.5f,0.5f, 0.5f);
@@ -118,11 +119,12 @@ int main()
 	shader.createShaderProgram();
 	shader.use();
 
-	Texture defaultTexture("Resources/Textures/blank.png");
+	Texture defaultTexture(1,1,1,1,1);
 	defaultTextureID = defaultTexture.getID();
 
 	Texture moon("Resources/Textures/moon.jpg");
 	Texture star("Resources/Textures/star.png");
+	Texture starSpecular("Resources/Textures/starSpecular.bmp");
 	Texture cubeMap("Resources/Textures/floor.bmp");
 
 	glEnable(GL_DEPTH_TEST);
@@ -168,13 +170,15 @@ int main()
 	orbitCubeX.setScale(0.25f, 0.25f, 0.25f);
 	orbitCubeZ.setScale(0.25f, 0.25f, 0.25f);
 	orbitCubeXZ.setScale(0.25f, 0.25f, 0.25f);
-	orbitCubeX.setMaterial(Materials::pearl);
-	orbitCubeZ.setMaterial(Materials::pearl);
-	orbitCubeXZ.setMaterial(Materials::pearl);
+	orbitCubeX.setMaterial(materials.pearl);
+	orbitCubeZ.setMaterial(materials.pearl);
+	orbitCubeXZ.setMaterial(materials.pearl);
+
+	Material starMaterial(star, starSpecular, 32);
 
 	Cube testCube(0.0f, 0.0f, 0.0f);
-	testCube.setMaterial(Materials::brass);
-	testCube.addTexture(star.getID());
+	testCube.setMaterial(starMaterial);
+
 
 	Model spaceShip(0,0,0,"C:/Users/dalet/OneDrive/Desktop/SpaceShip.obj");
 

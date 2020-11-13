@@ -3,6 +3,10 @@
 #include "SquidEngine.h"
 
 #define TEXTURE_UNITS 32
+#define MAX_TEXTURES 30
+
+#define DIFFUSE_MAP_TEXTURE_LAYER 0
+#define SPECULAR_MAP_TEXTURE_LAYER 1
 
 extern int defaultTextureID;
 
@@ -14,10 +18,10 @@ protected:
 	int numColourChannels = 0;
 	unsigned int textureID = 0;
 
-	void initTexture();
-
+	void createBlankTexture(float red, float green, float blue);
 public:
 	Texture();
+	Texture(float red, float green, float blue, int imgWidth, int imgHeight);
 	Texture(const char* textureFile);
 	bool openFile(const char* fileName);
 	unsigned char* getImage();
@@ -32,5 +36,7 @@ public:
 
 	void setWrapping(int wrapX, int wrapY);
 	void setFiltering(int scaleUp, int scaleDown);
+
+	void initTexture();
 };
 

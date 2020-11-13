@@ -31,7 +31,7 @@ public:
 	std::vector<Vertex> shapeVertices;
 	std::vector<unsigned int> shapeIndices;
 
-	Shape(float x, float y, float z) : Object3D(x,y,z){};
+	Shape(float x, float y, float z) : Object3D(x,y,z) {};
 	//Create a shape with mesh data
 	Shape(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
 	//Create a shape with mesh data at the given position
@@ -47,9 +47,6 @@ public:
 	void setMaterial(Material shapeMaterial);
 	//get this shape's material
 	Material getMaterial();
-
-	//Add a texture forming the next layer
-	void addTexture(unsigned int textureID);
 
 	//Return the shape's model matrix
 	glm::mat4 getModelMatrix();
