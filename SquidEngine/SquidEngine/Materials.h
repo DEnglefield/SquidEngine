@@ -4,19 +4,23 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Texture.h"
+#include <vector>
+
+
 
 //Definition of material properties to be attached to an object to modify lighting
 struct Material {
-	Texture diffuseTexture;
-	Texture specularTexture;
+	std::vector<Texture> diffuseMaps;
+	std::vector<Texture> specularMaps;
 	float highlight;
 	Material();
 	Material(glm::vec3 matDiffuse, glm::vec3 matSpecular, float matHighlight);
 	Material(Texture& diffuseMap, Texture& specularMap, float matHighlight);
+	void addDiffuseMap(Texture& texture);
+	void addSpecularMap(Texture& texture);
 };
 
 
-static Material pearl;
 
 //List of pre-made materials
 struct Materials {

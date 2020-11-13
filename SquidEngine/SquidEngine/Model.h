@@ -32,6 +32,9 @@ private:
 	//Find meshes within the model file tree structure
 	void readAssimpNode(aiNode* treeNode, const aiScene* modelScene);
 
+	//Get the material textures and properties for the material assimp node
+	Material readMeshMaterial(aiMaterial* mat, aiTextureType type, const char* typeName);
+
 	//Generate a shape from a assimp mesh
 	Shape createMesh(aiMesh* mesh, const aiScene* modelScene);
 

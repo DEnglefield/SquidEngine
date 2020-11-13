@@ -1,12 +1,20 @@
 #version 330 core
 out vec4 FragColor;
 
+#define MAX_POINT_LIGHTS 8
+#define MAX_SPOT_LIGHTS 8
+#define MAX_DIRECTIONAL_LIGHTS 8
 
+#define MAX_DIFFUSE_MAPS 8 
+#define MAX_SPECULAR_MAPS 8
 
 struct Material {
-    sampler2D diffuseMap;
-    sampler2D specularMap;
+    int numDiffuseMaps;
+    int numSpecularMaps;
     float reflectivity;
+    sampler2D diffuseMaps[MAX_DIFFUSE_MAPS];
+    sampler2D specularMaps[MAX_SPECULAR_MAPS];
+    
 }; 
 
 
@@ -15,7 +23,7 @@ struct PointLight {
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
-        float linearFallOff;
+    float linearFallOff;
     float quadraticFallOff;
 }; 
 
@@ -40,9 +48,6 @@ struct DirectionalLight {
     vec3 specular;
 }; 
 
-#define MAX_POINT_LIGHTS 8
-#define MAX_SPOT_LIGHTS 8
-#define MAX_DIRECTIONAL_LIGHTS 8
 
 uniform bool enabledPointLights[MAX_POINT_LIGHTS];
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
@@ -73,7 +78,6 @@ vec3 applyDirectionalLight(DirectionalLight light, vec3 viewVec);
 
 void main() {
 
-
     vec3 lighting = vec3(0,0,0);
 
     vec3 viewVec = normalize(cameraPos - fragPos);
@@ -98,6 +102,9 @@ void main() {
 
    
    FragColor = vec4(lighting,1);
+
+   
+
 } 
 
 
@@ -154,17 +161,23 @@ vec3 applyDirectionalLight(DirectionalLight light, vec3 viewVec){
 }
 
 
-vec3 getAmbientLight() { return texture(material.diffuseMap,texUV).xyz; }
+vec3 getAmbientLight() { 
+    vec3 diffuseMapping = vec3(1,1,1);
+    for (int i=0; i < material.numDiffuseMaps; ++i){ diffuseMapping *= texture(material.diffuseMaps[i], texUV).xyz; }
+    return diffuseMapping;
+}
 
 vec3 getDiffuseLight(vec3 lightVec) {
     float lightAngle = clamp(dot(fragNormal, lightVec),0.0,1.0);
-    return lightAngle * texture(material.diffuseMap,texUV).xyz;
+    return lightAngle * getAmbientLight();
 }
 
 vec3 getSpecularLight(vec3 lightVec, vec3 viewVec) {
     vec3 reflectDir = reflect(-lightVec, fragNormal);
     float specValue = max(dot(viewVec, reflectDir), 0.0);
-    return pow(specValue, material.reflectivity) * texture(material.specularMap,texUV).xyz; 
+    vec3 specularMapping = vec3(1,1,1);;
+    for (int i=0; i < material.numSpecularMaps; ++i){ specularMapping *= texture(material.specularMaps[i], texUV).xyz; }
+    return specularMapping * pow(specValue, material.reflectivity);
 }
 
 

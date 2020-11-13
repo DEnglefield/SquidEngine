@@ -9,9 +9,15 @@
 #define WORLD_MATRIX_UNIFORM "worldMatrix"
 #define VIEW_MATRIX_UNIFORM "viewMatrix"
 #define PROJECTION_MATRIX_UNIFORM "projMatrix"
+
+#define MAX_DIFFUSE_MAPS 8 
+#define MAX_SPECULAR_MAPS 8
+
 #define MATERIAL_UNIFORM "material"
-#define MATERIAL_DIFFUSE_MAP_UNIFORM "diffuseMap"
-#define MATERIAL_SPECULAR_MAP_UNIFORM "specularMap"
+#define MATERIAL_NUM_DIFFUSE_MAPS_UNIFORM "numDiffuseMaps"
+#define MATERIAL_DIFFUSE_MAPS_UNIFORM "diffuseMaps"
+#define MATERIAL_NUM_SPECULAR_MAPS_UNIFORM "numSpecularMaps"
+#define MATERIAL_SPECULAR_MAPS_UNIFORM "specularMaps"
 #define MATERIAL_REFLECTIVITY_UNIFORM "reflectivity"
 #define CAMERA_POSITION_UNIFORM "cameraPos"
 

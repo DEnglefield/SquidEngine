@@ -119,9 +119,6 @@ int main()
 	shader.createShaderProgram();
 	shader.use();
 
-	Texture defaultTexture(1,1,1,1,1);
-	defaultTextureID = defaultTexture.getID();
-
 	Texture moon("Resources/Textures/moon.jpg");
 	Texture star("Resources/Textures/star.png");
 	Texture starSpecular("Resources/Textures/starSpecular.bmp");
@@ -177,8 +174,10 @@ int main()
 	Material starMaterial(star, starSpecular, 32);
 
 	Cube testCube(0.0f, 0.0f, 0.0f);
+	std::cout << "Texture ID: " << starSpecular.getID() << std::endl;
 	testCube.setMaterial(starMaterial);
 
+	defaultTextureID = 0;
 
 	Model spaceShip(0,0,0,"C:/Users/dalet/OneDrive/Desktop/SpaceShip.obj");
 

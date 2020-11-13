@@ -6,18 +6,23 @@ Material::Material() { }
 
 
 Material::Material(glm::vec3 matDiffuse, glm::vec3 matSpecular, float matHighlight) {
-	diffuseTexture = Texture(matDiffuse.x, matDiffuse.y, matDiffuse.z, 1, 1);
-	specularTexture = Texture(matSpecular.x, matSpecular.y, matSpecular.z, 1, 1);
+	Texture diffuseTexture(matDiffuse.x, matDiffuse.y, matDiffuse.z, 1, 1);
+	Texture specularTexture(matSpecular.x, matSpecular.y, matSpecular.z, 1, 1);
+	addDiffuseMap(diffuseTexture);
+	addSpecularMap(specularTexture);
 	highlight = matHighlight;
 };
 
 
 Material::Material(Texture& diffuseMap, Texture& specularMap, float matHighlight) {
-	diffuseTexture = diffuseMap;
-	specularTexture = specularMap;
+	addDiffuseMap(diffuseMap);
+	addSpecularMap(specularMap);
 	highlight = matHighlight;
 };
 
+
+void Material::addDiffuseMap(Texture& texture) { diffuseMaps.push_back(texture); }
+void Material::addSpecularMap(Texture& texture) { specularMaps.push_back(texture); }
 
 
 Materials::Materials() {

@@ -179,11 +179,41 @@ void ShaderProgram::setMaterial(Material& material) {
 	string propertyName = string(MATERIAL_UNIFORM);
 	propertyName.append(".");
 
-	glActiveTexture(GL_TEXTURE0 + DIFFUSE_MAP_TEXTURE_LAYER);
-	glBindTexture(GL_TEXTURE_2D, material.diffuseTexture.getID());
+	int numDiffuseMaps = 0;
+	int numSpecularMaps = 0;
 
-	glActiveTexture(GL_TEXTURE0 + SPECULAR_MAP_TEXTURE_LAYER);
-	glBindTexture(GL_TEXTURE_2D, material.specularTexture.getID());
+	
+	for (int i = 0; i < material.diffuseMaps.size(); ++i) {
+		if (numDiffuseMaps >= MAX_DIFFUSE_MAPS) { continue; }
+
+		int loc = glGetUniformLocation(ID, (propertyName + MATERIAL_DIFFUSE_MAPS_UNIFORM + "[" + std::to_string(i) + "]").c_str());
+		glActiveTexture(GL_TEXTURE0 + numDiffuseMaps);
+		glBindTexture(GL_TEXTURE_2D, material.diffuseMaps[i].getID());
+		glUniform1i(loc, numDiffuseMaps);
+
+		++numDiffuseMaps;
+	}
+	
+	
+	for (int i = 0; i < material.specularMaps.size(); ++i) {
+		if (numSpecularMaps >= MAX_SPECULAR_MAPS) { continue; }
+		
+		
+		int loc = glGetUniformLocation(ID, (propertyName + MATERIAL_SPECULAR_MAPS_UNIFORM + "[" + std::to_string(i) + "]").c_str());
+
+		int textureLayer = numDiffuseMaps + numSpecularMaps;
+		glActiveTexture(GL_TEXTURE0 + textureLayer);
+		
+		glBindTexture(GL_TEXTURE_2D, material.specularMaps[i].getID());
+
+		
+		glUniform1i(loc, textureLayer);
+		++numSpecularMaps;
+	}
+
+
+	setInt((propertyName + MATERIAL_NUM_DIFFUSE_MAPS_UNIFORM).c_str(), numDiffuseMaps);
+	setInt((propertyName + MATERIAL_NUM_SPECULAR_MAPS_UNIFORM).c_str(), numSpecularMaps);
 
 	setFloat((propertyName + MATERIAL_REFLECTIVITY_UNIFORM).c_str(), material.highlight);
 }

@@ -3,30 +3,24 @@
 #include "SquidEngine.h"
 
 #define TEXTURE_UNITS 32
-#define MAX_TEXTURES 30
 
-#define DIFFUSE_MAP_TEXTURE_LAYER 0
-#define SPECULAR_MAP_TEXTURE_LAYER 1
+#define NO_TEXTURE_PATH "";
 
 extern int defaultTextureID;
 
 class Texture {
 protected:
-	unsigned char* imageData;
-	int width = 0;
-	int height = 0;
-	int numColourChannels = 0;
 	unsigned int textureID = 0;
-
-	void createBlankTexture(float red, float green, float blue);
+	std::string imagePath;
+	void createBlankTexture(float red, float green, float blue, int imgWidth, int imgHeight);
 public:
 	Texture();
 	Texture(float red, float green, float blue, int imgWidth, int imgHeight);
 	Texture(const char* textureFile);
 	bool openFile(const char* fileName);
-	unsigned char* getImage();
 
 	unsigned int getID();
+	std::string getImagePath();
 
 	void setScaleUpFilter(int filter);
 	void setScaleDownFilter(int filter);

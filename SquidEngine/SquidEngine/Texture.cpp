@@ -9,32 +9,31 @@ int defaultTextureID = 0;
 Texture::Texture() { }
 
 Texture::Texture(float red, float green, float blue, int imgWidth, int imgHeight) {
+	imagePath = NO_TEXTURE_PATH;
 	initTexture();
-	width = imgWidth;
-	height = imgHeight;
-	createBlankTexture(red, green, blue);
+	createBlankTexture(red, green, blue, imgWidth, imgHeight);
 }
 
 
 Texture::Texture(const char* textureFile) {
+	imagePath = textureFile;
 	initTexture();
 	openFile(textureFile);
 }
 
 
-unsigned char* Texture::getImage() { return imageData; }
 unsigned int Texture::getID() { return textureID; }
 
 
-void Texture::createBlankTexture(float red, float green, float blue) {
+void Texture::createBlankTexture(float red, float green, float blue, int imgWidth, int imgHeight) {
 	glBindTexture(GL_TEXTURE_2D, textureID);
-	numColourChannels = 3;
+	int numColourChannels = 3;
 	
-	unsigned int imageSize = (width * height) * numColourChannels;
+	unsigned int imageSize = (imgWidth * imgHeight) * numColourChannels;
 
 	unsigned char pixel[3]{ (unsigned char)(255 * red), (unsigned char)(255 * green) , (unsigned char)(255 * blue) };
 
-	imageData = new unsigned char[imageSize];
+	unsigned char* imageData = new unsigned char[imageSize];
 
 	for (int i = 0; i < imageSize; i+=numColourChannels) {
 		imageData[i] = pixel[0];
@@ -42,10 +41,10 @@ void Texture::createBlankTexture(float red, float green, float blue) {
 		imageData[i+2] = pixel[2];
 	}
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imgWidth, imgHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
 	glBindTexture(GL_TEXTURE_2D, defaultTextureID);
 
-	delete[] (imageData);
+	delete[] imageData;
 }
 
 
@@ -53,7 +52,8 @@ bool Texture::openFile(const char* fileName) {
 	bool success = true;
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	stbi_set_flip_vertically_on_load(true);
-	imageData = stbi_load(fileName, &width, &height, &numColourChannels, 0);
+	int width, height, numColourChannels;
+	unsigned char* imageData = stbi_load(fileName, &width, &height, &numColourChannels, 0);
 	if (imageData) {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
 		glGenerateMipmap(GL_TEXTURE_2D);
@@ -63,8 +63,12 @@ bool Texture::openFile(const char* fileName) {
 		success = false;
 	}
 	glBindTexture(GL_TEXTURE_2D, defaultTextureID);
+	stbi_image_free(imageData);
 	return success;
 }
+
+
+std::string Texture::getImagePath() { return imagePath;}
 
 
 void Texture::initTexture() {
