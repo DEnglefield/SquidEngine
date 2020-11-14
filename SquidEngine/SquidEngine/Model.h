@@ -5,6 +5,7 @@
 #include "Texture.h"
 #include "Shape.h"
 #include "Object3D.h"
+#include "Materials.h"
 #include <vector>
 #include <filesystem>
 #include <string>
@@ -20,8 +21,14 @@ private:
 	//List of shape objects representing model meshes
 	std::vector<Shape> meshes;
 	
+	//List of textures included thoughout all meshes
+	std::vector<Texture> meshTextures;
+
 	//Center of mass for the entire model
 	glm::vec3 centerOfMass;
+
+	//Directory of the model
+	std::string directory;
 
 	//Calculate the center of the model and move it to center of model coordinates
 	void centerModel();
@@ -33,7 +40,7 @@ private:
 	void readAssimpNode(aiNode* treeNode, const aiScene* modelScene);
 
 	//Get the material textures and properties for the material assimp node
-	Material readMeshMaterial(aiMaterial* mat, aiTextureType type, const char* typeName);
+	std::vector<Texture> getMeshMaterialTextures(aiMaterial* mat, aiTextureType type);
 
 	//Generate a shape from a assimp mesh
 	Shape createMesh(aiMesh* mesh, const aiScene* modelScene);

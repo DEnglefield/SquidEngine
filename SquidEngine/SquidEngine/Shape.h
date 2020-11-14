@@ -22,9 +22,6 @@ protected:
 	//Attached material for this shape
 	Material material;
 
-	//Compute the normal vectors using the list of vertices and indices
-	void computeNormals(std::vector<Vertex> &vertices, std::vector<unsigned int> &indices);
-
 public:
 
 	//List of vertices and indices that make the shape
@@ -54,4 +51,6 @@ public:
 	//Add the vertices and indices to the vertex buffer
 	void createBuffer(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
 
+	//Compute the normal vectors using the list of vertices and indices
+	void computeNormals();
 };

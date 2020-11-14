@@ -167,7 +167,6 @@
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="SquidEngine.cpp" />
     <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="Voxel.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -187,7 +186,6 @@
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="stb_image_write.h" />
     <ClInclude Include="Texture.h" />
-    <ClInclude Include="Voxel.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>

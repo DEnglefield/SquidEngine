@@ -2,6 +2,8 @@
 #include "Texture.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
 #include <vector>
 
 int defaultTextureID = 0;
@@ -48,18 +50,31 @@ void Texture::createBlankTexture(float red, float green, float blue, int imgWidt
 }
 
 
+#include <string>
+
 bool Texture::openFile(const char* fileName) {
 	bool success = true;
 	glBindTexture(GL_TEXTURE_2D, textureID);
-	stbi_set_flip_vertically_on_load(true);
+	stbi_set_flip_vertically_on_load(false);
 	int width, height, numColourChannels;
-	unsigned char* imageData = stbi_load(fileName, &width, &height, &numColourChannels, 0);
+	unsigned char* imageData = stbi_load(fileName, &width, &height, &numColourChannels, STBI_rgb);
 	if (imageData) {
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
 		glGenerateMipmap(GL_TEXTURE_2D);
+
+		//std::string fileName("DebugImages/OUT");
+		//fileName.append(std::to_string(textureID) + ".png");
+		//stbi_write_png(fileName.c_str(), width, height, numColourChannels, imageData, width * numColourChannels);
+
+
+
+
 	}
+
 	else {
-		std::cout << "Failed to load texture" << std::endl;
+		std::cout << "Failed to load texture: " << fileName << std::endl;
 		success = false;
 	}
 	glBindTexture(GL_TEXTURE_2D, defaultTextureID);

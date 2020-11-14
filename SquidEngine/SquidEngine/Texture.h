@@ -6,6 +6,7 @@
 
 #define NO_TEXTURE_PATH "";
 
+
 extern int defaultTextureID;
 
 class Texture {

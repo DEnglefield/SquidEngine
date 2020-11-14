@@ -119,7 +119,6 @@ int main()
 	shader.createShaderProgram();
 	shader.use();
 
-	Texture moon("Resources/Textures/moon.jpg");
 	Texture star("Resources/Textures/star.png");
 	Texture starSpecular("Resources/Textures/starSpecular.bmp");
 	Texture cubeMap("Resources/Textures/floor.bmp");
@@ -142,6 +141,11 @@ int main()
 
 	glm::mat4 worldMatrix(1.0f);
 	shader.setMat4(WORLD_MATRIX_UNIFORM, worldMatrix);
+
+	DirectionalLight sceneLight(-0.5f, -0.5f, -0.5f);
+	//sceneLight.ambient = glm::vec3(0.7f, 0.7f, 0.7f);
+	//sceneLight.diffuse = glm::vec3(1.2f, 1.2f, 1.2f);
+	shader.addDirectionalLight(sceneLight);
 
 	PointLight orbitLightX(0, -1, 0);
 	unsigned int orbitLightXHandle = shader.addPointLight(orbitLightX);
@@ -174,12 +178,18 @@ int main()
 	Material starMaterial(star, starSpecular, 32);
 
 	Cube testCube(0.0f, 0.0f, 0.0f);
-	std::cout << "Texture ID: " << starSpecular.getID() << std::endl;
 	testCube.setMaterial(starMaterial);
 
 	defaultTextureID = 0;
 
-	Model spaceShip(0,0,0,"C:/Users/dalet/OneDrive/Desktop/SpaceShip.obj");
+	//Model spaceShip(0,0,0,"C:/Users/dalet/OneDrive/Desktop/SpaceShip.obj");
+	//Model moon(0, 0, 0, "Resources/Models/MoonModel/Moon 2k.obj");
+	
+	Model building(0, 0, 0, "Resources/Models/Buildings/Residential Buildings 001.obj");
+	building.setScale(0.5f, 0.5f, 0.5f);
+
+	//Model room(0, 0, 0, "Resources/Models/RoomModel/interior.obj");
+	//room.setScale(0.01f, 0.01f, 0.01f);
 
 	double frameStart = glfwGetTime();
 	while (!mainWindow.closing())
@@ -199,6 +209,7 @@ int main()
 			//voxelArea.draw(shader);
 			testCube.draw(shader);
 			//spaceShip.draw(shader);
+			building.draw(shader);
 		}
 
 		orbitLightX.position = (lightOrbitMatrixX * glm::vec4(orbitLightX.position,1.0f));
