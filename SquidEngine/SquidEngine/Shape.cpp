@@ -55,7 +55,7 @@ Material Shape::getMaterial() { return material; }
 //Compute the normal vectors for all vertice in the shape
 //Slow and not smooth, use one-ring in geom or compute shader
 void Shape::computeNormals() {
-	for (int i = 0; i < shapeIndices.size(); i+=3) {
+	for (int i = 0; i < shapeIndices.size()-3; i+=3) {
 		glm::vec3 BA = shapeVertices[shapeIndices[i+1]].pos - shapeVertices[shapeIndices[i]].pos;
 		glm::vec3 CA = shapeVertices[shapeIndices[i+2]].pos - shapeVertices[shapeIndices[i]].pos;
 

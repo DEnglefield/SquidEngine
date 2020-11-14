@@ -93,7 +93,7 @@ Shape Model::createMesh(aiMesh* mesh, const aiScene* modelScene) {
 
 	Shape newShape(vertices, indices);
 	//If mesh had no normals generate triangle normals
-	if (mesh->HasNormals()) {newShape.computeNormals();}
+	if (!mesh->HasNormals()) {newShape.computeNormals(); }
 
 	//Read mesh material properties and add to the shape
 	if (mesh->mMaterialIndex >= 0) {
