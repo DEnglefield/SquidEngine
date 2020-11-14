@@ -191,6 +191,8 @@
   <ItemGroup>
     <None Include="Shaders\BasicShader\BasicShader.frag" />
     <None Include="Shaders\BasicShader\BasicShader.vert" />
+    <None Include="Shaders\DepthShader\DepthShader.frag" />
+    <None Include="Shaders\DepthShader\DepthShader.vert" />
     <None Include="Shaders\LightingShader\LightingShader.frag" />
     <None Include="Shaders\LightingShader\LightingShader.vert" />
   </ItemGroup>

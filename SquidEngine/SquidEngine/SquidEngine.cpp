@@ -104,19 +104,36 @@ int main()
 	Materials materials;
 
 	ViewPort viewMain(0.0f, 0.0f, 1.0f, 1.0f);
+	ViewPort debugViewLeft(0.0f, 0.0f, 0.5f, 1.0f);
+	ViewPort debugViewRight(0.5f, 0.0f, 0.5f, 1.0f);
 	ViewPort view1(0.0f, 0.5f,0.5f, 0.5f);
 	ViewPort view2(0.5f, 0.5f, 0.5f, 0.5f);
 	ViewPort view3(0.0f, 0.0f, 0.5f, 0.5f);
 	ViewPort view4(0.5f, 0.0f, 0.5f, 0.5f);
 
 	vector<ViewPort> viewsMain = { viewMain };
+	vector<ViewPort> debugViews = { debugViewLeft, debugViewRight };
 	vector<ViewPort> views = { view1, view2, view3, view4 };
+
+	glm::mat4 worldMatrix(1.0f);
 
 	ShaderProgram basicShader("Shaders/BasicShader/BasicShader.vert", "Shaders/BasicShader/BasicShader.frag");
 	ShaderProgram lightingShader("Shaders/LightingShader/LightingShader.vert", "Shaders/LightingShader/LightingShader.frag");
+	ShaderProgram depthShader("Shaders/DepthShader/DepthShader.vert", "Shaders/DepthShader/DepthShader.frag");
 
+	basicShader.createShaderProgram();
+	basicShader.use();
+	basicShader.setMat4(WORLD_MATRIX_UNIFORM, worldMatrix);
+
+	depthShader.createShaderProgram();
+	depthShader.use();
+	depthShader.setMat4(WORLD_MATRIX_UNIFORM, worldMatrix);
+
+	lightingShader.createShaderProgram();
+	lightingShader.use();
+	lightingShader.setMat4(WORLD_MATRIX_UNIFORM, worldMatrix);
+	
 	ShaderProgram shader = lightingShader;
-	shader.createShaderProgram();
 	shader.use();
 
 	Texture star("Resources/Textures/star.png");
@@ -125,27 +142,12 @@ int main()
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_SCISSOR_TEST);
-
-	/*
-	Voxel voxelArea(0,0,0);
-	voxelArea.setMaterial(Materials.obsidian);
-	voxelArea.setSeed(427942);
-	voxelArea.setSurfaceLevel(0.4f);
-	voxelArea.setFrequency(1.0f);
-	voxelArea.setOctaves(8.0f);
-	voxelArea.outputNoise("debugImages/voxel.png",256,256);
-	voxelArea.populatePoints(100, 50, 100);
-	voxelArea.setScale(20.0f, 10.0f, 20.0f);
-	voxelArea.build();
-	*/
-
-	glm::mat4 worldMatrix(1.0f);
-	shader.setMat4(WORLD_MATRIX_UNIFORM, worldMatrix);
+	
 
 	DirectionalLight sceneLight(-0.5f, -0.5f, -0.5f);
 	//sceneLight.ambient = glm::vec3(0.7f, 0.7f, 0.7f);
 	//sceneLight.diffuse = glm::vec3(1.2f, 1.2f, 1.2f);
-	shader.addDirectionalLight(sceneLight);
+	unsigned int sceneLightHandle = shader.addDirectionalLight(sceneLight);
 
 	PointLight orbitLightX(0, -1, 0);
 	unsigned int orbitLightXHandle = shader.addPointLight(orbitLightX);
@@ -191,45 +193,52 @@ int main()
 	//Model room(0, 0, 0, "Resources/Models/RoomModel/interior.obj");
 	//room.setScale(0.01f, 0.01f, 0.01f);
 
+	vector<ViewPort> viewList = debugViews;//viewsMain;
+
 	double frameStart = glfwGetTime();
 	while (!mainWindow.closing())
 	{
 
 		processCameraInput(mainWindow,cam);
 
-		vector<ViewPort> viewList = viewsMain;
+		orbitLightX.position = (lightOrbitMatrixX * glm::vec4(orbitLightX.position, 1.0f));
+		orbitCubeX.setPosition(orbitLightX.position.x, orbitLightX.position.y, orbitLightX.position.z);
 
+		orbitLightZ.position = (lightOrbitMatrixZ * glm::vec4(orbitLightZ.position, 1.0f));
+		orbitCubeZ.setPosition(orbitLightZ.position.x, orbitLightZ.position.y, orbitLightZ.position.z);
+
+		orbitLightXZ.position = (lightOrbitMatrixXZ * glm::vec4(orbitLightXZ.position, 1.0f));
+		orbitCubeXZ.setPosition(orbitLightXZ.position.x, orbitLightXZ.position.y, orbitLightXZ.position.z);
+
+		
 		for (int i = 0; i < viewList.size(); ++i) {
 			viewList[i].use();
 			cam.setView(viewList[i]);
 
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 			glClearColor(0.43f, 0.71f, 0.86 - ((0.86f / views.size()) * (i)), 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			//voxelArea.draw(shader);
-			testCube.draw(shader);
-			//spaceShip.draw(shader);
+			if ((i + 1) % 2 != 0) { shader = lightingShader; }
+			else { shader = depthShader; }
+
+			shader.use();
+			cam.use(shader);
+			
+			shader.setVec3(shader.getLightPropertyName(POINT_LIGHT_UNIFORM, LIGHT_POSITION_UNIFORM, orbitLightXHandle).c_str(), orbitLightX.position);
+			shader.setVec3(shader.getLightPropertyName(POINT_LIGHT_UNIFORM, LIGHT_POSITION_UNIFORM, orbitLightZHandle).c_str(), orbitLightZ.position);
+			shader.setVec3(shader.getLightPropertyName(POINT_LIGHT_UNIFORM, LIGHT_POSITION_UNIFORM, orbitLightXZHandle).c_str(), orbitLightXZ.position);
+			shader.setVec3(shader.getLightPropertyName(DIRECTIONAL_LIGHT_UNIFORM, LIGHT_DIRECTION_UNIFORM, sceneLightHandle).c_str(), orbitLightZ.position);
+
+
 			building.draw(shader);
+
+			orbitCubeX.draw(shader);
+			orbitCubeZ.draw(shader);
+			orbitCubeXZ.draw(shader);
+			testCube.draw(shader);
 		}
-
-		orbitLightX.position = (lightOrbitMatrixX * glm::vec4(orbitLightX.position,1.0f));
-		shader.setVec3(shader.getLightPropertyName(POINT_LIGHT_UNIFORM,LIGHT_POSITION_UNIFORM,orbitLightXHandle).c_str(), orbitLightX.position);
-		orbitCubeX.setPosition(orbitLightX.position.x, orbitLightX.position.y, orbitLightX.position.z);
-
-		orbitLightZ.position = (lightOrbitMatrixZ * glm::vec4(orbitLightZ.position, 1.0f));
-		shader.setVec3(shader.getLightPropertyName(POINT_LIGHT_UNIFORM, LIGHT_POSITION_UNIFORM, orbitLightZHandle).c_str(), orbitLightZ.position);
-		orbitCubeZ.setPosition(orbitLightZ.position.x, orbitLightZ.position.y, orbitLightZ.position.z);
-
-		orbitLightXZ.position = (lightOrbitMatrixXZ * glm::vec4(orbitLightXZ.position, 1.0f));
-		shader.setVec3(shader.getLightPropertyName(POINT_LIGHT_UNIFORM, LIGHT_POSITION_UNIFORM, orbitLightXZHandle).c_str(), orbitLightXZ.position);
-		orbitCubeXZ.setPosition(orbitLightXZ.position.x, orbitLightXZ.position.y, orbitLightXZ.position.z);
-
-		orbitCubeX.draw(shader);
-		orbitCubeZ.draw(shader);
-		orbitCubeXZ.draw(shader);
 		
-
-		cam.use(shader);
+		
 
 		glfwSwapInterval(1);
 		glfwSwapBuffers(glfwGetCurrentContext());

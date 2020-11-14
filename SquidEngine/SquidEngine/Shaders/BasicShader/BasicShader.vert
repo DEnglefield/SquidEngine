@@ -8,13 +8,15 @@ uniform mat4 worldMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projMatrix;
 
+out vec3 fragPos;
 out vec3 fragNormal;
 out vec2 texUV;
 
 void main()
 {
-	mat4 fullTransform = projMatrix * viewMatrix * worldMatrix * modelMatrix;
-	fragNormal = normal;
+	mat4 viewTransform = projMatrix * viewMatrix;
+	fragNormal = normalize(mat3(transpose(inverse(modelMatrix))) * normal); 
 	texUV = tex;
-    gl_Position = fullTransform * vec4(pos, 1.0);
+	fragPos = vec3(modelMatrix * vec4(pos, 1.0));
+    gl_Position = viewTransform * worldMatrix * vec4(fragPos, 1.0);
 }
