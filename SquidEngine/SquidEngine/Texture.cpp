@@ -43,34 +43,24 @@ void Texture::createBlankTexture(float red, float green, float blue, int imgWidt
 		imageData[i+2] = pixel[2];
 	}
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imgWidth, imgHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgWidth, imgHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
 	glBindTexture(GL_TEXTURE_2D, defaultTextureID);
 
 	delete[] imageData;
 }
 
 
-#include <string>
-
 bool Texture::openFile(const char* fileName) {
 	bool success = true;
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	stbi_set_flip_vertically_on_load(false);
 	int width, height, numColourChannels;
-	unsigned char* imageData = stbi_load(fileName, &width, &height, &numColourChannels, STBI_rgb);
+	unsigned char* imageData = stbi_load(fileName, &width, &height, &numColourChannels, STBI_rgb_alpha);
+
 	if (imageData) {
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
 		glGenerateMipmap(GL_TEXTURE_2D);
-
-		//std::string fileName("DebugImages/OUT");
-		//fileName.append(std::to_string(textureID) + ".png");
-		//stbi_write_png(fileName.c_str(), width, height, numColourChannels, imageData, width * numColourChannels);
-
-
-
-
 	}
 
 	else {

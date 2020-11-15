@@ -45,6 +45,7 @@ private:
 	//Generate a shape from a assimp mesh
 	Shape createMesh(aiMesh* mesh, const aiScene* modelScene);
 
+
 public:
 
 	//Create a model with an initial position and model file

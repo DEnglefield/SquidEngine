@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SquidEngine.h"
+#include <string>
 
 #define TEXTURE_UNITS 32
 

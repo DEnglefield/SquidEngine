@@ -142,11 +142,14 @@ int main()
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_SCISSOR_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
 
-	DirectionalLight sceneLight(-0.5f, -0.5f, -0.5f);
+	DirectionalLight sceneLight(-0.25f,-0.25f, 0.0f);
 	//sceneLight.ambient = glm::vec3(0.7f, 0.7f, 0.7f);
-	//sceneLight.diffuse = glm::vec3(1.2f, 1.2f, 1.2f);
+	//sceneLight.diffuse = glm::vec3(0,0,0);
+	//sceneLight.specular = glm::vec3(0.9f,0.9f,0.9f);
 	unsigned int sceneLightHandle = shader.addDirectionalLight(sceneLight);
 
 	PointLight orbitLightX(0, -1, 0);
@@ -219,7 +222,7 @@ int main()
 			glClearColor(0.43f, 0.71f, 0.86 - ((0.86f / views.size()) * (i)), 1.0f);
 
 			if ((i + 1) % 2 != 0) { shader = lightingShader; }
-			else { shader = depthShader; }
+			else { shader = basicShader; }
 
 			shader.use();
 			cam.use(shader);
@@ -227,8 +230,6 @@ int main()
 			shader.setVec3(shader.getLightPropertyName(POINT_LIGHT_UNIFORM, LIGHT_POSITION_UNIFORM, orbitLightXHandle).c_str(), orbitLightX.position);
 			shader.setVec3(shader.getLightPropertyName(POINT_LIGHT_UNIFORM, LIGHT_POSITION_UNIFORM, orbitLightZHandle).c_str(), orbitLightZ.position);
 			shader.setVec3(shader.getLightPropertyName(POINT_LIGHT_UNIFORM, LIGHT_POSITION_UNIFORM, orbitLightXZHandle).c_str(), orbitLightXZ.position);
-			shader.setVec3(shader.getLightPropertyName(DIRECTIONAL_LIGHT_UNIFORM, LIGHT_DIRECTION_UNIFORM, sceneLightHandle).c_str(), orbitLightZ.position);
-
 
 			building.draw(shader);
 

@@ -11,6 +11,7 @@ Material::Material(glm::vec3 matDiffuse, glm::vec3 matSpecular, float matHighlig
 	addDiffuseMap(diffuseTexture);
 	addSpecularMap(specularTexture);
 	highlight = matHighlight;
+	opacity = 1;
 };
 
 
@@ -18,6 +19,7 @@ Material::Material(Texture& diffuseMap, Texture& specularMap, float matHighlight
 	addDiffuseMap(diffuseMap);
 	addSpecularMap(specularMap);
 	highlight = matHighlight;
+	opacity = 1;
 };
 
 

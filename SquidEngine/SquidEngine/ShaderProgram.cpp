@@ -214,8 +214,8 @@ void ShaderProgram::setMaterial(Material& material) {
 
 	setInt((propertyName + MATERIAL_NUM_DIFFUSE_MAPS_UNIFORM).c_str(), numDiffuseMaps);
 	setInt((propertyName + MATERIAL_NUM_SPECULAR_MAPS_UNIFORM).c_str(), numSpecularMaps);
-
 	setFloat((propertyName + MATERIAL_REFLECTIVITY_UNIFORM).c_str(), material.highlight);
+	setFloat((propertyName + MATERIAL_OPACITY_UNIFORM).c_str(), material.opacity);
 }
 
 

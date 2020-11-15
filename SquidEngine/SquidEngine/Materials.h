@@ -13,6 +13,7 @@ struct Material {
 	std::vector<Texture> diffuseMaps;
 	std::vector<Texture> specularMaps;
 	float highlight;
+	float opacity;
 	Material();
 	Material(glm::vec3 matDiffuse, glm::vec3 matSpecular, float matHighlight);
 	Material(Texture& diffuseMap, Texture& specularMap, float matHighlight);

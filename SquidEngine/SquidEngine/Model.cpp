@@ -103,22 +103,27 @@ Shape Model::createMesh(aiMesh* mesh, const aiScene* modelScene) {
 		aiColor3D diffuse(0.f, 0.f, 0.f);
 		aiColor3D specular(0.f, 0.f, 0.f);
 		float shininess = 8;
+		float alpha = 1;
 
 		material->Get(AI_MATKEY_COLOR_AMBIENT, ambient);
 		material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse);
 		material->Get(AI_MATKEY_COLOR_SPECULAR, specular);
 		material->Get(AI_MATKEY_SHININESS, shininess);
+		material->Get(AI_MATKEY_OPACITY, alpha);
 
 		glm::vec3 matAmbient(ambient.r, ambient.g, ambient.b);
 		glm::vec3 matDiffuse(diffuse.r, diffuse.g, diffuse.b);
 		glm::vec3 matSpecular(specular.r, specular.g, specular.b);
 
 		Material meshMaterial(matDiffuse, matSpecular, shininess*0.25f);
+		meshMaterial.opacity = alpha;
 
 		std::cout << "Shininess(Ns): " << meshMaterial.highlight << std::endl;
 		std::cout << "Ambient Colour(Ka): " << ambient.r << ", " << ambient.g << ", " << ambient.b << std::endl;
 		std::cout << "Diffuse Colour(Kd): " << diffuse.r << ", " << diffuse.g << ", " << diffuse.b << std::endl;
 		std::cout << "Specular Colour(Ks): " << specular.r << ", " << specular.g << ", " << specular.b << std::endl;
+		std::cout << "Opacity(d): " << alpha << std::endl;
+
 
 		//Get diffuse maps
 		std::vector<Texture> diffuseTextures = getMeshMaterialTextures(material, aiTextureType_DIFFUSE);

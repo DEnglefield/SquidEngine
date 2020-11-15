@@ -12,6 +12,7 @@ struct Material {
     int numDiffuseMaps;
     int numSpecularMaps;
     float reflectivity;
+    float opacity;
     sampler2D diffuseMaps[MAX_DIFFUSE_MAPS];
     sampler2D specularMaps[MAX_SPECULAR_MAPS];
     
@@ -101,7 +102,7 @@ void main() {
     }  
 
    
-   FragColor = vec4(lighting,1);
+   FragColor = vec4(lighting, material.opacity);
 
    
 

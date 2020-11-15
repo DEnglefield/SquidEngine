@@ -19,6 +19,7 @@
 #define MATERIAL_NUM_SPECULAR_MAPS_UNIFORM "numSpecularMaps"
 #define MATERIAL_SPECULAR_MAPS_UNIFORM "specularMaps"
 #define MATERIAL_REFLECTIVITY_UNIFORM "reflectivity"
+#define MATERIAL_OPACITY_UNIFORM "opacity"
 #define CAMERA_POSITION_UNIFORM "cameraPos"
 
 #define LIGHT_AMBIENT_UNIFORM "ambient"
