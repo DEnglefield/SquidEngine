@@ -27,21 +27,12 @@ void Shape::destroyShape() {
 //Draw the shape on the screen
 void Shape::draw(ShaderProgram& shader) {
 
-	/*
-	for (int i = 0; i < textureLayers.size(); ++i) {
-		glActiveTexture(GL_TEXTURE0+i);
-		glBindTexture(GL_TEXTURE_2D, textureLayers[i]);
-	}
-	*/
-
 	shader.setMat4(MODEL_MATRIX_UNIFORM, modelMatrix);
 	shader.setMaterial(material);
 
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, shapeIndices.size(), GL_UNSIGNED_INT, 0);
-
 	glBindTexture(GL_TEXTURE_2D, defaultTextureID);
-
 }
 
 

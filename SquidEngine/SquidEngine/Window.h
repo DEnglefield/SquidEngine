@@ -1,17 +1,21 @@
 #pragma once
 
 #include "SquidEngine.h"
+#include "FrameBuffer.h"
 
 
-struct ViewPort {
-	float xPos, yPos, width, height;
+typedef struct ViewPort {
+	float windowPercentX, windowPercentY;
+	float windowWidthPercent, windowHeightPercent;
+	int width, height;
+	int xPos, yPos;
 	//Create the viewport area using percentage positions on the window
 	ViewPort(float xPercent, float yPercent, float widthPercent, float heightPercent);
 	//Set this viewport as the active viewport meaning all future draw commands
 	//will be directed to this viewport
 	//Also scales the viewport with the active window
 	void use();
-};
+}ViewPort;
 
 
 //Window object acting as a container for viewports
@@ -20,6 +24,7 @@ protected:
 	int windowWidth, windowHeight;
 	const char* windowName;
 public:
+
 	//Wrapped glfw window
 	GLFWwindow* form;
 	Window(int width, int height, const char* name);

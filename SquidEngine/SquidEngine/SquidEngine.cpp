@@ -10,6 +10,8 @@
 #include "Voxel.h"
 #include "Model.h"
 #include "Materials.h"
+#include "FrameBuffer.h"
+#include "ScreenQuad.h"
 
 using namespace std;
 
@@ -18,6 +20,7 @@ CameraFPS cam(0, 0, 3, 0, 0, -1);
 void mainResizeEvent(GLFWwindow* window, int width, int height)
 {
 	cout << "Resized to :" << width << ", " << height << endl;
+	resizeFrameBuffers(width, height);
 }
 
 
@@ -101,6 +104,7 @@ int main()
 		std::cout << "Failed to initialize GLAD" << std::endl;
 	}
 
+
 	Materials materials;
 
 	ViewPort viewMain(0.0f, 0.0f, 1.0f, 1.0f);
@@ -120,6 +124,9 @@ int main()
 	ShaderProgram basicShader("Shaders/BasicShader/BasicShader.vert", "Shaders/BasicShader/BasicShader.frag");
 	ShaderProgram lightingShader("Shaders/LightingShader/LightingShader.vert", "Shaders/LightingShader/LightingShader.frag");
 	ShaderProgram depthShader("Shaders/DepthShader/DepthShader.vert", "Shaders/DepthShader/DepthShader.frag");
+	ShaderProgram quadShader("Shaders/QuadShader/QuadShader.vert", "Shaders/QuadShader/QuadShader.frag");
+
+	quadShader.createShaderProgram();
 
 	basicShader.createShaderProgram();
 	basicShader.use();
@@ -142,6 +149,7 @@ int main()
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_SCISSOR_TEST);
+	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
@@ -192,16 +200,34 @@ int main()
 	
 	Model building(0, 0, 0, "Resources/Models/Buildings/Residential Buildings 001.obj");
 	building.setScale(0.5f, 0.5f, 0.5f);
+	Model building2(0, 0, 0, "Resources/Models/Buildings/Residential Buildings 005.obj");
+	building2.setScale(0.5f, 0.5f, 0.5f);
+	building2.setPosition(0, 0, 14);
 
 	//Model room(0, 0, 0, "Resources/Models/RoomModel/interior.obj");
 	//room.setScale(0.01f, 0.01f, 0.01f);
 
+	ScreenQuad screenQuad(0.1f, 0.1f, 0.9f, 0.9f);
+
 	vector<ViewPort> viewList = debugViews;//viewsMain;
 
-	double frameStart = glfwGetTime();
-	while (!mainWindow.closing())
-	{
+	//glm::vec3 firstClearColour = glm::vec3(1, 0, 0);
+	FrameBuffer debugViewBuffers[] = {
+		FrameBuffer(glfwGetCurrentContext()),
+		FrameBuffer(glfwGetCurrentContext())
+	};
 
+	ShaderProgram debugShaders[] = {
+		lightingShader,
+		basicShader
+	};
+
+	DrawFrameBuffer outputFrameBuffer;
+	outputFrameBuffer.setClearColour(glm::vec3(0,1,0));
+
+
+	double frameStart = glfwGetTime();
+	while (!mainWindow.closing()) {
 		processCameraInput(mainWindow,cam);
 
 		orbitLightX.position = (lightOrbitMatrixX * glm::vec4(orbitLightX.position, 1.0f));
@@ -213,30 +239,39 @@ int main()
 		orbitLightXZ.position = (lightOrbitMatrixXZ * glm::vec4(orbitLightXZ.position, 1.0f));
 		orbitCubeXZ.setPosition(orbitLightXZ.position.x, orbitLightXZ.position.y, orbitLightXZ.position.z);
 
-		
+
+		//Pass 1 & 2
 		for (int i = 0; i < viewList.size(); ++i) {
-			viewList[i].use();
-			cam.setView(viewList[i]);
+			debugViewBuffers[i].use(viewMain);
+			cam.setView(viewMain);
 
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-			glClearColor(0.43f, 0.71f, 0.86 - ((0.86f / views.size()) * (i)), 1.0f);
-
-			if ((i + 1) % 2 != 0) { shader = lightingShader; }
-			else { shader = basicShader; }
-
+			shader = debugShaders[i];
 			shader.use();
 			cam.use(shader);
-			
+
 			shader.setVec3(shader.getLightPropertyName(POINT_LIGHT_UNIFORM, LIGHT_POSITION_UNIFORM, orbitLightXHandle).c_str(), orbitLightX.position);
 			shader.setVec3(shader.getLightPropertyName(POINT_LIGHT_UNIFORM, LIGHT_POSITION_UNIFORM, orbitLightZHandle).c_str(), orbitLightZ.position);
 			shader.setVec3(shader.getLightPropertyName(POINT_LIGHT_UNIFORM, LIGHT_POSITION_UNIFORM, orbitLightXZHandle).c_str(), orbitLightXZ.position);
-
-			building.draw(shader);
 
 			orbitCubeX.draw(shader);
 			orbitCubeZ.draw(shader);
 			orbitCubeXZ.draw(shader);
 			testCube.draw(shader);
+
+			building.draw(shader);
+			building2.draw(shader);
+		}
+		
+		//Pass 3 to show pass 1 and 2
+		for (int i = 0; i < viewList.size(); ++i) {
+			
+			outputFrameBuffer.use(viewList[i]);
+			
+			screenQuad.setTexture(debugViewBuffers[i].getTextureOutput());
+			//screenQuad.setTexture(star.getID());
+			quadShader.use();
+			screenQuad.draw();
+
 		}
 		
 		

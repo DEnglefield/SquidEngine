@@ -38,7 +38,7 @@ void Camera::setFOV(float FOV) { fieldOfView = FOV; }
 //Update the with and height of the viewport used by this camera
 void Camera::setView(int width, int height) { viewWidth = width; viewHeight = height; }
 //Get the view size from a ViewPort object
-void Camera::setView(ViewPort& viewPort) { getViewPortSize(viewPort, &viewWidth, &viewHeight); }
+void Camera::setView(ViewPort& viewPort) { setView(viewPort.width, viewPort.height); }
 //Update the maximum and minimum render distance
 void Camera::setRenderDistance(float near, float far) { minRender = near; maxRender = far; }
 

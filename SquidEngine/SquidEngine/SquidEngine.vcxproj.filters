@@ -25,6 +25,9 @@
     <Filter Include="Shaders\DepthShader">
       <UniqueIdentifier>{52cb4df8-2fd8-4bd8-b439-04ebb0ebc57c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\QuadShader">
+      <UniqueIdentifier>{7df9581c-42c9-4d2f-82d2-95345199f083}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SquidEngine.cpp">
@@ -64,6 +67,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Materials.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ScreenQuad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -119,6 +128,12 @@
     <ClInclude Include="Cube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FrameBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenQuad.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\BasicShader\BasicShader.vert">
@@ -138,6 +153,12 @@
     </None>
     <None Include="Shaders\DepthShader\DepthShader.frag">
       <Filter>Shaders\DepthShader</Filter>
+    </None>
+    <None Include="Shaders\QuadShader\QuadShader.frag">
+      <Filter>Shaders\QuadShader</Filter>
+    </None>
+    <None Include="Shaders\QuadShader\QuadShader.vert">
+      <Filter>Shaders\QuadShader</Filter>
     </None>
   </ItemGroup>
 </Project>

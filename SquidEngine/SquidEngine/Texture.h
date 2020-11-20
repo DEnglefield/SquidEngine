@@ -14,9 +14,10 @@ class Texture {
 protected:
 	unsigned int textureID = 0;
 	std::string imagePath;
-	void createBlankTexture(float red, float green, float blue, int imgWidth, int imgHeight);
+	void createBlankTexture(int imgWidth, int imgHeight);
+	void createColouredTexture(float red, float green, float blue, int imgWidth, int imgHeight);
 public:
-	Texture();
+	Texture(int imgWidth, int imgHeight);
 	Texture(float red, float green, float blue, int imgWidth, int imgHeight);
 	Texture(const char* textureFile);
 	bool openFile(const char* fileName);
@@ -34,5 +35,7 @@ public:
 	void setFiltering(int scaleUp, int scaleDown);
 
 	void initTexture();
+
+	void destroy();
 };
 

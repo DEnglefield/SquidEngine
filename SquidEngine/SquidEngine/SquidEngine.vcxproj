@@ -157,12 +157,14 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraFPS.cpp" />
+    <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="MarchingCubeLookup.h" />
     <ClCompile Include="Materials.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Object3D.cpp" />
     <ClCompile Include="Primitives.cpp" />
+    <ClCompile Include="ScreenQuad.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="SquidEngine.cpp" />
@@ -173,12 +175,14 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraFPS.h" />
     <ClInclude Include="Colours.h" />
+    <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Materials.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Object3D.h" />
     <ClInclude Include="PerlinNoise.hpp" />
     <ClInclude Include="Cube.h" />
+    <ClInclude Include="ScreenQuad.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="SquidEngine.h" />
@@ -195,6 +199,8 @@
     <None Include="Shaders\DepthShader\DepthShader.vert" />
     <None Include="Shaders\LightingShader\LightingShader.frag" />
     <None Include="Shaders\LightingShader\LightingShader.vert" />
+    <None Include="Shaders\QuadShader\QuadShader.frag" />
+    <None Include="Shaders\QuadShader\QuadShader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

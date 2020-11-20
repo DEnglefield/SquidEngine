@@ -8,12 +8,16 @@
 
 int defaultTextureID = 0;
 
-Texture::Texture() { }
+Texture::Texture(int imgWidth, int imgHeight) {
+	imagePath = NO_TEXTURE_PATH;
+	initTexture();
+	createBlankTexture(imgWidth, imgHeight);
+}
 
 Texture::Texture(float red, float green, float blue, int imgWidth, int imgHeight) {
 	imagePath = NO_TEXTURE_PATH;
 	initTexture();
-	createBlankTexture(red, green, blue, imgWidth, imgHeight);
+	createColouredTexture(red, green, blue, imgWidth, imgHeight);
 }
 
 
@@ -21,13 +25,21 @@ Texture::Texture(const char* textureFile) {
 	imagePath = textureFile;
 	initTexture();
 	openFile(textureFile);
+	
 }
 
 
 unsigned int Texture::getID() { return textureID; }
 
 
-void Texture::createBlankTexture(float red, float green, float blue, int imgWidth, int imgHeight) {
+void Texture::createBlankTexture(int imgWidth, int imgHeight) {
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgWidth, imgHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glBindTexture(GL_TEXTURE_2D, defaultTextureID);
+}
+
+
+void Texture::createColouredTexture(float red, float green, float blue, int imgWidth, int imgHeight) {
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	int numColourChannels = 3;
 	
@@ -129,3 +141,5 @@ void Texture::setBorderColour(glm::vec4 borderColour) {
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, colour);
 	glBindTexture(GL_TEXTURE_2D, defaultTextureID);
 }
+
+void Texture::destroy() { glDeleteTextures(1, &textureID); };

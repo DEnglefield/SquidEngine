@@ -17,7 +17,6 @@ Window::Window(int width, int height, const char* name) {
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
 		glfwInitialized = true;
 	}
 	windowWidth = width;
@@ -59,10 +58,10 @@ void Window::getWindowSize(int* width, int* height) { glfwGetWindowSize(form, wi
 
 //Create the viewport area using percentage positions on the window
 ViewPort::ViewPort(float xPercent, float yPercent, float widthPercent, float heightPercent) {
-	xPos = xPercent;
-	yPos = yPercent;
-	width = widthPercent;
-	height = heightPercent;
+	windowPercentX = xPercent;
+	windowPercentY = yPercent;
+	windowWidthPercent = widthPercent;
+	windowHeightPercent = heightPercent;
 }
 
 
@@ -72,8 +71,14 @@ ViewPort::ViewPort(float xPercent, float yPercent, float widthPercent, float hei
 void ViewPort::use() {
 	int winWidth, winHeight;
 	glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
-	glViewport(winWidth * xPos, winHeight * yPos, winWidth * width, winHeight * height);
-	glScissor(winWidth * xPos, winHeight * yPos, winWidth * width, winHeight * height);
+	
+	xPos = winWidth * windowPercentX;
+	yPos = winHeight * windowPercentY;
+	width = winWidth * windowWidthPercent;
+	height = winHeight * windowHeightPercent;
+
+	glViewport(xPos, yPos, width, height);
+	glScissor(xPos, yPos, width, height);
 	activeViewPort = this;
 }
 
@@ -82,11 +87,4 @@ ViewPort& getCurrentViewPort() {
 	return *activeViewPort;
 }
 
-//Get the pixel size of the given viewport
-void getViewPortSize(ViewPort &viewPort, int* width, int* height) {
-	int winWidth, winHeight;
-	glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
-	*width = ceil(winWidth * viewPort.width);
-	*height = ceil(winHeight * viewPort.height);
-}
 
