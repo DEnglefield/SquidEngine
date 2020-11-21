@@ -75,8 +75,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Libraries\VS_Libs\include;C:\VS Libs\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Libraries\VS_Libs\lib\assimp;C:\Libraries\VS_Libs\lib\GLFW;C:\VS Libs\lib\GLFW;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Libraries\VS_Libs\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Libraries\VS_Libs\lib\assimp;C:\Libraries\VS_Libs\lib\GLFW;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>

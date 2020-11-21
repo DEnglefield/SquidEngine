@@ -1,14 +1,31 @@
 
 #include "FrameBuffer.h"
 
-std::vector<FrameBuffer*> FrameBuffer::scaledFrameBuffers;
+std::list<ScaledFrameBuffer*> ScaledFrameBuffer::scaledFrameBuffers;
 
-FrameBuffer::FrameBuffer(GLFWwindow* window) {
-	clearCol = glm::vec3(0.43f, 0.71f, 0.86f);
-	scaledFrameBuffers.push_back(this); //need a way to remove it
-	glGenFramebuffers(1, &ID);
-	glfwGetWindowSize(window, &width, &height);
-	initBuffer(width, height, clearCol);
+ScaledFrameBuffer::ScaledFrameBuffer(ViewPort& view) : FrameBuffer(view.width, view.height) {
+	scaledFrameBuffers.push_back(this);
+	percentWidth = view.windowWidthPercent;
+	percentHeight = view.windowHeightPercent;
+}
+
+
+ScaledFrameBuffer::ScaledFrameBuffer(float widthPercent, float heightPercent) 
+	: FrameBuffer(widthPercent * 800, heightPercent * 600) {
+	scaledFrameBuffers.push_back(this);
+	percentWidth = widthPercent;
+	percentHeight = heightPercent;
+}
+
+
+void ScaledFrameBuffer::destroy() {
+	scaledFrameBuffers.remove(this);
+	FrameBuffer::destroy();
+}
+
+
+void ScaledFrameBuffer::resizeBuffer(int imgWidth, int imgHeight) {
+	FrameBuffer::resizeBuffer(percentWidth * imgWidth, percentHeight * imgHeight);
 }
 
 
@@ -83,6 +100,7 @@ unsigned int FrameBuffer::getTextureOutput() { return colourBufferID; }
 void FrameBuffer::use() {
 	glBindFramebuffer(GL_FRAMEBUFFER, ID);
 	glViewport(0, 0, width, height);
+	glScissor(0, 0, width, height);
 	glClearColor(clearCol.x, clearCol.y, clearCol.z, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
@@ -127,8 +145,12 @@ int DrawFrameBuffer::getWidth() { return 0; }
 int DrawFrameBuffer::getHeight() { return 0; };
 
 void resizeFrameBuffers(int width, int height) {
-	for (int i = 0; i < FrameBuffer::scaledFrameBuffers.size(); ++i) {
-		FrameBuffer::scaledFrameBuffers[i]->resizeBuffer(width, height);
+
+	std::list<ScaledFrameBuffer>::iterator it;
+
+	for (auto const& buffer : ScaledFrameBuffer::scaledFrameBuffers) {
+		buffer->resizeBuffer(width, height);
 	}
+
 }
 

@@ -17,8 +17,7 @@ using namespace std;
 
 CameraFPS cam(0, 0, 3, 0, 0, -1);
 
-void mainResizeEvent(GLFWwindow* window, int width, int height)
-{
+void mainResizeEvent(GLFWwindow* window, int width, int height) {
 	cout << "Resized to :" << width << ", " << height << endl;
 	resizeFrameBuffers(width, height);
 }
@@ -212,9 +211,9 @@ int main()
 	vector<ViewPort> viewList = debugViews;//viewsMain;
 
 	//glm::vec3 firstClearColour = glm::vec3(1, 0, 0);
-	FrameBuffer debugViewBuffers[] = {
-		FrameBuffer(glfwGetCurrentContext()),
-		FrameBuffer(glfwGetCurrentContext())
+	ScaledFrameBuffer debugViewBuffers[] = {
+		ScaledFrameBuffer(0.5f,1.0f),
+		ScaledFrameBuffer(0.5f,1.0f)
 	};
 
 	ShaderProgram debugShaders[] = {
@@ -242,8 +241,8 @@ int main()
 
 		//Pass 1 & 2
 		for (int i = 0; i < viewList.size(); ++i) {
-			debugViewBuffers[i].use(viewMain);
-			cam.setView(viewMain);
+			debugViewBuffers[i].use();
+			cam.setView(debugViewBuffers[i].getWidth(), debugViewBuffers[i].getHeight());
 
 			shader = debugShaders[i];
 			shader.use();
@@ -271,7 +270,7 @@ int main()
 			//screenQuad.setTexture(star.getID());
 			quadShader.use();
 			screenQuad.draw();
-
+			//break;
 		}
 		
 		

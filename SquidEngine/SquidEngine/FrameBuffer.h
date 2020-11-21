@@ -3,7 +3,7 @@
 #include "SquidEngine.h"
 #include "Window.h"
 #include "Texture.h"
-#include <vector>
+#include <list>
 
 
 
@@ -19,7 +19,6 @@ protected:
 
 public:
 
-	static std::vector<FrameBuffer*> scaledFrameBuffers;
 	unsigned int getTextureOutput();
 
 	FrameBuffer() {};
@@ -34,6 +33,18 @@ public:
 	int getWidth();
 	int getHeight();
 
+	void resizeBuffer(int imgWidth, int imgHeight);
+	void destroy();
+};
+
+
+class ScaledFrameBuffer : public FrameBuffer {
+private:
+	float percentWidth, percentHeight;
+public:
+	static std::list<ScaledFrameBuffer*> scaledFrameBuffers;
+	ScaledFrameBuffer(ViewPort& view);
+	ScaledFrameBuffer(float widthPercent, float heightPercent);
 	void resizeBuffer(int imgWidth, int imgHeight);
 	void destroy();
 };
