@@ -85,14 +85,15 @@ unsigned int ShaderProgram2::createShaderProgram() {
 	glLinkProgram(ID);
 
 	int success;
-	char infoLog[512];
+	char infoLog[1024];
 
 	//Check if link was successful
 	glGetProgramiv(ID, GL_LINK_STATUS, &success);
+	
 	if (!success) {
-		glGetShaderInfoLog(ID, 512, NULL, infoLog);
-		std::cout << "Failed to link shaders:" << std::endl;
-		std::cout << infoLog << std::endl;
+		//Check if link was successful
+		glGetShaderInfoLog(ID, 1024, NULL, infoLog);
+		std::cout << "Failed to link shaders: " << infoLog << std::endl;
 		throw std::runtime_error("Couldn't create shader program");
 	}
 
@@ -110,12 +111,10 @@ unsigned int ShaderProgram2::createShaderProgram() {
 
 void ShaderProgram2::draw(FrameBuffer& target) {
 	targetBuffer = &target;
-	shaderPasses[shaderPasses.size() - 1].writeBuffer = targetBuffer;
+	target.use();
 	for (int i = 0; i < shaderPasses.size(); ++i) {
-		shaderPasses[i].writeBuffer->use();
-		glUseProgram(shaderPasses[i].shaderID);
-			
-		onNextPass(i, shaderPasses[i].shaderID);
+		glUseProgram(shaderPasses[i]);
+		onNextPass(i, shaderPasses[i]);
 	}
 }
 
@@ -123,21 +122,16 @@ void ShaderProgram2::draw(FrameBuffer& target) {
 void ShaderProgram2::destroy() {
 	ShaderProgram2::sceneShaders.remove(this);
 	for (int i = 0; i < shaderPasses.size(); ++i) {
-		glDeleteProgram(shaderPasses[i].shaderID);
-		if (shaderPasses[i].writeBuffer != nullptr) {
-			shaderPasses[i].writeBuffer->destroy();
-		}
-		
+		glDeleteProgram(shaderPasses[i]);
 	}
 }
 
 
 
 //Create next shader pass
-void ShaderProgram2::newShaderPass(const char* vertexFile, const char* fragmentFile, FrameBuffer* passBuffer) {
+void ShaderProgram2::newShaderPass(const char* vertexFile, const char* fragmentFile) {
 	if (writingMode) { throw std::runtime_error("Failed to create shader pass: Shader Pipeline is already in write mode"); }
 	writingMode = true;
-	passFrameBuffer = passBuffer;
 
 	//Load vertex shader
 	vertexID = loadShader(vertexFile, GL_VERTEX_SHADER);
@@ -172,10 +166,7 @@ bool ShaderProgram2::attachGeometryShader(const char* geometryFile) {
 //Finish creating a new shader pass ignoring future commands
 int ShaderProgram2::finishShaderPass() {
 	if (!writingMode) { throw std::runtime_error("Failed to finish shader pipeline: Shader Pipeline not in write mode"); }
-	ShaderPass newPass;
-	newPass.shaderID = createShaderProgram();
-	newPass.writeBuffer = passFrameBuffer;
-	shaderPasses.push_back(newPass);
+	shaderPasses.push_back(createShaderProgram());
 	writingMode = false;
 	return shaderPasses.size()-1;
 }
@@ -183,40 +174,40 @@ int ShaderProgram2::finishShaderPass() {
 
 //Send a boolean value represetned by an integer to the shader
 void ShaderProgram2::setBool(int shaderStage, const char* attr, bool value, int index) {
-	glUseProgram(shaderPasses[shaderStage].shaderID);
-	glUniform1i(glGetUniformLocation(shaderPasses[shaderStage].shaderID, getIndexedUniform(attr, index).c_str()), value);
+	glUseProgram(shaderPasses[shaderStage]);
+	glUniform1i(glGetUniformLocation(shaderPasses[shaderStage], getIndexedUniform(attr, index).c_str()), value);
 }
 
 //Send a float value to the shader
 void ShaderProgram2::setFloat(int shaderStage, const char* attr, float value, int index) {
-	glUseProgram(shaderPasses[shaderStage].shaderID);
-	glUniform1f(glGetUniformLocation(shaderPasses[shaderStage].shaderID, getIndexedUniform(attr, index).c_str()), value);
+	glUseProgram(shaderPasses[shaderStage]);
+	glUniform1f(glGetUniformLocation(shaderPasses[shaderStage], getIndexedUniform(attr, index).c_str()), value);
 }
 
 //Send an integer value to the shader
 void ShaderProgram2::setInt(int shaderStage, const char* attr, int value, int index) {
-	glUseProgram(shaderPasses[shaderStage].shaderID);
-	glUniform1i(glGetUniformLocation(shaderPasses[shaderStage].shaderID, getIndexedUniform(attr, index).c_str()), value);
+	glUseProgram(shaderPasses[shaderStage]);
+	glUniform1i(glGetUniformLocation(shaderPasses[shaderStage], getIndexedUniform(attr, index).c_str()), value);
 }
 
 //Send a 3D vector to the shader
 void ShaderProgram2::setVec3(int shaderStage, const char* attr, glm::vec3 value, int index) {
-	glUseProgram(shaderPasses[shaderStage].shaderID);
-	unsigned int loc = glGetUniformLocation(shaderPasses[shaderStage].shaderID, getIndexedUniform(attr, index).c_str());
+	glUseProgram(shaderPasses[shaderStage]);
+	unsigned int loc = glGetUniformLocation(shaderPasses[shaderStage], getIndexedUniform(attr, index).c_str());
 	glUniform3fv(loc, 1, glm::value_ptr(value));
 }
 
 //Send a 4D vector to the shader
 void ShaderProgram2::setVec4(int shaderStage, const char* attr, glm::vec4 value, int index) {
-	glUseProgram(shaderPasses[shaderStage].shaderID);
-	unsigned int loc = glGetUniformLocation(shaderPasses[shaderStage].shaderID, getIndexedUniform(attr, index).c_str());
+	glUseProgram(shaderPasses[shaderStage]);
+	unsigned int loc = glGetUniformLocation(shaderPasses[shaderStage], getIndexedUniform(attr, index).c_str());
 	glUniform4fv(loc, 1, glm::value_ptr(value));
 }
 
 //Send a 4x4 matrix to the shader
 void ShaderProgram2::setMat4(int shaderStage, const char* attr, glm::mat4 value, int index) {
-	glUseProgram(shaderPasses[shaderStage].shaderID);
-	unsigned int loc = glGetUniformLocation(shaderPasses[shaderStage].shaderID, getIndexedUniform(attr, index).c_str());
+	glUseProgram(shaderPasses[shaderStage]);
+	unsigned int loc = glGetUniformLocation(shaderPasses[shaderStage], getIndexedUniform(attr, index).c_str());
 	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(value));
 }
 
@@ -280,7 +271,7 @@ void ShaderProgram2::useShapeMaterial(unsigned int shaderStage, Drawable& obj) {
 
 	Material mat = obj.getMaterial();
 
-	unsigned int shaderID = shaderPasses[shaderStage].shaderID;
+	unsigned int shaderID = shaderPasses[shaderStage];
 
 	for (int i = 0; i < mat.diffuseMaps.size(); ++i) {
 		if (numDiffuseMaps >= MAX_DIFFUSE_MAPS) { continue; }
@@ -315,7 +306,9 @@ void ShaderProgram2::useShapeMaterial(unsigned int shaderStage, Drawable& obj) {
 
 	setInt(shaderStage, (propertyName + MATERIAL_NUM_DIFFUSE_MAPS_UNIFORM).c_str(), numDiffuseMaps, -1);
 	setInt(shaderStage, (propertyName + MATERIAL_NUM_SPECULAR_MAPS_UNIFORM).c_str(), numSpecularMaps, -1);
-	setFloat(shaderStage, (propertyName + MATERIAL_REFLECTIVITY_UNIFORM).c_str(), mat.highlight, -1);
+	setFloat(shaderStage, (propertyName + MATERIAL_HIGHLIGHT_UNIFORM).c_str(), mat.highlight, -1);
+	setFloat(shaderStage, (propertyName + MATERIAL_REFLECTIVITY_UNIFORM).c_str(), mat.reflectivity, -1);
+	setFloat(shaderStage, (propertyName + MATERIAL_REFRACTIVITY_UNIFORM).c_str(), mat.refractivity, -1);
 	setFloat(shaderStage, (propertyName + MATERIAL_OPACITY_UNIFORM).c_str(), mat.opacity, -1);
 }
 

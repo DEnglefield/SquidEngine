@@ -34,6 +34,9 @@
     <Filter Include="ShaderPipelines">
       <UniqueIdentifier>{14b05349-0fe0-408a-9055-a8ff9ba8f930}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\SkyboxLightingShader">
+      <UniqueIdentifier>{acff62ee-54a2-4548-83b8-2c48e869a847}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SquidEngine.cpp">
@@ -88,6 +91,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BasicLightingShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CubeMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Cube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -161,6 +170,9 @@
     <ClInclude Include="App.h">
       <Filter>App</Filter>
     </ClInclude>
+    <ClInclude Include="CubeMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\BasicShader\BasicShader.vert">
@@ -186,6 +198,18 @@
     </None>
     <None Include="Shaders\QuadShader\QuadShader.vert">
       <Filter>Shaders\QuadShader</Filter>
+    </None>
+    <None Include="Shaders\SkyboxLightingShader\SkyboxShader.frag">
+      <Filter>Shaders\SkyboxLightingShader</Filter>
+    </None>
+    <None Include="Shaders\SkyboxLightingShader\SkyboxShader.vert">
+      <Filter>Shaders\SkyboxLightingShader</Filter>
+    </None>
+    <None Include="Shaders\SkyboxLightingShader\SkyboxLightingShader.frag">
+      <Filter>Shaders\SkyboxLightingShader</Filter>
+    </None>
+    <None Include="Shaders\SkyboxLightingShader\SkyBoxLightingShader.vert">
+      <Filter>Shaders\SkyboxLightingShader</Filter>
     </None>
   </ItemGroup>
 </Project>

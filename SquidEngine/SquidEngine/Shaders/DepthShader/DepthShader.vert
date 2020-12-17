@@ -14,7 +14,7 @@ out vec2 texUV;
 void main()
 {
 	mat4 viewTransform = projMatrix * viewMatrix;
-	fragNormal = normalize(mat3(transpose(inverse(modelMatrix))) * normal); 
+	fragNormal = mat3(transpose(inverse(modelMatrix))) * normal;
 	texUV = tex;
 	fragPos = vec3(modelMatrix * vec4(pos, 1.0));
     gl_Position = viewTransform * vec4(fragPos, 1.0);

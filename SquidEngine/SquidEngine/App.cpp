@@ -11,7 +11,8 @@
 Cube* testCube;
 Model* building;
 Material* testMat;
-BasicLightingShader* lightingShader;
+SkyboxLightingShader* lightingShader;
+SkyBox* skybox;
 DirectionalLight dirLight(-1.0f,-0.25f,0.0f);
 CameraFPS cam(0, 0, 3, 0, 0, -1);
 
@@ -22,6 +23,17 @@ glm::vec3 lightDir2(0, 0, 0);
 void Game::onInit() {
 	testCube = new Cube(0,0,0);
 	building = new Model(-5,0,5,"Resources/Models/Buildings/Residential Buildings 001.obj");
+	testCube->computeNormals();
+	std::vector<std::string> skyboxImages = {
+		"Resources/Textures/skybox/right.jpg",
+		"Resources/Textures/skybox/left.jpg",
+		"Resources/Textures/skybox/top.jpg",
+		"Resources/Textures/skybox/bottom.jpg",
+		"Resources/Textures/skybox/front.jpg",
+		"Resources/Textures/skybox/back.jpg"
+	};
+
+	skybox = new SkyBox(skyboxImages);
 
 	testMat = new Material(
 		"Resources/Textures/star.png", 
@@ -31,7 +43,7 @@ void Game::onInit() {
 	testCube->setMaterial(*testMat);
 
 
-	lightingShader = new BasicLightingShader();
+	lightingShader = new SkyboxLightingShader();
 	lightingShader->onInit();
 	lightingShader->setMainCamera(cam);
 
@@ -39,6 +51,7 @@ void Game::onInit() {
 	lightingShader->addModel(*building);
 
 	lightingShader->addDirectionalLight(dirLight);
+	lightingShader->setSkybox(*skybox);
 
 	ViewPort views[] = { 
 		ViewPort(0,0,0.5f,1.0f),

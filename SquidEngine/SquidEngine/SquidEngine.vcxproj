@@ -159,6 +159,8 @@
     <ClCompile Include="BasicLightingShader.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraFPS.cpp" />
+    <ClCompile Include="Cube.cpp" />
+    <ClCompile Include="CubeMap.cpp" />
     <ClCompile Include="Drawable.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="glad.c" />
@@ -179,6 +181,7 @@
     <ClInclude Include="BasicLightingShader.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraFPS.h" />
+    <ClInclude Include="CubeMap.h" />
     <ClInclude Include="Drawable.h" />
     <ClInclude Include="EngineInstance.h" />
     <ClInclude Include="FrameBuffer.h" />
@@ -208,6 +211,10 @@
     <None Include="Shaders\LightingShader\LightingShader.vert" />
     <None Include="Shaders\QuadShader\QuadShader.frag" />
     <None Include="Shaders\QuadShader\QuadShader.vert" />
+    <None Include="Shaders\SkyboxLightingShader\SkyboxLightingShader.frag" />
+    <None Include="Shaders\SkyboxLightingShader\SkyBoxLightingShader.vert" />
+    <None Include="Shaders\SkyboxLightingShader\SkyboxShader.frag" />
+    <None Include="Shaders\SkyboxLightingShader\SkyboxShader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

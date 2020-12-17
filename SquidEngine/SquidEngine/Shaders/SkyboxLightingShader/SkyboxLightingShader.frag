@@ -12,10 +12,11 @@ struct Material {
     int numDiffuseMaps;
     int numSpecularMaps;
     float highlight;
+    float reflectivity;
+    float refractivity;
     float opacity;
     sampler2D diffuseMaps[MAX_DIFFUSE_MAPS];
     sampler2D specularMaps[MAX_SPECULAR_MAPS];
-    
 }; 
 
 
@@ -61,6 +62,8 @@ uniform DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS];
 
 uniform Material material;
 
+uniform samplerCube skyboxTexture;
+
 in vec3 fragPos;
 in vec3 fragNormal;
 in vec2 texUV;
@@ -76,13 +79,16 @@ vec3 applyPointLight(PointLight light, vec3 viewVec);
 vec3 applySpotLight(SpotLight light, vec3 viewVec);
 vec3 applyDirectionalLight(DirectionalLight light, vec3 viewVec); 
 
+vec3 applySkyboxReflection(vec3 viewVec);
+vec3 applySkyboxRefraction(vec3 viewVec);
 
 void main() {
 
     vec3 lighting = vec3(0,0,0);
 
-    vec3 viewVec = normalize(cameraPos - fragPos);
+    vec3 viewVec = normalize(fragPos - cameraPos);
 
+   
     for (int i=0; i < numPointLights; ++i){
         lighting += applyPointLight(pointLights[i], viewVec);
     }   
@@ -94,9 +100,17 @@ void main() {
     for (int i=0; i < numDirectionalLights; ++i){
         lighting += applyDirectionalLight(directionalLights[i], viewVec);
     }  
+    
+    vec3 skyBoxLighting = vec3(0,0,0);
+    //skyBoxLighting += applySkyboxReflection(viewVec);
+    skyBoxLighting += applySkyboxRefraction(viewVec);
 
+
+
+    //skyBoxLighting = texture(skyboxTexture, vec3(0,0,0)).rgb;
+    //skyBoxLighting += texture(material.diffuseMaps[0],texUV).rgb;
    
-   FragColor = vec4(lighting, material.opacity);
+    FragColor = vec4(lighting, 1) + vec4(skyBoxLighting,1);
 
 } 
 
@@ -169,7 +183,6 @@ vec3 getSpecularLight(vec3 lightVec, vec3 viewVec) {
     vec3 reflectDir = reflect(-lightVec, fragNormal);
     vec3 halfwayDir = normalize(lightVec + viewVec);
     float specValue = max(dot(fragNormal, halfwayDir), 0.0);
-    //float specValue = max(dot(viewVec, reflectDir), 0.0);
     vec3 specularMapping = vec3(1,1,1);;
     for (int i=0; i < material.numSpecularMaps; ++i){ specularMapping *= texture(material.specularMaps[i], texUV).xyz; }
     return specularMapping * pow(specValue, material.highlight);
@@ -179,4 +192,17 @@ vec3 getSpecularLight(vec3 lightVec, vec3 viewVec) {
 float getAttenuation(vec3 lightPos, float linearFallOff, float quadraticFallOff){
     float fragDistance = length(lightPos - fragPos);
     return 1.0 / (1.0f + linearFallOff * fragDistance + quadraticFallOff * pow(fragDistance,2)); 
+}
+
+
+vec3 applySkyboxReflection(vec3 viewVec){
+    vec3 reflectVec = reflect(viewVec, normalize(fragNormal));
+    return texture(skyboxTexture, reflectVec).rgb;// * material.reflectivity;
+}
+
+
+vec3 applySkyboxRefraction(vec3 viewVec){
+    float ratio = 1/1.52;//material.refractivity;
+    vec3 refractVec = refract(viewVec, normalize(fragNormal), ratio);
+    return texture(skyboxTexture, refractVec).rgb;
 }

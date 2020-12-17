@@ -5,7 +5,9 @@
 
 
 Drawable::Drawable(float x, float y, float z)
-	: Object3D(x,y,z) {}
+	: Object3D(x,y,z) {
+	visable = true;
+}
 
 Drawable::Drawable(float x, float y, float z, 
 	std::vector<Vertex> vertices, std::vector<unsigned int> indices)

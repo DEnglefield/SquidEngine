@@ -23,7 +23,9 @@
 #define MATERIAL_DIFFUSE_MAPS_UNIFORM "diffuseMaps"
 #define MATERIAL_NUM_SPECULAR_MAPS_UNIFORM "numSpecularMaps"
 #define MATERIAL_SPECULAR_MAPS_UNIFORM "specularMaps"
+#define MATERIAL_HIGHLIGHT_UNIFORM "highlight"
 #define MATERIAL_REFLECTIVITY_UNIFORM "reflectivity"
+#define MATERIAL_REFRACTIVITY_UNIFORM "refractivity"
 #define MATERIAL_OPACITY_UNIFORM "opacity"
 
 #define LIGHT_AMBIENT_UNIFORM "ambient"
@@ -50,16 +52,11 @@
 #define MAX_DIRECTIONAL_LIGHTS 8
 
 
-struct ShaderPass {
-	unsigned int shaderID;
-	FrameBuffer* writeBuffer;
-};
-
 
 class ShaderProgram2 {
 
 protected:
-	std::vector<ShaderPass> shaderPasses;
+	std::vector<unsigned int> shaderPasses;
 
 	std::list<Drawable*> shaderShapes;
 
@@ -96,7 +93,7 @@ protected:
 	const char* getMaterialPropertyName(const char* property);
 
 	//Create next shader pass
-	void newShaderPass(const char* vertexFile, const char* fragmentFile, FrameBuffer* passBuffer);
+	void newShaderPass(const char* vertexFile, const char* fragmentFile);
 	//Finish creating a new shader pass ignoring future commands
 	int finishShaderPass();
 	//Attach an optional geometry shader
