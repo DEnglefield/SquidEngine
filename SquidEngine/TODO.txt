@@ -1,0 +1,15 @@
+todo:
+
+create shaderPipeline with property setters /
+Add shaderPipeline attribute to material /
+add a list of objects to a material /
+append each material to a list and draw objects for each material /
+assume object is draw upon creation with .setVisable() tag /
+Remove dependency loops
+Move light handling from shaderProgram to light and remove 
+unnessesery uniform setters
+
+
+
+
+

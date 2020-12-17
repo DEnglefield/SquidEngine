@@ -1,4 +1,6 @@
 
+
+#include <iostream>
 #include "Model.h"
 
 
@@ -11,9 +13,9 @@ Model::Model(float x, float y, float z, const char* modelFile) : Object3D(x,y,z)
 
 
 //Free up buffers used by meshes within this model
-void Model::destroyModel() {
+void Model::destroy() {
 	for (int i = 0; i < meshes.size(); ++i) {
-		meshes[i].destroyShape();
+		meshes[i].destroy();
 	}
 }
 
@@ -38,6 +40,10 @@ void Model::loadModel(const char* modelFile) {
 	//Read master assimp node for meshes
 	readAssimpNode(modelScene->mRootNode, modelScene);
 
+	for (int i = 0; i < meshes.size(); ++i) {
+		setPosition(getPosition().x, getPosition().y, getPosition().z);
+	}
+
 	centerModel();
 }
 
@@ -48,7 +54,8 @@ void Model::readAssimpNode(aiNode* treeNode, const aiScene* modelScene) {
 	//Read each mesh in this node and add it to the model
 	for (unsigned int i = 0; i < treeNode->mNumMeshes; i++) {
 		aiMesh* mesh = modelScene->mMeshes[treeNode->mMeshes[i]];
-		meshes.push_back(createMesh(mesh, modelScene));
+		createMesh(mesh, modelScene);
+		
 	}
 
 	//Get child node
@@ -59,9 +66,10 @@ void Model::readAssimpNode(aiNode* treeNode, const aiScene* modelScene) {
 
 
 //Generate a shape from a assimp mesh and add it to this model
-Shape Model::createMesh(aiMesh* mesh, const aiScene* modelScene) {
+void Model::createMesh(aiMesh* mesh, const aiScene* modelScene) {
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
+
 
 	//Get each vertex in the mesh
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
@@ -91,9 +99,8 @@ Shape Model::createMesh(aiMesh* mesh, const aiScene* modelScene) {
 			indices.push_back(face.mIndices[j]);
 	}
 
+
 	Shape newShape(vertices, indices);
-	//If mesh had no normals generate triangle normals
-	if (!mesh->HasNormals()) {newShape.computeNormals(); }
 
 	//Read mesh material properties and add to the shape
 	if (mesh->mMaterialIndex >= 0) {
@@ -133,12 +140,16 @@ Shape Model::createMesh(aiMesh* mesh, const aiScene* modelScene) {
 		//Get specular maps
 		std::vector<Texture> specularTextures = getMeshMaterialTextures(material, aiTextureType_SPECULAR);
 		meshMaterial.specularMaps.insert(meshMaterial.specularMaps.end(), specularTextures.begin(), specularTextures.end());
-	
 		newShape.setMaterial(meshMaterial);
 	}
+	else {
+		std::cout << "Mesh with no material detected" << std::endl;
+	}
 
-	
-	return newShape;
+	//If mesh had no normals generate triangle normals
+	if (!mesh->HasNormals()) { newShape.computeNormals(); }
+
+	meshes.push_back(newShape);
 }
 
 
@@ -195,14 +206,6 @@ void Model::centerModel() {
 
 
 
-//Draw the model and all included shapes/meshes
-void Model::draw(ShaderProgram& shader) {
-	for (int i = 0; i < meshes.size(); ++i) {
-		meshes[i].draw(shader);
-	}
-}
-
-
 //Set the position of the model
 void Model::setPosition(float x, float y, float z) {
 	for (int i = 0; i < meshes.size(); ++i) {
@@ -252,3 +255,16 @@ void Model::translate(float x, float y, float z) {
 
 	Object3D::translate(x,y,z);
 }
+
+
+//Set visability of the model and contained shapes
+void Model::setVisable(bool state) { 
+	for (int i = 0; i < meshes.size(); ++i) {
+		meshes[i].setVisable(state);
+	}
+}
+
+
+
+
+

@@ -155,8 +155,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="App.cpp" />
+    <ClCompile Include="BasicLightingShader.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraFPS.cpp" />
+    <ClCompile Include="Drawable.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="MarchingCubeLookup.h" />
@@ -165,16 +168,19 @@
     <ClCompile Include="Object3D.cpp" />
     <ClCompile Include="Primitives.cpp" />
     <ClCompile Include="ScreenQuad.cpp" />
-    <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="ShaderProgram2.cpp" />
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="SquidEngine.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="App.h" />
+    <ClInclude Include="BasicLightingShader.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraFPS.h" />
-    <ClInclude Include="Colours.h" />
+    <ClInclude Include="Drawable.h" />
+    <ClInclude Include="EngineInstance.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Materials.h" />
@@ -183,7 +189,8 @@
     <ClInclude Include="PerlinNoise.hpp" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="ScreenQuad.h" />
-    <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="Shader.h" />
+    <ClInclude Include="ShaderProgram2.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="SquidEngine.h" />
     <ClInclude Include="Primitives.h" />

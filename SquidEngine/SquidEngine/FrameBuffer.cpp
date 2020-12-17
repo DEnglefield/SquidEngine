@@ -1,9 +1,13 @@
 
+#include <iostream>
 #include "FrameBuffer.h"
+#include "Texture.h"
 
 std::list<ScaledFrameBuffer*> ScaledFrameBuffer::scaledFrameBuffers;
 
-ScaledFrameBuffer::ScaledFrameBuffer(ViewPort& view) : FrameBuffer(view.width, view.height) {
+ScaledFrameBuffer::ScaledFrameBuffer() : StaticFrameBuffer() {};
+
+ScaledFrameBuffer::ScaledFrameBuffer(ViewPort& view) : StaticFrameBuffer(view.width, view.height) {
 	scaledFrameBuffers.push_back(this);
 	percentWidth = view.windowWidthPercent;
 	percentHeight = view.windowHeightPercent;
@@ -11,7 +15,7 @@ ScaledFrameBuffer::ScaledFrameBuffer(ViewPort& view) : FrameBuffer(view.width, v
 
 
 ScaledFrameBuffer::ScaledFrameBuffer(float widthPercent, float heightPercent) 
-	: FrameBuffer(widthPercent * 800, heightPercent * 600) {
+	: StaticFrameBuffer(widthPercent * 800, heightPercent * 600) {
 	scaledFrameBuffers.push_back(this);
 	percentWidth = widthPercent;
 	percentHeight = heightPercent;
@@ -20,29 +24,32 @@ ScaledFrameBuffer::ScaledFrameBuffer(float widthPercent, float heightPercent)
 
 void ScaledFrameBuffer::destroy() {
 	scaledFrameBuffers.remove(this);
-	FrameBuffer::destroy();
+	StaticFrameBuffer::destroy();
 }
 
 
 void ScaledFrameBuffer::resizeBuffer(int imgWidth, int imgHeight) {
-	FrameBuffer::resizeBuffer(percentWidth * imgWidth, percentHeight * imgHeight);
+	StaticFrameBuffer::resizeBuffer(percentWidth * imgWidth, percentHeight * imgHeight);
 }
 
 
-FrameBuffer::FrameBuffer(int imgWidth, int imgHeight) {
+StaticFrameBuffer::StaticFrameBuffer() : FrameBuffer() {}
+
+StaticFrameBuffer::StaticFrameBuffer(int imgWidth, int imgHeight) : FrameBuffer() {
 	clearCol = glm::vec3(0.43f, 0.71f, 0.86f);
 	glGenFramebuffers(1, &ID);
 	initBuffer(imgWidth, imgHeight, clearCol);
 }
 
 
-FrameBuffer::FrameBuffer(int imgWidth, int imgHeight, glm::vec3& clearColour) {
+StaticFrameBuffer::StaticFrameBuffer(int imgWidth, int imgHeight, glm::vec3& clearColour)
+	: FrameBuffer() {
 	glGenFramebuffers(1, &ID);
 	initBuffer(imgWidth, imgHeight, clearColour);
 }
 
 
-void FrameBuffer::initBuffer(int imgWidth, int imgHeight, glm::vec3& clearColour) {
+void StaticFrameBuffer::initBuffer(int imgWidth, int imgHeight, glm::vec3& clearColour) {
 	setClearColour(clearColour);
 
 	width = imgWidth;
@@ -77,7 +84,7 @@ void FrameBuffer::initBuffer(int imgWidth, int imgHeight, glm::vec3& clearColour
 }
 
 
-void FrameBuffer::resizeBuffer(int imgWidth, int imgHeight) {
+void StaticFrameBuffer::resizeBuffer(int imgWidth, int imgHeight) {
 	glDeleteTextures(1, &colourBufferID);
 	glDeleteRenderbuffers(1, &renderBufferID);
 	initBuffer(imgWidth, imgHeight, clearCol);
@@ -85,17 +92,19 @@ void FrameBuffer::resizeBuffer(int imgWidth, int imgHeight) {
 }
 
 
-void FrameBuffer::destroy() { 
+void StaticFrameBuffer::destroy() {
 	glDeleteTextures(1, &colourBufferID);
 	glDeleteRenderbuffers(1, &renderBufferID);
 	glDeleteFramebuffers(1, &ID);
-
+	FrameBuffer::destroy();
 }
 
 
-void FrameBuffer::setClearColour(glm::vec3 clearColour) {clearCol = clearColour;}
 
-unsigned int FrameBuffer::getTextureOutput() { return colourBufferID; }
+
+unsigned int StaticFrameBuffer::getTextureOutput() { return colourBufferID; }
+
+void FrameBuffer::setClearColour(glm::vec3 clearColour) { clearCol = clearColour; }
 
 void FrameBuffer::use() {
 	glBindFramebuffer(GL_FRAMEBUFFER, ID);
@@ -115,41 +124,17 @@ void FrameBuffer::use(struct ViewPort& viewport) {
 }
 
 
-int FrameBuffer::getWidth() { return width; }
-int FrameBuffer::getHeight() { return height; };
 
 
-DrawFrameBuffer::DrawFrameBuffer() { setClearColour(glm::vec3(0.43f, 0.71f, 0.86f)); }
-
-void DrawFrameBuffer::setClearColour(glm::vec3 clearColour) { clearCol = clearColour; }
-
-void DrawFrameBuffer::use() {
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	int winWidth, winHeight;
-	glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
-	glViewport(0, 0, winWidth, winHeight);
-	glClearColor(clearCol.x, clearCol.y, clearCol.z, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+DrawFrameBuffer::DrawFrameBuffer() {
+	setClearColour(glm::vec3(0.43f, 0.71f, 0.86f));
+	ID = 0;
 }
-
-
-void DrawFrameBuffer::use(struct ViewPort& viewport) {
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	viewport.use();
-	glClearColor(clearCol.x, clearCol.y, clearCol.z, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-}
-
-
-int DrawFrameBuffer::getWidth() { return 0; }
-int DrawFrameBuffer::getHeight() { return 0; };
 
 void resizeFrameBuffers(int width, int height) {
 
-	std::list<ScaledFrameBuffer>::iterator it;
-
-	for (auto const& buffer : ScaledFrameBuffer::scaledFrameBuffers) {
-		buffer->resizeBuffer(width, height);
+	for (auto const& scaledBuffer : ScaledFrameBuffer::scaledFrameBuffers) {
+		scaledBuffer->resizeBuffer(width, height);
 	}
 
 }

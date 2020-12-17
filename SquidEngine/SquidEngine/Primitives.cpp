@@ -1,4 +1,5 @@
 
+#include <glad\glad.h>
 #include "Primitives.h"
 
 //Create vertex using a vector for each attribute

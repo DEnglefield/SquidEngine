@@ -1,5 +1,6 @@
 
 #include "Camera.h"
+#include <iostream>
 
 
 //Create a camera using eye and look target vector
@@ -22,13 +23,6 @@ Camera::Camera(glm::vec3 eye, glm::vec3 look) {
 	lookAt(look.x, look.y, look.z);
 }
 
-
-//Set this camera as the active camera
-void Camera::use(ShaderProgram& shader) {
-	shader.setCameraPosition(eyePos);
-	shader.setMat4(VIEW_MATRIX_UNIFORM, getViewMatrix());
-	shader.setMat4(PROJECTION_MATRIX_UNIFORM, getProjectionMatrix());
-}
 
 
 //Set the type of projection being CAMERA_ORTHOGRAPHIC or CAMERA_PERSPECTIVE

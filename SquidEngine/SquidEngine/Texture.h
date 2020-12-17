@@ -1,6 +1,8 @@
 #pragma once
 
-#include "SquidEngine.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <string>
 
 #define TEXTURE_UNITS 32

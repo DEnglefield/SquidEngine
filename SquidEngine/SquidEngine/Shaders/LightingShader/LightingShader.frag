@@ -50,13 +50,13 @@ struct DirectionalLight {
 }; 
 
 
-uniform bool enabledPointLights[MAX_POINT_LIGHTS];
+uniform int numPointLights;
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
 
-uniform bool enabledSpotLights[MAX_SPOT_LIGHTS];
+uniform int numSpotLights;
 uniform SpotLight spotLights[MAX_SPOT_LIGHTS];
 
-uniform bool enabledDirectionalLights[MAX_DIRECTIONAL_LIGHTS];
+uniform int numDirectionalLights;
 uniform DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS];
 
 uniform Material material;
@@ -83,28 +83,20 @@ void main() {
 
     vec3 viewVec = normalize(cameraPos - fragPos);
 
-    for (int i=0; i < MAX_POINT_LIGHTS; ++i){
-        if (enabledPointLights[i]){
-            lighting += applyPointLight(pointLights[i], viewVec);
-        }
+    for (int i=0; i < numPointLights; ++i){
+        lighting += applyPointLight(pointLights[i], viewVec);
     }   
 
-    for (int i=0; i < MAX_SPOT_LIGHTS; ++i){
-        if (enabledSpotLights[i]){
-            lighting += applySpotLight(spotLights[i], viewVec);
-        }
+    for (int i=0; i < numSpotLights; ++i){
+        lighting += applySpotLight(spotLights[i], viewVec);
     }   
 
-    for (int i=0; i < MAX_DIRECTIONAL_LIGHTS; ++i){
-        if (enabledDirectionalLights[i]){
-            lighting += applyDirectionalLight(directionalLights[i], viewVec);
-        }
+    for (int i=0; i < numDirectionalLights; ++i){
+        lighting += applyDirectionalLight(directionalLights[i], viewVec);
     }  
 
    
    FragColor = vec4(lighting, material.opacity);
-
-   
 
 } 
 

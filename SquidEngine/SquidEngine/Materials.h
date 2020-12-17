@@ -1,28 +1,39 @@
 #pragma once
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
-#include "Texture.h"
 #include <vector>
+#include <list>
+#include "Texture.h"
 
 
 
 //Definition of material properties to be attached to an object to modify lighting
-struct Material {
+class Material {
+public:
+
+	//std::list<Drawable*> boundShapes;
+
 	std::vector<Texture> diffuseMaps;
 	std::vector<Texture> specularMaps;
 	float highlight;
 	float opacity;
+
 	Material();
 	Material(glm::vec3 matDiffuse, glm::vec3 matSpecular, float matHighlight);
-	Material(Texture& diffuseMap, Texture& specularMap, float matHighlight);
-	void addDiffuseMap(Texture& texture);
-	void addSpecularMap(Texture& texture);
+	Material(Texture diffuseMap, Texture specularMap, float matHighlight);
+	inline void addDiffuseMap(Texture texture) { diffuseMaps.push_back(texture); };
+	inline void addSpecularMap(Texture texture) { specularMaps.push_back(texture); };
+
+	//inline void addShape(Drawable& shape) { boundShapes.push_back(&shape); };
+	//inline void removeShape(Drawable& shape) { boundShapes.push_back(&shape); };
+	void destroy();
+
 };
 
 
-
+/*
 //List of pre-made materials
 struct Materials {
 	
@@ -64,3 +75,4 @@ struct Materials {
 
 };
 
+*/

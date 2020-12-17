@@ -1,9 +1,9 @@
 #pragma once
 
-#include "SquidEngine.h"
-#include "Primitives.h"
-#include "ShaderProgram.h"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 //Abstract class implementing transformation controls for objects in the scene
 class Object3D {
@@ -30,5 +30,6 @@ public:
 	//Move the object along the given axis
 	void translate(float x, float y, float z);
 
-
+	//Return the shape's model matrix
+	inline glm::mat4 getModelMatrix() { return modelMatrix; }
 };

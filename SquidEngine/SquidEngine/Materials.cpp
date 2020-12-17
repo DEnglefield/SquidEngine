@@ -1,7 +1,6 @@
 
 #include "Materials.h"
 
-
 Material::Material() { }
 
 
@@ -15,7 +14,7 @@ Material::Material(glm::vec3 matDiffuse, glm::vec3 matSpecular, float matHighlig
 };
 
 
-Material::Material(Texture& diffuseMap, Texture& specularMap, float matHighlight) {
+Material::Material(Texture diffuseMap, Texture specularMap, float matHighlight) {
 	addDiffuseMap(diffuseMap);
 	addSpecularMap(specularMap);
 	highlight = matHighlight;
@@ -23,10 +22,28 @@ Material::Material(Texture& diffuseMap, Texture& specularMap, float matHighlight
 };
 
 
-void Material::addDiffuseMap(Texture& texture) { diffuseMaps.push_back(texture); }
-void Material::addSpecularMap(Texture& texture) { specularMaps.push_back(texture); }
 
 
+
+
+void Material::destroy() {
+
+	for (int i = 0; i < diffuseMaps.size(); ++i) {
+		diffuseMaps[i].destroy();
+	}
+
+	for (int i = 0; i < specularMaps.size(); ++i) {
+		specularMaps[i].destroy();
+	}
+	
+}
+
+
+
+
+
+
+/*
 Materials::Materials() {
 	chrome = Material(
 		glm::vec3(0.4f, 0.4f, 0.4f),
@@ -156,3 +173,4 @@ Materials::Materials() {
 		glm::vec3(0.7f, 0.568627f, 0.13f),
 		glm::vec3(0.992157f, 0.86f, 0.7f), 30);
 }
+*/

@@ -1,7 +1,7 @@
 
 #include "Window.h"
+#include <iostream>
 
-using namespace std;
 
 //Flag to track state of GLFW
 bool glfwInitialized = false;
@@ -37,7 +37,7 @@ Window::~Window() {
 //Create and show the window
 void Window::show() {
 	form = glfwCreateWindow(windowWidth, windowHeight, windowName, NULL, NULL);
-	if (form == NULL) { cout << "Failed to create GLFW window" << endl; }
+	if (form == NULL) { std::cout << "Failed to create GLFW window" << std::endl; }
 }
 
 //Get the state of the given key

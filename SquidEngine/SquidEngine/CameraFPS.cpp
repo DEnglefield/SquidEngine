@@ -1,5 +1,6 @@
 
 #include "CameraFPS.h"
+#include <iostream>
 
 
 //Create a camera using eye and look target vector
@@ -33,6 +34,13 @@ void CameraFPS::moveUp() {
 //Move the camera down
 void CameraFPS::moveDown() {
 	eyePos -= glm::normalize(glm::cross(glm::cross(lookVec, upVec), lookVec)) * adjustedSpeed;
+}
+
+
+//Set camera base move speed
+void CameraFPS::setMoveSpeed(float newSpeed) {
+	moveSpeed = newSpeed;
+	if (newSpeed < 0) { moveSpeed = 0; };
 }
 
 
@@ -76,6 +84,7 @@ void CameraFPS::updateCursorPos(double xPos, double yPos, bool doRotation) {
 		newTarget.y = sin(glm::radians(yaw));
 		newTarget.z = cos(glm::radians(pitch)+ glm::radians(180.0f)) * cos(glm::radians(yaw));
 		lookVec = glm::normalize(newTarget);
+	
 	}
 
 	lastCursorPos = glm::vec2(xPos, yPos);

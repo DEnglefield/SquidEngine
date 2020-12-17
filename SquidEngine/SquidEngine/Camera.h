@@ -1,10 +1,9 @@
 #pragma once
 
-#include "SquidEngine.h"
-#include "ShaderProgram.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include "Window.h"
-
-
 
 #define CAMERA_PERSPECTIVE 1
 #define CAMERA_ORTHOGRAPHIC 2
@@ -36,8 +35,6 @@ public:
 		float lookX, float lookY, float lookZ);
 	Camera(glm::vec3 eye, glm::vec3 look);
 
-	//Set this camera as the active camera
-	void use(ShaderProgram& shader);
 
 	//Set the type of projection being CAMERA_ORTHOGRAPHIC or CAMERA_PERSPECTIVE
 	void setPerspective(int viewType);

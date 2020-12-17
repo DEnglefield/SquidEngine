@@ -1,6 +1,5 @@
 #pragma once
 
-#include "SquidEngine.h"
 #include "Camera.h"
 
 //A camera capable of moving around the scene
@@ -17,14 +16,21 @@ protected:
 
 	//Sensitivity of mouse cursor movement
 	float sensitivity = 0.09;
-public:
+
 	//Distance per second
-	float moveSpeed = 2.5f; 
+	float moveSpeed = 2.5f;
+public:
+	 
 
 	//Create a camera using eye and look target vector
 	CameraFPS(float eyeX, float eyeY, float eyeZ,
 		float lookX, float lookY, float lookZ);
 	CameraFPS(glm::vec3 eye, glm::vec3 look);
+
+	//Set camera base move speed
+	void setMoveSpeed(float newSpeed);
+	//Get the unmodified move speed to the camera
+	inline float getMoveSpeed() { return moveSpeed; };
 
 	//Move the camera forward
 	void moveForward();

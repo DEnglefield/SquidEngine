@@ -1,7 +1,10 @@
 #pragma once
 
-#include "SquidEngine.h"
-#include <iostream>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <ostream>
+
 //Vertex used to represent points in 3D space including
 //Position, normal and texture coordinates
 struct Vertex {

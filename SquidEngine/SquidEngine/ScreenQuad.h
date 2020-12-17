@@ -1,7 +1,7 @@
 #pragma once
-#include "Texture.h"
-#include "Primitives.h"
+
 #include <vector>
+#include "Primitives.h"
 
 //A quad to be presented on the screen
 class ScreenQuad {
@@ -17,6 +17,7 @@ private:
 	//Create buffers for the quad
 	void createBuffer();
 public:
+	ScreenQuad();
 	//Create a screen quad using a position and size between 0 and 1
 	ScreenQuad(float xPos, float yPos, float width, float height);
 	//Set a texture to draw on the quad

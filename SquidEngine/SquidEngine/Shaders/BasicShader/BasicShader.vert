@@ -4,7 +4,6 @@ layout (location = 1) in vec3 normal;
 layout (location = 2) in vec2 tex;
 
 uniform mat4 modelMatrix;
-uniform mat4 worldMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projMatrix;
 
@@ -18,5 +17,5 @@ void main()
 	fragNormal = normalize(mat3(transpose(inverse(modelMatrix))) * normal); 
 	texUV = tex;
 	fragPos = vec3(modelMatrix * vec4(pos, 1.0));
-    gl_Position = viewTransform * worldMatrix * vec4(fragPos, 1.0);
+    gl_Position = viewTransform * vec4(fragPos, 1.0);
 }

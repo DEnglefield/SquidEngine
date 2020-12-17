@@ -1,25 +1,19 @@
 #pragma once
 
-#include "SquidEngine.h"
-#include "ShaderProgram.h"
-#include "Texture.h"
-#include "Shape.h"
-#include "Object3D.h"
-#include "Materials.h"
-#include <vector>
-#include <filesystem>
-#include <string>
-
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <vector>
+#include "Shape.h"
+
 
 //Representation of an imported model file including any contained meshes
 class Model : public Object3D {
 private:
 
-	//List of shape objects representing model meshes
-	std::vector<Shape> meshes;
 	
 	//List of textures included thoughout all meshes
 	std::vector<Texture> meshTextures;
@@ -43,19 +37,19 @@ private:
 	std::vector<Texture> getMeshMaterialTextures(aiMaterial* mat, aiTextureType type);
 
 	//Generate a shape from a assimp mesh
-	Shape createMesh(aiMesh* mesh, const aiScene* modelScene);
+	void createMesh(aiMesh* mesh, const aiScene* modelScene);
 
 
 public:
+
+	//List of shape objects representing model meshes
+	std::vector<Shape> meshes;
 
 	//Create a model with an initial position and model file
 	Model(float x, float y, float z, const char* modelFile);
 
 	//Free up buffers used by meshes within this model
-	void destroyModel();
-
-	//Draw the model and all included shapes/meshes
-	void draw(ShaderProgram& shader);
+	void destroy();
 
 	//Set the position of the model
 	void setPosition(float x, float y, float z);
@@ -70,4 +64,7 @@ public:
 	void rotate(float angle, float x, float y, float z);
 	//Move the model along the given axis
 	void translate(float x, float y, float z);
+
+	//Set visability of the model and contained shapes
+	void setVisable(bool state);
 };
