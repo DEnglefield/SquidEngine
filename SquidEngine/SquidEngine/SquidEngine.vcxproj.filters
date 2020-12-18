@@ -211,5 +211,11 @@
     <None Include="Shaders\SkyboxLightingShader\SkyBoxLightingShader.vert">
       <Filter>Shaders\SkyboxLightingShader</Filter>
     </None>
+    <None Include="Shaders\SkyboxLightingShader\SkyboxReflectionShader.vert">
+      <Filter>Shaders\SkyboxLightingShader</Filter>
+    </None>
+    <None Include="Shaders\SkyboxLightingShader\SkyboxReflectionShader.frag">
+      <Filter>Shaders\SkyboxLightingShader</Filter>
+    </None>
   </ItemGroup>
 </Project>

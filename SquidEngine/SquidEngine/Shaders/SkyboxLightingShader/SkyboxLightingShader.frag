@@ -62,7 +62,7 @@ uniform DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS];
 
 uniform Material material;
 
-uniform samplerCube skyboxTexture;
+uniform sampler2D skyboxReflections;
 
 in vec3 fragPos;
 in vec3 fragNormal;
@@ -79,15 +79,12 @@ vec3 applyPointLight(PointLight light, vec3 viewVec);
 vec3 applySpotLight(SpotLight light, vec3 viewVec);
 vec3 applyDirectionalLight(DirectionalLight light, vec3 viewVec); 
 
-vec3 applySkyboxReflection(vec3 viewVec);
-vec3 applySkyboxRefraction(vec3 viewVec);
 
 void main() {
 
     vec3 lighting = vec3(0,0,0);
 
     vec3 viewVec = normalize(fragPos - cameraPos);
-
    
     for (int i=0; i < numPointLights; ++i){
         lighting += applyPointLight(pointLights[i], viewVec);
@@ -101,17 +98,10 @@ void main() {
         lighting += applyDirectionalLight(directionalLights[i], viewVec);
     }  
     
-    vec3 skyBoxLighting = vec3(0,0,0);
-    //skyBoxLighting += applySkyboxReflection(viewVec);
-    skyBoxLighting += applySkyboxRefraction(viewVec);
+    //lighting += texture(skyboxReflections, );
 
-
-
-    //skyBoxLighting = texture(skyboxTexture, vec3(0,0,0)).rgb;
-    //skyBoxLighting += texture(material.diffuseMaps[0],texUV).rgb;
-   
-    FragColor = vec4(lighting, 1) + vec4(skyBoxLighting,1);
-
+    FragColor = vec4(lighting, material.opacity); 
+    FragColor = vec4(gl_FragCoord.xyz, 1); 
 } 
 
 
@@ -195,14 +185,3 @@ float getAttenuation(vec3 lightPos, float linearFallOff, float quadraticFallOff)
 }
 
 
-vec3 applySkyboxReflection(vec3 viewVec){
-    vec3 reflectVec = reflect(viewVec, normalize(fragNormal));
-    return texture(skyboxTexture, reflectVec).rgb;// * material.reflectivity;
-}
-
-
-vec3 applySkyboxRefraction(vec3 viewVec){
-    float ratio = 1/1.52;//material.refractivity;
-    vec3 refractVec = refract(viewVec, normalize(fragNormal), ratio);
-    return texture(skyboxTexture, refractVec).rgb;
-}

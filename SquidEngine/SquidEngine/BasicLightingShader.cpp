@@ -20,30 +20,43 @@ void BasicLightingShader::onNextPass(int shaderStage, unsigned int shaderID) {
 
 
 void SkyboxLightingShader::onInit() {
+	
+
+	newShaderPass(
+		"Shaders/SkyboxLightingShader/SkyboxReflectionShader.vert",
+		"Shaders/SkyboxLightingShader/SkyboxReflectionShader.frag");
+
+	finishShaderPass();
+
+	newShaderPass(
+		"Shaders/SkyboxLightingShader/SkyboxShader.vert",
+		"Shaders/SkyboxLightingShader/SkyboxShader.frag");
+
+	finishShaderPass();
+
 	newShaderPass(
 		"Shaders/SkyboxLightingShader/SkyboxLightingShader.vert",
 		"Shaders/SkyboxLightingShader/SkyboxLightingShader.frag");
 
 	finishShaderPass();
 	
-	newShaderPass(
-		"Shaders/SkyboxLightingShader/SkyboxShader.vert",
-		"Shaders/SkyboxLightingShader/SkyboxShader.frag");
-
-	finishShaderPass();
+	skyboxLightingBuffer = ScaledFrameBuffer(1,1);
 	
 }
 
 
 
 void SkyboxLightingShader::onNextPass(int shaderStage, unsigned int shaderID) {
-	glActiveTexture(GL_TEXTURE2); // Safe number to avoid overwriting material textures
-	glBindTexture(GL_TEXTURE_CUBE_MAP, sceneSkyBox->getTextureID());
+	
 	useCamera(shaderStage, mainCamera);
 
+	
 	if (shaderStage == 0) {
-		useLighting(shaderStage);
+		glActiveTexture(GL_TEXTURE31); // Safe number to avoid overwriting material textures
+		glBindTexture(GL_TEXTURE_CUBE_MAP, sceneSkyBox->getTextureID());
+		skyboxLightingBuffer.use();
 		drawShapes(shaderStage);
+		targetBuffer->use();
 	}
 
 	if (shaderStage == 1) {
@@ -54,7 +67,16 @@ void SkyboxLightingShader::onNextPass(int shaderStage, unsigned int shaderID) {
 		sceneSkyBox->draw();
 		glDepthFunc(GL_LESS);
 	}
-	
+
+
+
+	if (shaderStage == 2) {
+		glActiveTexture(GL_TEXTURE31); // Safe number to avoid overwriting material textures
+		glBindTexture(GL_TEXTURE_2D, skyboxLightingBuffer.getTextureOutput());
+		useLighting(shaderStage);
+		drawShapes(shaderStage);
+	}
+
 }
 
 

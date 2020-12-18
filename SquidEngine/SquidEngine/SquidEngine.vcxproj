@@ -213,6 +213,8 @@
     <None Include="Shaders\QuadShader\QuadShader.vert" />
     <None Include="Shaders\SkyboxLightingShader\SkyboxLightingShader.frag" />
     <None Include="Shaders\SkyboxLightingShader\SkyBoxLightingShader.vert" />
+    <None Include="Shaders\SkyboxLightingShader\SkyboxReflectionShader.frag" />
+    <None Include="Shaders\SkyboxLightingShader\SkyboxReflectionShader.vert" />
     <None Include="Shaders\SkyboxLightingShader\SkyboxShader.frag" />
     <None Include="Shaders\SkyboxLightingShader\SkyboxShader.vert" />
   </ItemGroup>
