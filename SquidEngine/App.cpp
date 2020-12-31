@@ -10,6 +10,7 @@
 
 Cube* testCube;
 Model* building;
+Model* bauble;
 Material* testMat;
 SkyboxLightingShader* lightingShader;
 SkyBox* skybox;
@@ -23,7 +24,9 @@ glm::vec3 lightDir2(0, 0, 0);
 void Game::onInit() {
 	testCube = new Cube(0,0,0);
 	building = new Model(-5,0,5,"Resources/Models/Buildings/Residential Buildings 001.obj");
-	testCube->computeNormals();
+	//bauble = new Model(0, 5, 0,"Resources/Models/BigModels/Bauble/Christmastree_Ball.obj");
+
+	
 	std::vector<std::string> skyboxImages = {
 		"Resources/Textures/skybox/right.jpg",
 		"Resources/Textures/skybox/left.jpg",
@@ -49,6 +52,7 @@ void Game::onInit() {
 
 	lightingShader->addShape(*testCube);
 	lightingShader->addModel(*building);
+	//lightingShader->addModel(*bauble);
 
 	lightingShader->addDirectionalLight(dirLight);
 	lightingShader->setSkybox(*skybox);

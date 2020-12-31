@@ -10,8 +10,9 @@ Material::Material(glm::vec3 matDiffuse, glm::vec3 matSpecular, float matHighlig
 	addDiffuseMap(diffuseTexture);
 	addSpecularMap(specularTexture);
 	highlight = matHighlight;
-	reflectivity = 0;
-	refractivity = 1;
+	reflectivity = 0.5f;
+	refractivity = 0;
+	refractiveIndex = 1.5f;
 	opacity = 1;
 };
 
@@ -22,6 +23,7 @@ Material::Material(Texture diffuseMap, Texture specularMap, float matHighlight) 
 	highlight = matHighlight;
 	reflectivity = 0;
 	refractivity = 1;
+	refractiveIndex = 1;
 	opacity = 1;
 };
 

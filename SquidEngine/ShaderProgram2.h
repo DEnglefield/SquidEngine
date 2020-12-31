@@ -26,6 +26,7 @@
 #define MATERIAL_HIGHLIGHT_UNIFORM "highlight"
 #define MATERIAL_REFLECTIVITY_UNIFORM "reflectivity"
 #define MATERIAL_REFRACTIVITY_UNIFORM "refractivity"
+#define MATERIAL_REFRACTIVE_INDEX_UNIFORM "refractiveIndex"
 #define MATERIAL_OPACITY_UNIFORM "opacity"
 
 #define LIGHT_AMBIENT_UNIFORM "ambient"

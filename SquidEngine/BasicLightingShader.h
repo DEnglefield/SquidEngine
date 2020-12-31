@@ -13,9 +13,10 @@ public:
 class SkyboxLightingShader : public ShaderProgram2 {
 private:
 	SkyBox* sceneSkyBox;
-	ScaledFrameBuffer skyboxLightingBuffer;
+	ScaledFrameBuffer* skyboxLightingBuffer;
 	void onNextPass(int shaderStage, unsigned int shaderID) override;
 public:
 	void onInit() override;
+	void destroy();
 	inline void setSkybox(SkyBox& skybox) { sceneSkyBox = &skybox; };
 };

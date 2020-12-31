@@ -15,7 +15,6 @@
 
 
 bool windowFocused = false;
-CameraFPS defaultCamera(0, 0, 3, 0, 0, -1);
 Window mainWindow(800, 600, "SquidEngine");
 EngineInstance* currentInstance;
 
@@ -25,6 +24,7 @@ std::vector<ViewPort> viewPorts = { ViewPort(0.0f, 0.0f, 1.0f, 1.0f) };
 
 
 void mainResizeEvent(GLFWwindow* window, int width, int height) {
+	std::cout << "Resize event: " << width << ", " << height << std::endl;
 	resizeFrameBuffers(width, height);
 	currentInstance->onWindowResize(width, height);
 }
@@ -33,24 +33,10 @@ void mainResizeEvent(GLFWwindow* window, int width, int height) {
 
 void cursorCallBack(GLFWwindow* window, double xpos, double ypos) {
 	currentInstance->onMouseMove(xpos, ypos);
-	if (windowFocused) {
-		defaultCamera.updateCursorPos(xpos, ypos, true);
-	}
-	else {
-		defaultCamera.updateCursorPos(xpos, ypos, false);
-	}
-	
-	
 }
 
 void scrollCallBack(GLFWwindow* window, double scrollX, double scrollY) {
 
-	if (defaultCamera.getMoveSpeed() + scrollY < 0) {
-		defaultCamera.setMoveSpeed(0);
-	}
-	else {
-		defaultCamera.setMoveSpeed(defaultCamera.getMoveSpeed() + scrollY) ;
-	}
 	currentInstance->onMouseScroll(scrollX, scrollY);
 }
 
@@ -143,7 +129,6 @@ void runEngine(EngineInstance& instance) {
 		glfwPollEvents();
 
 		frameTime = glfwGetTime() - frameStart;
-		defaultCamera.updateFPS(1 / frameTime);
 		frameStart = glfwGetTime();
 	}	
 

@@ -18,7 +18,7 @@ public:
 	std::vector<Texture> diffuseMaps;
 	std::vector<Texture> specularMaps;
 	float highlight;
-	float reflectivity, refractivity;
+	float reflectivity, refractivity, refractiveIndex;
 	float opacity;
 
 	Material();

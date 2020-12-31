@@ -98,10 +98,11 @@ void main() {
         lighting += applyDirectionalLight(directionalLights[i], viewVec);
     }  
     
-    //lighting += texture(skyboxReflections, );
+    //vec2 texcoord = ((gl_FragCoord.xy - adjust.xy) / scale.xy) / textureSize(sampler0); 
+    lighting += texelFetch( skyboxReflections, ivec2(gl_FragCoord.xy), 0 ).rgb;
 
     FragColor = vec4(lighting, material.opacity); 
-    FragColor = vec4(gl_FragCoord.xyz, 1); 
+    //FragColor = vec4(screenPos.xy,0, 1); 
 } 
 
 

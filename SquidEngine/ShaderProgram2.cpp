@@ -309,13 +309,13 @@ void ShaderProgram2::useShapeMaterial(unsigned int shaderStage, Drawable& obj) {
 	setFloat(shaderStage, (propertyName + MATERIAL_HIGHLIGHT_UNIFORM).c_str(), mat.highlight, -1);
 	setFloat(shaderStage, (propertyName + MATERIAL_REFLECTIVITY_UNIFORM).c_str(), mat.reflectivity, -1);
 	setFloat(shaderStage, (propertyName + MATERIAL_REFRACTIVITY_UNIFORM).c_str(), mat.refractivity, -1);
+	setFloat(shaderStage, (propertyName + MATERIAL_REFRACTIVE_INDEX_UNIFORM).c_str(), mat.refractiveIndex, -1);
 	setFloat(shaderStage, (propertyName + MATERIAL_OPACITY_UNIFORM).c_str(), mat.opacity, -1);
 }
 
 
 void ShaderProgram2::addModel(Model& model){
 	for (int i = 0; i < model.meshes.size(); ++i) {
-		std::cout << "Model shape: " << model.meshes[i].shapeIndices.size() / 3 << std::endl;
 		addShape(model.meshes[i]);
 	}
 }
@@ -323,7 +323,6 @@ void ShaderProgram2::addModel(Model& model){
 
 void ShaderProgram2::removeModel(Model& model) {
 	for (int i = 0; i < model.meshes.size(); ++i) {
-		std::cout << "Model shape: " << model.meshes[i].shapeIndices.size() / 3 << std::endl;
 		removeShape(model.meshes[i]);
 	}
 }

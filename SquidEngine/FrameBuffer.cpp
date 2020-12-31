@@ -29,7 +29,7 @@ void ScaledFrameBuffer::destroy() {
 
 
 void ScaledFrameBuffer::resizeBuffer(int imgWidth, int imgHeight) {
-	StaticFrameBuffer::resizeBuffer(percentWidth * imgWidth, percentHeight * imgHeight);
+	StaticFrameBuffer::resizeBuffer(1 * imgWidth, 1 * imgHeight);
 }
 
 
@@ -51,10 +51,8 @@ StaticFrameBuffer::StaticFrameBuffer(int imgWidth, int imgHeight, glm::vec3& cle
 
 void StaticFrameBuffer::initBuffer(int imgWidth, int imgHeight, glm::vec3& clearColour) {
 	setClearColour(clearColour);
-
 	width = imgWidth;
 	height = imgHeight;
-
 	glBindFramebuffer(GL_FRAMEBUFFER, ID);
 
 	Texture colourBuffer(width, height);
@@ -132,7 +130,7 @@ DrawFrameBuffer::DrawFrameBuffer() {
 }
 
 void resizeFrameBuffers(int width, int height) {
-
+	std::cout << "Framebuffer resize all: " << width << ", " << height << std::endl;
 	for (auto const& scaledBuffer : ScaledFrameBuffer::scaledFrameBuffers) {
 		scaledBuffer->resizeBuffer(width, height);
 	}

@@ -92,6 +92,8 @@ void Model::createMesh(aiMesh* mesh, const aiScene* modelScene) {
 		vertices.push_back(Vertex(pos, normal, texUV));
 	}
 
+	std::cout << "Read all vertices" << std::endl;
+
 	//Add face descriptions to mesh
 	for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
 		aiFace face = mesh->mFaces[i];

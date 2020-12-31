@@ -14,6 +14,7 @@ struct Material {
     float highlight;
     float reflectivity;
     float refractivity;
+    float refractiveIndex;
     float opacity;
     sampler2D diffuseMaps[MAX_DIFFUSE_MAPS];
     sampler2D specularMaps[MAX_SPECULAR_MAPS];
@@ -39,22 +40,22 @@ void main() {
 
     vec3 viewVec = normalize(fragPos - cameraPos);
 
-    //skyBoxLighting += applySkyboxReflection(viewVec);
+    skyBoxLighting += applySkyboxReflection(viewVec);
     skyBoxLighting += applySkyboxRefraction(viewVec);
 
     FragColor = vec4(skyBoxLighting,material.opacity);
-
+    //FragColor = vec4(0,1,0,1);
 } 
 
 
 vec3 applySkyboxReflection(vec3 viewVec){
     vec3 reflectVec = reflect(viewVec, normalize(fragNormal));
-    return texture(skyboxTexture, reflectVec).rgb;// * material.reflectivity;
+    return texture(skyboxTexture, reflectVec).rgb * material.reflectivity;
 }
 
 
 vec3 applySkyboxRefraction(vec3 viewVec){
-    float ratio = 1/1.52;//material.refractivity;
+    float ratio = 1/material.refractiveIndex;
     vec3 refractVec = refract(viewVec, normalize(fragNormal), ratio);
-    return texture(skyboxTexture, refractVec).rgb;
+    return texture(skyboxTexture, refractVec).rgb * (1-material.opacity);
 }
