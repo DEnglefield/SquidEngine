@@ -64,7 +64,8 @@ void SkyboxLightingShader::onNextPass(int shaderStage, unsigned int shaderID) {
 	if (shaderStage == 1) {
 		glDepthFunc(GL_LEQUAL);
 		glm::mat4 viewMatrixNoTranslation = glm::mat4(glm::mat3(mainCamera->getViewMatrix()));
-		setMat4(shaderStage, VIEW_MATRIX_UNIFORM, viewMatrixNoTranslation, -1);
+		//setMat4(shaderStage, VIEW_MATRIX_UNIFORM, viewMatrixNoTranslation, -1);
+		imageMatricesUBO->setData(0,sizeof(glm::mat4),&viewMatrixNoTranslation);
 		setMat4(shaderStage, MODEL_MATRIX_UNIFORM, sceneSkyBox->getModelMatrix(), -1);
 		sceneSkyBox->draw();
 		glDepthFunc(GL_LESS);

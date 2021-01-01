@@ -8,32 +8,26 @@ UniformBuffer::UniformBuffer(size_t bufferSize, unsigned int bindingID) {
 };
 
 
-void UniformBuffer::createUniformBuffer(size_t bufferSize, unsigned int bindingID) {
+void UniformBuffer::createUniformBuffer(size_t bufferSize, unsigned int binding) {
 	glGenBuffers(1, &bufferID);
 	glBindBuffer(GL_UNIFORM_BUFFER, bufferID);
 	glBufferData(GL_UNIFORM_BUFFER, bufferSize, nullptr, GL_STATIC_DRAW);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-	setBinding(bindingID);
+	setBinding(binding);
 
 }
 
 
-void UniformBuffer::setBinding(unsigned int bindingID) {
+void UniformBuffer::setBinding(unsigned int binding) {
+	bindingID = binding;
 	glBindBufferBase(GL_UNIFORM_BUFFER, bindingID, bufferID);
 }
 
 
-unsigned int UniformBuffer::addData(size_t size, void* item) {
+void UniformBuffer::addData(size_t size, void* item) {
 	setData(highestWriteOffset, size, item);
-	writeOffsets.push_back(highestWriteOffset);
 	highestWriteOffset += size;
-	return writeOffsets.size() - 1;
-}
-
-
-void UniformBuffer::setData(unsigned int offset, size_t size, void* item) {
-	setData(writeOffsets[offset], size, item);
 }
 
 

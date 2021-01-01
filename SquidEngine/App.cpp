@@ -18,8 +18,6 @@ SkyBox* skybox;
 DirectionalLight dirLight(-1.0f,-0.25f,0.0f);
 CameraFPS cam(0, 0, 3, 0, 0, -1);
 
-UniformBuffer* uniBuffer;
-
 
 glm::mat4 lightRotator(1.0f);
 glm::vec3 lightDir1(0, 0, 0);
@@ -49,17 +47,8 @@ void Game::onInit() {
 
 	testCube->setMaterial(*testMat);
 
-	uniBuffer = new UniformBuffer(sizeof(glm::mat4)*2,2);
-	
-	glm::mat4 view = cam.getViewMatrix();
-	glm::mat4 proj = cam.getProjectionMatrix();
-
-	uniBuffer->addData(sizeof(glm::mat4), &view);
-	uniBuffer->addData(sizeof(glm::mat4), &proj);
-
 	lightingShader = new SkyboxLightingShader();
 	lightingShader->onInit();
-	lightingShader->bindUniformBlock(1,2,"ImageMatrices");
 	
 
 	lightingShader->setMainCamera(cam);

@@ -8,6 +8,13 @@
 
 std::list<ShaderProgram2*> ShaderProgram2::sceneShaders;
 
+//Register shader program and create common UBOs
+ShaderProgram2::ShaderProgram2() {
+	ShaderProgram2::sceneShaders.push_back(this); 	
+	imageMatricesUBO = new UniformBuffer(sizeof(glm::mat4) * 2, 2);
+}
+
+
 //Load a shader file and compile the GLSL code
 unsigned int ShaderProgram2::loadShader(const char* fileName, int shaderType) {
 	//ID for this shader stage
@@ -105,6 +112,7 @@ unsigned int ShaderProgram2::createShaderProgram() {
 	if (geometryID != -1) {
 		glDeleteShader(geometryID);
 	}
+
 	return ID;
 }
 
@@ -124,6 +132,8 @@ void ShaderProgram2::destroy() {
 	for (int i = 0; i < shaderPasses.size(); ++i) {
 		glDeleteProgram(shaderPasses[i]);
 	}
+	imageMatricesUBO->destroy();
+	delete imageMatricesUBO;
 }
 
 
@@ -168,6 +178,9 @@ int ShaderProgram2::finishShaderPass() {
 	if (!writingMode) { throw std::runtime_error("Failed to finish shader pipeline: Shader Pipeline not in write mode"); }
 	shaderPasses.push_back(createShaderProgram());
 	writingMode = false;
+
+	bindUniformBlock(shaderPasses.size()-1, imageMatricesUBO->getBinding(), IMAGE_MATRICES_UBO);
+
 	return shaderPasses.size()-1;
 }
 
@@ -378,8 +391,17 @@ void ShaderProgram2::useLighting(unsigned int shaderStage) {
 
 
 void ShaderProgram2::useCamera(unsigned int shaderStage, Camera* cam) {
-	setMat4(shaderStage, VIEW_MATRIX_UNIFORM, cam->getViewMatrix(), -1);
-	setMat4(shaderStage, PROJECTION_MATRIX_UNIFORM, cam->getProjectionMatrix(), -1);
+	//setMat4(shaderStage, VIEW_MATRIX_UNIFORM, cam->getViewMatrix(), -1);
+	//setMat4(shaderStage, PROJECTION_MATRIX_UNIFORM, cam->getProjectionMatrix(), -1);
+
+	glm::mat4 view = cam->getViewMatrix();
+	glm::mat4 proj = cam->getProjectionMatrix();
+	
+	imageMatricesUBO->setData(0, sizeof(glm::mat4), &view);
+	imageMatricesUBO->setData(sizeof(glm::mat4), sizeof(glm::mat4), &proj);
+
+
+
 	setVec3(shaderStage, CAMERA_POSITION_UNIFORM, cam->getPosition(), -1);
 }
 
@@ -401,5 +423,8 @@ void ShaderProgram2::drawShapes(unsigned int shaderStage) {
 unsigned int ShaderProgram2::bindUniformBlock(int shaderStage, unsigned int binding, const char* attr){
 	unsigned int uniformLocation = glGetUniformBlockIndex(shaderPasses[shaderStage], attr);
 	glUniformBlockBinding(shaderPasses[shaderStage], uniformLocation, binding);
+
+	std::cout << "Shader stage: " << shaderStage << " Uniform: " << uniformLocation << " name: " << attr << " got binding: " << binding << std::endl;
+
 	return uniformLocation;
 }

@@ -8,12 +8,11 @@
 #include "Model.h"
 #include "Light.h"
 #include "Camera.h"
+#include "UniformBuffer.h"
 
 
 #define MODEL_MATRIX_UNIFORM "modelMatrix"
-#define WORLD_MATRIX_UNIFORM "worldMatrix"
-#define VIEW_MATRIX_UNIFORM "viewMatrix"
-#define PROJECTION_MATRIX_UNIFORM "projMatrix"
+#define IMAGE_MATRICES_UBO "ImageMatrices"
 
 #define MAX_DIFFUSE_MAPS 8 
 #define MAX_SPECULAR_MAPS 8
@@ -68,6 +67,13 @@ protected:
 	//Framebuffer to write final result to
 	FrameBuffer* targetBuffer;
 
+	//Uniform buffer for image matrices
+	UniformBuffer* imageMatricesUBO;
+	//Uniform buffer for current material
+	UniformBuffer* materialUBO;
+	//Uniform buffer for all light instances
+	UniformBuffer* lightUBO;
+
 	//Temp data for building new shader pass
 	unsigned int vertexID = -1;
 	unsigned int fragmentID = -1;
@@ -102,9 +108,9 @@ protected:
 
 public:
 	static std::list<ShaderProgram2*> sceneShaders;
-	//std::list<Material*> boundMaterials;
 
-	inline ShaderProgram2() { ShaderProgram2::sceneShaders.push_back(this); }
+	//Register shader program and create common UBOs
+	ShaderProgram2();
 
 	void draw(FrameBuffer& target);
 	void destroy();
