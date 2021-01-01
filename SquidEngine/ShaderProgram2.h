@@ -143,5 +143,9 @@ public:
 	//Append a index string to a property uniform name
 	std::string getIndexedUniform(const char* property, int index);
 	//Get the location ID for a uniform name
-	inline int getUniformLocation(int shaderStage, const char* attr) { return glGetUniformLocation(shaderStage, attr); }
+	inline int getUniformLocation(int shaderStage, const char* attr) { return glGetUniformLocation(shaderPasses[shaderStage], attr); }
+
+	//Bind a uniform buffer block to given binding ID
+	unsigned int bindUniformBlock(int shaderStage, unsigned int binding, const char* attr);
+	
 };

@@ -397,3 +397,9 @@ void ShaderProgram2::drawShapes(unsigned int shaderStage) {
 }
 
 
+//Bind a uniform buffer block to given binding ID
+unsigned int ShaderProgram2::bindUniformBlock(int shaderStage, unsigned int binding, const char* attr){
+	unsigned int uniformLocation = glGetUniformBlockIndex(shaderPasses[shaderStage], attr);
+	glUniformBlockBinding(shaderPasses[shaderStage], uniformLocation, binding);
+	return uniformLocation;
+}

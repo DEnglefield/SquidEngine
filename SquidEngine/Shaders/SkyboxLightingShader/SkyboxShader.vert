@@ -4,9 +4,11 @@ layout (location = 1) in vec3 normal;
 layout (location = 2) in vec2 tex;
 
 uniform mat4 modelMatrix;
-uniform mat4 viewMatrix;
-uniform mat4 projMatrix;
 
+layout (std140) uniform ImageMatrices {
+    mat4 projMatrix;
+    mat4 viewMatrix;
+};
 
 out vec3 tex3D;
 
