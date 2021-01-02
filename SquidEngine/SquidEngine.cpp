@@ -78,6 +78,8 @@ void runEngine(EngineInstance& instance) {
 
 	currentInstance = &instance;
 
+	//glfwWindowHint(GLFW_SAMPLES, 4); //Not needed unless rendering geometry to ouput framebuffer
+
 	mainWindow.show();
 	glfwSetFramebufferSizeCallback(mainWindow.form, mainResizeEvent);
 	glfwSetCursorPosCallback(mainWindow.form, cursorCallBack);
@@ -91,6 +93,7 @@ void runEngine(EngineInstance& instance) {
 		std::cout << "Failed to initialize GLAD" << std::endl;
 	}
 
+	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_SCISSOR_TEST);
 	//glEnable(GL_CULL_FACE);

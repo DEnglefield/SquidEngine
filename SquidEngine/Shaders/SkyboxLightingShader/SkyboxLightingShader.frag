@@ -81,7 +81,6 @@ vec3 applyDirectionalLight(DirectionalLight light, vec3 viewVec);
 
 
 void main() {
-
     vec3 lighting = vec3(0,0,0);
 
     vec3 viewVec = normalize(fragPos - cameraPos);
@@ -102,6 +101,7 @@ void main() {
     lighting += texelFetch( skyboxReflections, ivec2(gl_FragCoord.xy), 0 ).rgb;
 
     FragColor = vec4(lighting, material.opacity); 
+ 
     //FragColor = vec4(screenPos.xy,0, 1); 
 } 
 

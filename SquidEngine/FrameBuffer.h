@@ -29,6 +29,9 @@ protected:
 	
 	unsigned int colourBufferID;
 	unsigned int renderBufferID;
+	unsigned int numMultiSamples;
+	bool enableAntiAliasing;
+	StaticFrameBuffer* nonSamplingBuffer;
 	
 	void initBuffer(int imgWidth, int imgHeight, glm::vec3& clearColour);
 
@@ -37,10 +40,11 @@ public:
 	unsigned int getTextureOutput();
 
 	StaticFrameBuffer();
-	StaticFrameBuffer(int imgWidth, int imgHeight);
-	StaticFrameBuffer(int imgWidth, int imgHeight, glm::vec3& clearColour);
+	StaticFrameBuffer(int imgWidth, int imgHeight, bool doAntiAliasing);
+	StaticFrameBuffer(int imgWidth, int imgHeight, bool doAntiAliasing, glm::vec3& clearColour);
 
 	void resizeBuffer(int imgWidth, int imgHeight);
+	void doAntiAliasing(bool state, unsigned int samples);
 	void destroy();
 };
 
@@ -62,6 +66,7 @@ class DrawFrameBuffer : public FrameBuffer {
 public:
 	DrawFrameBuffer();
 };
+
 
 
 void resizeFrameBuffers(int width, int height);

@@ -76,7 +76,7 @@ void SkyboxLightingShader::onNextPass(int shaderStage, unsigned int shaderID) {
 	if (shaderStage == 2) {
 		glActiveTexture(GL_TEXTURE20); // Safe number to avoid overwriting material textures
 		glBindTexture(GL_TEXTURE_2D, skyboxLightingBuffer->getTextureOutput());
-		
+
 		int loc = glGetUniformLocation(shaderID, getIndexedUniform("skyboxReflections", -1).c_str());
 		glUniform1i(loc, 20);
 
