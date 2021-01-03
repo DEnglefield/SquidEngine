@@ -83,7 +83,7 @@ vec3 applyDirectionalLight(DirectionalLight light, vec3 viewVec);
 void main() {
     vec3 lighting = vec3(0,0,0);
 
-    vec3 viewVec = normalize(fragPos - cameraPos);
+    vec3 viewVec = normalize(cameraPos - fragPos);
    
     for (int i=0; i < numPointLights; ++i){
         lighting += applyPointLight(pointLights[i], viewVec);
@@ -171,6 +171,7 @@ vec3 getDiffuseLight(vec3 lightVec) {
 }
 
 vec3 getSpecularLight(vec3 lightVec, vec3 viewVec) {
+
     vec3 reflectDir = reflect(-lightVec, fragNormal);
     vec3 halfwayDir = normalize(lightVec + viewVec);
     float specValue = max(dot(fragNormal, halfwayDir), 0.0);

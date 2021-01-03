@@ -1,5 +1,7 @@
 
 #include "Materials.h"
+#include <iostream>
+
 
 Material::Material() { }
 
@@ -10,6 +12,7 @@ Material::Material(glm::vec3 matDiffuse, glm::vec3 matSpecular, float matHighlig
 	addDiffuseMap(diffuseTexture);
 	addSpecularMap(specularTexture);
 	highlight = matHighlight;
+	std::cout << matHighlight << std::endl;
 	reflectivity = 0.5f;
 	refractivity = 0;
 	refractiveIndex = 1.5f;
@@ -21,6 +24,7 @@ Material::Material(Texture diffuseMap, Texture specularMap, float matHighlight) 
 	addDiffuseMap(diffuseMap);
 	addSpecularMap(specularMap);
 	highlight = matHighlight;
+	std::cout << matHighlight << std::endl;
 	reflectivity = 0;
 	refractivity = 1;
 	refractiveIndex = 1;

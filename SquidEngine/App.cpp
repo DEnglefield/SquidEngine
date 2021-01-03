@@ -17,6 +17,7 @@ SkyboxLightingShader* lightingShader;
 SkyBox* skybox;
 DirectionalLight dirLight(-1.0f,-0.25f,0.0f);
 CameraFPS cam(0, 0, 3, 0, 0, -1);
+Model* cottage;
 
 
 glm::mat4 lightRotator(1.0f);
@@ -24,11 +25,14 @@ glm::vec3 lightDir1(0, 0, 0);
 glm::vec3 lightDir2(0, 0, 0);
 
 void Game::onInit() {
+	cam.setRenderDistance(0.01f,500.0f);
+
 	testCube = new Cube(0,0,0);
 	building = new Model(-5,0,5,"Resources/Models/Buildings/Residential Buildings 001.obj");
 	//bauble = new Model(0, 5, 0,"Resources/Models/BigModels/Bauble/Christmastree_Ball.obj");
+	cottage = new Model(5, 0, 5, "Resources/Models/Cottage/cottage.obj");
+	cottage->setScale(0.01f, 0.01f, 0.01f);
 
-	
 	std::vector<std::string> skyboxImages = {
 		"Resources/Textures/skybox/right.jpg",
 		"Resources/Textures/skybox/left.jpg",
@@ -43,7 +47,7 @@ void Game::onInit() {
 	testMat = new Material(
 		"Resources/Textures/star.png", 
 		"Resources/Textures/starSpecular.bmp", 
-		32);
+		64);
 
 	testCube->setMaterial(*testMat);
 
@@ -55,6 +59,7 @@ void Game::onInit() {
 
 	lightingShader->addShape(*testCube);
 	lightingShader->addModel(*building);
+	lightingShader->addModel(*cottage);
 	//lightingShader->addModel(*bauble);
 
 	lightingShader->addDirectionalLight(dirLight);

@@ -76,6 +76,11 @@ void StaticFrameBuffer::initBuffer(int imgWidth, int imgHeight, glm::vec3& clear
 			nonSamplingBuffer->resizeBuffer(width, height);
 		}
 	}
+	else if(nonSamplingBuffer != nullptr) {
+		nonSamplingBuffer->destroy();
+		delete nonSamplingBuffer;
+		nonSamplingBuffer = nullptr;
+	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, ID);
 
