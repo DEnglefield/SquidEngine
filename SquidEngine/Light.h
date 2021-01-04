@@ -6,9 +6,9 @@
 
 //Base representation of a light source including effects on material illumination
 struct Light {
-	glm::vec3 ambient = glm::vec3(0.2f, 0.2f, 0.2f);
+	glm::vec3 ambient = glm::vec3(0.1f, 0.1f, 0.1f);
 	glm::vec3 diffuse = glm::vec3(0.75f, 0.75f, 0.75f);
-	glm::vec3 specular = glm::vec3(0.8f, 0.8f, 0.8f);
+	glm::vec3 specular = glm::vec3(0.5f, 0.5f, 0.5f);
 	bool isVisable = true;
 	void setLightProperties(glm::vec3 lightAmbient, glm::vec3 lightDiffuse, glm::vec3 lightSpecular) {
 		ambient = lightAmbient;

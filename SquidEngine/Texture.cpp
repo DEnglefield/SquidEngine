@@ -10,21 +10,24 @@
 
 int defaultTextureID = 0;
 
-Texture::Texture(int imgWidth, int imgHeight) {
+Texture::Texture(int imgWidth, int imgHeight, int type) {
 	imagePath = NO_TEXTURE_PATH;
+	textureType = type;
 	initTexture();
 	createBlankTexture(imgWidth, imgHeight);
 }
 
-Texture::Texture(float red, float green, float blue, int imgWidth, int imgHeight) {
+Texture::Texture(float red, float green, float blue, int imgWidth, int imgHeight, int type) {
 	imagePath = NO_TEXTURE_PATH;
+	textureType = type;
 	initTexture();
 	createColouredTexture(red, green, blue, imgWidth, imgHeight);
 }
 
 
-Texture::Texture(const char* textureFile) {
+Texture::Texture(const char* textureFile, int type) {
 	imagePath = textureFile;
+	textureType = type;
 	initTexture();
 	openFile(textureFile);
 	
@@ -34,11 +37,20 @@ Texture::Texture(const char* textureFile) {
 unsigned int Texture::getID() { return textureID; }
 
 
-void Texture::createBlankTexture(int imgWidth, int imgHeight) {
+void Texture::createTexImage(int width, int height, const void* imageData) {
 	glBindTexture(GL_TEXTURE_2D, textureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgWidth, imgHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	if (doGammarCorrection()) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
+	}
+	else {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB_ALPHA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
+	}
+	
 	glBindTexture(GL_TEXTURE_2D, defaultTextureID);
 }
+
+
+void Texture::createBlankTexture(int imgWidth, int imgHeight) { createTexImage(imgWidth, imgHeight, NULL); }
 
 
 void Texture::createColouredTexture(float red, float green, float blue, int imgWidth, int imgHeight) {
@@ -57,7 +69,8 @@ void Texture::createColouredTexture(float red, float green, float blue, int imgW
 		imageData[i+2] = pixel[2];
 	}
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgWidth, imgHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
+	createTexImage(imgWidth, imgHeight, imageData);
+	
 	glBindTexture(GL_TEXTURE_2D, defaultTextureID);
 
 	delete[] imageData;
@@ -73,7 +86,8 @@ bool Texture::openFile(const char* fileName) {
 
 	if (imageData) {
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
+
+		createTexImage(width, height, imageData);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 
@@ -143,5 +157,18 @@ void Texture::setBorderColour(glm::vec4 borderColour) {
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, colour);
 	glBindTexture(GL_TEXTURE_2D, defaultTextureID);
 }
+
+
+bool Texture::doGammarCorrection() {
+	switch (textureType) {
+	case TEXTURE_DIFFUSE_MAP: return false;
+	case TEXTURE_SPECULAR_MAP: return true;
+	case TEXTURE_NORMAL_MAP: return true;
+	case TEXTURE_COLOUR_BUFFER: return true;
+	}
+
+	return true;
+}
+
 
 void Texture::destroy() { glDeleteTextures(1, &textureID); };

@@ -30,8 +30,6 @@ void Game::onInit() {
 	testCube = new Cube(0,0,0);
 	building = new Model(-5,0,5,"Resources/Models/Buildings/Residential Buildings 001.obj");
 	//bauble = new Model(0, 5, 0,"Resources/Models/BigModels/Bauble/Christmastree_Ball.obj");
-	cottage = new Model(5, 0, 5, "Resources/Models/Cottage/cottage.obj");
-	cottage->setScale(0.01f, 0.01f, 0.01f);
 
 	std::vector<std::string> skyboxImages = {
 		"Resources/Textures/skybox/right.jpg",
@@ -59,8 +57,6 @@ void Game::onInit() {
 
 	lightingShader->addShape(*testCube);
 	lightingShader->addModel(*building);
-	lightingShader->addModel(*cottage);
-	//lightingShader->addModel(*bauble);
 
 	lightingShader->addDirectionalLight(dirLight);
 	lightingShader->setSkybox(*skybox);

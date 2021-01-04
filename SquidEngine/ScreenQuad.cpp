@@ -2,6 +2,7 @@
 
 #include "ScreenQuad.h"
 #include <glad\glad.h>
+#include <iostream>
 
 
 ScreenQuad::ScreenQuad() {
@@ -64,4 +65,12 @@ void ScreenQuad::createBuffer() {
 	Vertex::getAttributeDescription();
 
 	glBindVertexArray(0);
+}
+
+
+//Free used buffers
+void ScreenQuad::destroy() {
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
 }

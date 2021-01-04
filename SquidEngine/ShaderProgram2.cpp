@@ -10,8 +10,9 @@ std::list<ShaderProgram2*> ShaderProgram2::sceneShaders;
 
 //Register shader program and create common UBOs
 ShaderProgram2::ShaderProgram2() {
-	ShaderProgram2::sceneShaders.push_back(this); 	
+	sceneShaders.push_back(this);
 	imageMatricesUBO = new UniformBuffer(sizeof(glm::mat4) * 2, 2);
+	enableShader(true);
 }
 
 
@@ -276,9 +277,10 @@ const char* ShaderProgram2::getMaterialPropertyName(const char* property) {
 
 
 void ShaderProgram2::useShapeMaterial(unsigned int shaderStage, Drawable& obj) {
+
 	std::string propertyName = std::string(MATERIAL_UNIFORM);
 	propertyName.append(".");
-
+	
 	int numDiffuseMaps = 0;
 	int numSpecularMaps = 0;
 
@@ -286,36 +288,36 @@ void ShaderProgram2::useShapeMaterial(unsigned int shaderStage, Drawable& obj) {
 
 	unsigned int shaderID = shaderPasses[shaderStage];
 
-	for (int i = 0; i < mat.diffuseMaps.size(); ++i) {
-		if (numDiffuseMaps >= MAX_DIFFUSE_MAPS) { continue; }
-
-		int loc = glGetUniformLocation(shaderID,getIndexedUniform((
+	for (int i = 0; i < mat.materialTextures.size(); ++i) {
+		if (mat.materialTextures[i].getTextureType() == TEXTURE_DIFFUSE_MAP) {
+			if (numDiffuseMaps >= MAX_DIFFUSE_MAPS) { continue; }
+			int loc = glGetUniformLocation(shaderID, getIndexedUniform((
 				propertyName + MATERIAL_DIFFUSE_MAPS_UNIFORM).c_str(), i).c_str());
 
-		glActiveTexture(GL_TEXTURE0 + numDiffuseMaps);
-		glBindTexture(GL_TEXTURE_2D, mat.diffuseMaps[i].getID());
-		glUniform1i(loc, numDiffuseMaps);
+			glActiveTexture(GL_TEXTURE0 + numDiffuseMaps);
+			glBindTexture(GL_TEXTURE_2D, mat.materialTextures[i].getID());
+			glUniform1i(loc, numDiffuseMaps);
 
-		++numDiffuseMaps;
+			++numDiffuseMaps;
+		}
 	}
 
-
-	for (int i = 0; i < mat.specularMaps.size(); ++i) {
-		if (numSpecularMaps >= MAX_SPECULAR_MAPS) { continue; }
-
-		int loc = glGetUniformLocation(shaderID,getIndexedUniform((
+	for (int i = 0; i < mat.materialTextures.size(); ++i) {
+		if (mat.materialTextures[i].getTextureType() == TEXTURE_SPECULAR_MAP) {
+			if (numSpecularMaps >= MAX_SPECULAR_MAPS) { continue; }
+			
+			int loc = glGetUniformLocation(shaderID, getIndexedUniform((
 				propertyName + MATERIAL_SPECULAR_MAPS_UNIFORM).c_str(), i).c_str());
 
-		int textureLayer = numDiffuseMaps + numSpecularMaps;
-		glActiveTexture(GL_TEXTURE0 + textureLayer);
+			int textureLayer = numDiffuseMaps + numSpecularMaps;
+			glActiveTexture(GL_TEXTURE0 + textureLayer);
 
-		glBindTexture(GL_TEXTURE_2D, mat.specularMaps[i].getID());
+			glBindTexture(GL_TEXTURE_2D, mat.materialTextures[i].getID());
 
-
-		glUniform1i(loc, textureLayer);
-		++numSpecularMaps;
+			glUniform1i(loc, textureLayer);
+			++numSpecularMaps;
+		}
 	}
-
 
 	setInt(shaderStage, (propertyName + MATERIAL_NUM_DIFFUSE_MAPS_UNIFORM).c_str(), numDiffuseMaps, -1);
 	setInt(shaderStage, (propertyName + MATERIAL_NUM_SPECULAR_MAPS_UNIFORM).c_str(), numSpecularMaps, -1);

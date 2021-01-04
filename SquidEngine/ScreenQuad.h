@@ -24,4 +24,6 @@ public:
 	void setTexture(unsigned int texture);
 	//Draw the quad with the QuadShader
 	void draw();
+	//Free used buffers
+	void destroy();
 };

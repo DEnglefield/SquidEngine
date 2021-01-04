@@ -177,7 +177,7 @@ vec3 getSpecularLight(vec3 lightVec, vec3 viewVec) {
     float specValue = max(dot(fragNormal, halfwayDir), 0.0);
     vec3 specularMapping = vec3(1,1,1);;
     for (int i=0; i < material.numSpecularMaps; ++i){ specularMapping *= texture(material.specularMaps[i], texUV).xyz; }
-    return specularMapping * pow(specValue, material.highlight);
+    return specularMapping * pow(specValue, material.highlight*4);
 }
 
 

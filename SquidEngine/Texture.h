@@ -9,6 +9,11 @@
 
 #define NO_TEXTURE_PATH "";
 
+#define TEXTURE_DIFFUSE_MAP 0
+#define TEXTURE_SPECULAR_MAP 1
+#define TEXTURE_COLOUR_BUFFER 2
+#define TEXTURE_NORMAL_MAP 3
+
 
 extern int defaultTextureID;
 
@@ -16,12 +21,15 @@ class Texture {
 protected:
 	unsigned int textureID = 0;
 	std::string imagePath;
+	int textureType;
+	bool doGammarCorrection();
+	void createTexImage(int width, int height, const void* imageData);
 	void createBlankTexture(int imgWidth, int imgHeight);
 	void createColouredTexture(float red, float green, float blue, int imgWidth, int imgHeight);
 public:
-	Texture(int imgWidth, int imgHeight);
-	Texture(float red, float green, float blue, int imgWidth, int imgHeight);
-	Texture(const char* textureFile);
+	Texture(int imgWidth, int imgHeight, int type);
+	Texture(float red, float green, float blue, int imgWidth, int imgHeight, int type);
+	Texture(const char* textureFile, int type);
 	bool openFile(const char* fileName);
 
 	unsigned int getID();
@@ -37,6 +45,8 @@ public:
 	void setFiltering(int scaleUp, int scaleDown);
 
 	void initTexture();
+
+	inline int getTextureType() { return textureType; };
 
 	void destroy();
 };

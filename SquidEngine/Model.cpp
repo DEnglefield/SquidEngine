@@ -124,24 +124,31 @@ void Model::createMesh(aiMesh* mesh, const aiScene* modelScene) {
 		glm::vec3 matDiffuse(diffuse.r, diffuse.g, diffuse.b);
 		glm::vec3 matSpecular(specular.r, specular.g, specular.b);
 
-		Material meshMaterial(matDiffuse, matSpecular, shininess);
+		Material meshMaterial;
+		meshMaterial.highlight = shininess;
 		meshMaterial.opacity = alpha;
 
-		/*
-		std::cout << "Shininess(Ns): " << meshMaterial.highlight << std::endl;
-		std::cout << "Ambient Colour(Ka): " << ambient.r << ", " << ambient.g << ", " << ambient.b << std::endl;
-		std::cout << "Diffuse Colour(Kd): " << diffuse.r << ", " << diffuse.g << ", " << diffuse.b << std::endl;
-		std::cout << "Specular Colour(Ks): " << specular.r << ", " << specular.g << ", " << specular.b << std::endl;
-		std::cout << "Opacity(d): " << alpha << std::endl;
-		*/
-
 		//Get diffuse maps
-		std::vector<Texture> diffuseTextures = getMeshMaterialTextures(material, aiTextureType_DIFFUSE);
-		meshMaterial.diffuseMaps.insert(meshMaterial.diffuseMaps.end(), diffuseTextures.begin(), diffuseTextures.end());
 		
+		std::vector<Texture> diffuseTextures = getMeshMaterialTextures(material, aiTextureType_DIFFUSE);
+		if (diffuseTextures.size() > 0) {
+			meshMaterial.materialTextures.insert(meshMaterial.materialTextures.end(), diffuseTextures.begin(), diffuseTextures.end());
+		}
+		else {
+			meshMaterial.addTexture(Texture(matAmbient.r,matAmbient.g,matAmbient.b,1,1,TEXTURE_DIFFUSE_MAP));
+		}
+
+
 		//Get specular maps
 		std::vector<Texture> specularTextures = getMeshMaterialTextures(material, aiTextureType_SPECULAR);
-		meshMaterial.specularMaps.insert(meshMaterial.specularMaps.end(), specularTextures.begin(), specularTextures.end());
+		if (specularTextures.size() > 0) {
+			meshMaterial.materialTextures.insert(meshMaterial.materialTextures.end(), specularTextures.begin(), specularTextures.end());
+		}
+		else {
+			meshMaterial.addTexture(Texture(matSpecular.r, matSpecular.g, matSpecular.b, 1, 1, TEXTURE_SPECULAR_MAP));
+		}
+		
+
 		newShape.setMaterial(meshMaterial);
 	}
 	else {
@@ -178,7 +185,15 @@ std::vector<Texture> Model::getMeshMaterialTextures(aiMaterial* mat, aiTextureTy
 		textureFile.append("\\");
 		textureFile.append(str.C_Str());
 		
-		Texture texture(textureFile.c_str());
+		int textureType = 0;
+		switch (type) {
+		case aiTextureType_DIFFUSE: textureType = TEXTURE_DIFFUSE_MAP; break;
+		case aiTextureType_SPECULAR: textureType = TEXTURE_SPECULAR_MAP; break;
+		case aiTextureType_NORMALS: textureType = TEXTURE_NORMAL_MAP; break;
+		default:textureType = TEXTURE_COLOUR_BUFFER; break;
+		}
+
+		Texture texture(textureFile.c_str(), textureType);
 		textures.push_back(texture);
 		meshTextures.push_back(texture);
 

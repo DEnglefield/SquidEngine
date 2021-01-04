@@ -11,12 +11,13 @@
 
 //Definition of material properties to be attached to an object to modify lighting
 class Material {
+protected:
+	void initMaterial();
 public:
 
 	//std::list<Drawable*> boundShapes;
 
-	std::vector<Texture> diffuseMaps;
-	std::vector<Texture> specularMaps;
+	std::vector<Texture> materialTextures;
 	float highlight;
 	float reflectivity, refractivity, refractiveIndex;
 	float opacity;
@@ -24,11 +25,10 @@ public:
 	Material();
 	Material(glm::vec3 matDiffuse, glm::vec3 matSpecular, float matHighlight);
 	Material(Texture diffuseMap, Texture specularMap, float matHighlight);
-	inline void addDiffuseMap(Texture texture) { diffuseMaps.push_back(texture); };
-	inline void addSpecularMap(Texture texture) { specularMaps.push_back(texture); };
+	Material(const char* diffuseMap, const char* specularMap, float matHighlight);
 
-	//inline void addShape(Drawable& shape) { boundShapes.push_back(&shape); };
-	//inline void removeShape(Drawable& shape) { boundShapes.push_back(&shape); };
+	inline void addTexture(Texture texture) { materialTextures.push_back(texture); };
+
 	void destroy();
 
 };

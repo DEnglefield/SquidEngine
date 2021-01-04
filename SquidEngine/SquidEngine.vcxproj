@@ -159,6 +159,7 @@
     <ClCompile Include="BasicLightingShader.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraFPS.cpp" />
+    <ClCompile Include="CommonPostShader.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="CubeMap.cpp" />
     <ClCompile Include="Drawable.cpp" />
@@ -182,6 +183,7 @@
     <ClInclude Include="BasicLightingShader.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraFPS.h" />
+    <ClInclude Include="CommonPostShader.h" />
     <ClInclude Include="CubeMap.h" />
     <ClInclude Include="Drawable.h" />
     <ClInclude Include="EngineInstance.h" />
@@ -207,12 +209,12 @@
   <ItemGroup>
     <None Include="Shaders\BasicShader\BasicShader.frag" />
     <None Include="Shaders\BasicShader\BasicShader.vert" />
+    <None Include="Shaders\CommonPostShader\CommonPostShader.frag" />
+    <None Include="Shaders\CommonPostShader\CommonPostShader.vert" />
     <None Include="Shaders\DepthShader\DepthShader.frag" />
     <None Include="Shaders\DepthShader\DepthShader.vert" />
     <None Include="Shaders\LightingShader\LightingShader.frag" />
     <None Include="Shaders\LightingShader\LightingShader.vert" />
-    <None Include="Shaders\QuadShader\QuadShader.frag" />
-    <None Include="Shaders\QuadShader\QuadShader.vert" />
     <None Include="Shaders\SkyboxLightingShader\SkyboxLightingShader.frag" />
     <None Include="Shaders\SkyboxLightingShader\SkyBoxLightingShader.vert" />
     <None Include="Shaders\SkyboxLightingShader\SkyboxReflectionShader.frag" />

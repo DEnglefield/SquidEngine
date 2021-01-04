@@ -106,11 +106,18 @@ protected:
 	//Attach an optional geometry shader
 	bool attachGeometryShader(const char* geometryFile);
 
+	//Flag to if indicaute this shader should be executed
+	bool useShader;
 public:
 	static std::list<ShaderProgram2*> sceneShaders;
 
 	//Register shader program and create common UBOs
 	ShaderProgram2();
+
+	//Enable or disable rendering with this shader during main render loop
+	inline void enableShader(bool state) { useShader = state; };
+	//Check is shader is allowed to be executed
+	inline bool isEnabled() { return useShader; };
 
 	void draw(FrameBuffer& target);
 	void destroy();

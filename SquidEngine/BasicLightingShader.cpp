@@ -53,10 +53,9 @@ void SkyboxLightingShader::onNextPass(int shaderStage, unsigned int shaderID) {
 	
 	if (shaderStage == 0) {
 		
+		skyboxLightingBuffer->use();
 		glActiveTexture(GL_TEXTURE20); // Safe number to avoid overwriting material textures
 		glBindTexture(GL_TEXTURE_CUBE_MAP, sceneSkyBox->getTextureID());
-		skyboxLightingBuffer->use();
-		
 		drawShapes(shaderStage);
 		targetBuffer->use();
 	}
@@ -64,7 +63,6 @@ void SkyboxLightingShader::onNextPass(int shaderStage, unsigned int shaderID) {
 	if (shaderStage == 1) {
 		glDepthFunc(GL_LEQUAL);
 		glm::mat4 viewMatrixNoTranslation = glm::mat4(glm::mat3(mainCamera->getViewMatrix()));
-		//setMat4(shaderStage, VIEW_MATRIX_UNIFORM, viewMatrixNoTranslation, -1);
 		imageMatricesUBO->setData(0,sizeof(glm::mat4),&viewMatrixNoTranslation);
 		setMat4(shaderStage, MODEL_MATRIX_UNIFORM, sceneSkyBox->getModelMatrix(), -1);
 		sceneSkyBox->draw();
@@ -79,7 +77,6 @@ void SkyboxLightingShader::onNextPass(int shaderStage, unsigned int shaderID) {
 
 		int loc = glGetUniformLocation(shaderID, getIndexedUniform("skyboxReflections", -1).c_str());
 		glUniform1i(loc, 20);
-
 
 		useLighting(shaderStage);
 		drawShapes(shaderStage);

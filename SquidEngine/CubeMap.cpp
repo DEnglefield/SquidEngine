@@ -24,7 +24,7 @@ void CubeMap::generateCubeMap(std::vector<std::string>& cubeImages) {
             glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
             glTexImage2D(
                 GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-                0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data
+                0, GL_SRGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data
             );
         }
         else {

@@ -25,9 +25,6 @@
     <Filter Include="Shaders\DepthShader">
       <UniqueIdentifier>{52cb4df8-2fd8-4bd8-b439-04ebb0ebc57c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shaders\QuadShader">
-      <UniqueIdentifier>{7df9581c-42c9-4d2f-82d2-95345199f083}</UniqueIdentifier>
-    </Filter>
     <Filter Include="App">
       <UniqueIdentifier>{965fb4d5-e18b-4fa2-91fc-f1dc4fcedbbf}</UniqueIdentifier>
     </Filter>
@@ -36,6 +33,9 @@
     </Filter>
     <Filter Include="Shaders\SkyboxLightingShader">
       <UniqueIdentifier>{acff62ee-54a2-4548-83b8-2c48e869a847}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\CommonPostShader">
+      <UniqueIdentifier>{96e89672-e0cc-44b4-b4a9-981b9e633a99}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -100,6 +100,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UniformBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CommonPostShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -179,6 +182,9 @@
     <ClInclude Include="UniformBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CommonPostShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\BasicShader\BasicShader.vert">
@@ -199,12 +205,6 @@
     <None Include="Shaders\DepthShader\DepthShader.frag">
       <Filter>Shaders\DepthShader</Filter>
     </None>
-    <None Include="Shaders\QuadShader\QuadShader.frag">
-      <Filter>Shaders\QuadShader</Filter>
-    </None>
-    <None Include="Shaders\QuadShader\QuadShader.vert">
-      <Filter>Shaders\QuadShader</Filter>
-    </None>
     <None Include="Shaders\SkyboxLightingShader\SkyboxShader.frag">
       <Filter>Shaders\SkyboxLightingShader</Filter>
     </None>
@@ -222,6 +222,12 @@
     </None>
     <None Include="Shaders\SkyboxLightingShader\SkyboxReflectionShader.frag">
       <Filter>Shaders\SkyboxLightingShader</Filter>
+    </None>
+    <None Include="Shaders\CommonPostShader\CommonPostShader.frag">
+      <Filter>Shaders\CommonPostShader</Filter>
+    </None>
+    <None Include="Shaders\CommonPostShader\CommonPostShader.vert">
+      <Filter>Shaders\CommonPostShader</Filter>
     </None>
   </ItemGroup>
 </Project>

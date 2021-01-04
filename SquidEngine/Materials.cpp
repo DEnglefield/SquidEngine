@@ -3,47 +3,48 @@
 #include <iostream>
 
 
-Material::Material() { }
+Material::Material() { 
+	highlight = 32.0f;
+	initMaterial();
+}
 
 
 Material::Material(glm::vec3 matDiffuse, glm::vec3 matSpecular, float matHighlight) {
-	Texture diffuseTexture(matDiffuse.x, matDiffuse.y, matDiffuse.z, 1, 1);
-	Texture specularTexture(matSpecular.x, matSpecular.y, matSpecular.z, 1, 1);
-	addDiffuseMap(diffuseTexture);
-	addSpecularMap(specularTexture);
+	addTexture(Texture(matDiffuse.x, matDiffuse.y, matDiffuse.z, 1, 1, TEXTURE_DIFFUSE_MAP));
+	addTexture(Texture(matSpecular.x, matSpecular.y, matSpecular.z, 1, 1, TEXTURE_SPECULAR_MAP));
 	highlight = matHighlight;
-	std::cout << matHighlight << std::endl;
-	reflectivity = 0.5f;
-	refractivity = 0;
-	refractiveIndex = 1.5f;
-	opacity = 1;
+	initMaterial();
 };
 
 
 Material::Material(Texture diffuseMap, Texture specularMap, float matHighlight) {
-	addDiffuseMap(diffuseMap);
-	addSpecularMap(specularMap);
+	addTexture(diffuseMap);
+	addTexture(specularMap);
 	highlight = matHighlight;
-	std::cout << matHighlight << std::endl;
+	initMaterial();
+};
+
+
+Material::Material(const char* diffuseMap, const char* specularMap, float matHighlight) {
+	addTexture(Texture(diffuseMap, TEXTURE_DIFFUSE_MAP));
+	addTexture(Texture(specularMap, TEXTURE_SPECULAR_MAP));
+	highlight = matHighlight;
+	initMaterial();
+};
+
+
+void Material::initMaterial() {
 	reflectivity = 0;
 	refractivity = 1;
 	refractiveIndex = 1;
 	opacity = 1;
-};
-
-
-
-
+}
 
 
 void Material::destroy() {
 
-	for (int i = 0; i < diffuseMaps.size(); ++i) {
-		diffuseMaps[i].destroy();
-	}
-
-	for (int i = 0; i < specularMaps.size(); ++i) {
-		specularMaps[i].destroy();
+	for (int i = 0; i < materialTextures.size(); ++i) {
+		materialTextures[i].destroy();
 	}
 	
 }

@@ -12,6 +12,7 @@
 #include "CameraFPS.h"
 #include "Materials.h"
 #include "Shape.h"
+#include "CommonPostShader.h"
 
 
 bool windowFocused = false;
@@ -100,32 +101,40 @@ void runEngine(EngineInstance& instance) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+
+	DrawFrameBuffer screenFrameBuffer;
+
+	ScaledFrameBuffer renderFrameBuffer(1, 1);
+
+	CommonPostShader postProcessShader;
+	postProcessShader.onInit();
+
 	currentInstance->onInit();
 
-	//ScaledFrameBuffer targetBuffer(1, 1);
-	
-	DrawFrameBuffer outputBuffer;
-	//ScreenQuad quad(1,1,1,1);
-
-	//targetBuffer.setClearColour(glm::vec3(0.75f, 0.25f, 0.25f));
-	
+	Texture test("Resources/Textures/star.png",TEXTURE_DIFFUSE_MAP);
 
 	double frameStart = glfwGetTime();
 	double frameTime = 0;
 	while (!mainWindow.closing()) {
-
 		currentInstance->onInputCheck(mainWindow.form);
 
 		for (int i = 0; i < viewPorts.size(); ++i) {
+			
 			viewPorts[i].use();
 			currentInstance->onDraw(frameTime, i, viewPorts[i]);
-
 			for (auto const& shader : ShaderProgram2::sceneShaders) {
-				shader->draw(outputBuffer);
+				if (shader->isEnabled()) {
+					shader->draw(renderFrameBuffer);
+				}
+				
 			}
 			
+
 		}
 
+
+		postProcessShader.setInputRender(renderFrameBuffer.getTextureOutput());
+		postProcessShader.draw(screenFrameBuffer);
 
 		glfwSwapInterval(1);
 		glfwSwapBuffers(glfwGetCurrentContext());
@@ -135,6 +144,7 @@ void runEngine(EngineInstance& instance) {
 		frameStart = glfwGetTime();
 	}	
 
+	//postProcessShader.destroy();
 	currentInstance->onClose();
 	glfwTerminate();
 }

@@ -7,7 +7,7 @@ std::list<ScaledFrameBuffer*> ScaledFrameBuffer::scaledFrameBuffers;
 
 ScaledFrameBuffer::ScaledFrameBuffer() : StaticFrameBuffer() {};
 
-ScaledFrameBuffer::ScaledFrameBuffer(ViewPort& view) : StaticFrameBuffer(view.width, view.height, true) {
+ScaledFrameBuffer::ScaledFrameBuffer(ViewPort& view) : StaticFrameBuffer(view.width, view.height, false) {
 	scaledFrameBuffers.push_back(this);
 	percentWidth = view.windowWidthPercent;
 	percentHeight = view.windowHeightPercent;
@@ -15,7 +15,7 @@ ScaledFrameBuffer::ScaledFrameBuffer(ViewPort& view) : StaticFrameBuffer(view.wi
 
 
 ScaledFrameBuffer::ScaledFrameBuffer(float widthPercent, float heightPercent) 
-	: StaticFrameBuffer(widthPercent * 800, heightPercent * 600, true) {
+	: StaticFrameBuffer(widthPercent * 800, heightPercent * 600, false) {
 	scaledFrameBuffers.push_back(this);
 	percentWidth = widthPercent;
 	percentHeight = heightPercent;
@@ -92,7 +92,7 @@ void StaticFrameBuffer::initBuffer(int imgWidth, int imgHeight, glm::vec3& clear
 		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
 	}
 	else {
-		Texture colourBuffer(width, height);
+		Texture colourBuffer(width, height, TEXTURE_COLOUR_BUFFER);
 
 		colourBuffer.setScaleUpFilter(GL_LINEAR);
 		colourBuffer.setScaleDownFilter(GL_LINEAR);
