@@ -8,16 +8,21 @@ std::list<ScaledFrameBuffer*> ScaledFrameBuffer::scaledFrameBuffers;
 
 ScaledFrameBuffer::ScaledFrameBuffer() : StaticFrameBuffer() {};
 
-ScaledFrameBuffer::ScaledFrameBuffer(ViewPort& view, bool doAntiAliasing) 
-	: StaticFrameBuffer(view.width, view.height, doAntiAliasing) {
+ScaledFrameBuffer::ScaledFrameBuffer(ViewPort& view, bool addColour, 
+	bool addDepthStencil, bool doAntiAliasing)
+	: StaticFrameBuffer(view.width, view.height, addColour, addDepthStencil, doAntiAliasing) {
+
 	scaledFrameBuffers.push_back(this);
 	percentWidth = view.windowWidthPercent;
 	percentHeight = view.windowHeightPercent;
 }
 
 
-ScaledFrameBuffer::ScaledFrameBuffer(float widthPercent, float heightPercent, bool doAntiAliasing)
-	: StaticFrameBuffer(widthPercent * 800, heightPercent * 600, doAntiAliasing) {
+ScaledFrameBuffer::ScaledFrameBuffer(float widthPercent, float heightPercent, 
+	bool addColour, bool addDepthStencil, bool doAntiAliasing) 
+	: StaticFrameBuffer(widthPercent * 800,heightPercent * 600, addColour, 
+		addDepthStencil, doAntiAliasing) {
+
 	scaledFrameBuffers.push_back(this);
 	percentWidth = widthPercent;
 	percentHeight = heightPercent;
@@ -37,20 +42,28 @@ void ScaledFrameBuffer::resizeBuffer(int imgWidth, int imgHeight) {
 
 StaticFrameBuffer::StaticFrameBuffer() : FrameBuffer() {}
 
-StaticFrameBuffer::StaticFrameBuffer(int imgWidth, int imgHeight, bool doAntiAliasing) : FrameBuffer() {
+StaticFrameBuffer::StaticFrameBuffer(int imgWidth, int imgHeight, bool addColour, 
+	bool addDepthStencil, bool doAntiAliasing) : FrameBuffer() {
+
 	clearCol = glm::vec3(0.43f, 0.71f, 0.86f);
 	glGenFramebuffers(1, &ID);
 	setAntiAliasing(doAntiAliasing);
 	nonSamplingBuffer = nullptr;
+	hasDepthAttachment = addDepthStencil;
+	hasColourAttachment = addColour;
 	initBuffer(imgWidth, imgHeight, clearCol);
 }
 
 
-StaticFrameBuffer::StaticFrameBuffer(int imgWidth, int imgHeight, bool doAntiAliasing, glm::vec3& clearColour)
+StaticFrameBuffer::StaticFrameBuffer(int imgWidth, int imgHeight, bool addColour, 
+	bool addDepthStencil, bool doAntiAliasing, glm::vec3& clearColour)
 	: FrameBuffer() {
+
 	glGenFramebuffers(1, &ID);
 	setAntiAliasing(doAntiAliasing);
 	nonSamplingBuffer = nullptr;
+	hasDepthAttachment = addDepthStencil;
+	hasColourAttachment = addColour;
 	initBuffer(imgWidth, imgHeight, clearColour);
 }
 
@@ -75,73 +88,129 @@ void StaticFrameBuffer::setAntiAliasing(bool state) {
 
 
 void StaticFrameBuffer::initBuffer(int imgWidth, int imgHeight, glm::vec3& clearColour) {
-	setClearColour(clearColour);
+
 	width = imgWidth;
 	height = imgHeight;
-
-	if (enableAntiAliasing) {
-		if (nonSamplingBuffer == nullptr) {
-			nonSamplingBuffer = new StaticFrameBuffer(width, height, false);
-		}
-		else {
-			nonSamplingBuffer->resizeBuffer(width, height);
-		}
-	}
-	else if(nonSamplingBuffer != nullptr) {
-		nonSamplingBuffer->destroy();
-		delete nonSamplingBuffer;
-		nonSamplingBuffer = nullptr;
-	}
-
+	
 	glBindFramebuffer(GL_FRAMEBUFFER, ID);
+	if (hasColourAttachment) { attachColour(width,height,clearColour); }
+	if (hasDepthAttachment) { attachDepthStencil(width, height); }
+	else { attachDepthStencilRenderBuffer(width, height); }
 
-	if (enableAntiAliasing){
-		glGenTextures(1, &colourBufferID);
-		
-		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, colourBufferID);
-		glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, renderConfig.numSmaplesMSAA
-			, GL_RGBA, width, height, GL_TRUE);
-		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer: " << ID << " is not complete!" << std::endl;
 	}
 	else {
-		Texture colourBuffer(width, height, TEXTURE_COLOUR_BUFFER);
-
-		colourBuffer.setScaleUpFilter(GL_LINEAR);
-		colourBuffer.setScaleDownFilter(GL_LINEAR);
-		colourBuffer.setWrappingX(GL_CLAMP_TO_BORDER);
-		colourBuffer.setWrappingY(GL_CLAMP_TO_BORDER);
-		colourBufferID = colourBuffer.getID();
+		std::cout << "Frame buffer: "<< ID << " complete" << std::endl;
 	}
-
-	std::cout << "Resized texture: " << colourBufferID << " to: " << width << ", " << height << std::endl;
-
-
-	glGenRenderbuffers(1, &renderBufferID);
-	glBindRenderbuffer(GL_RENDERBUFFER, renderBufferID);
-
-	if (enableAntiAliasing) {
-		glRenderbufferStorageMultisample(GL_RENDERBUFFER, renderConfig.numSmaplesMSAA
-			, GL_DEPTH24_STENCIL8, width, height);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, colourBufferID, 0);
-	}
-	else {
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colourBufferID, 0);
-	}
-
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderBufferID);
-
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 
+void StaticFrameBuffer::attachColour(int imgWidth, int imgHeight, glm::vec3& clearColour) {
+	setClearColour(clearColour);
+
+	if (enableAntiAliasing) {
+		if (nonSamplingBuffer == nullptr) {
+			nonSamplingBuffer = new StaticFrameBuffer(imgWidth, imgHeight, true, hasDepthAttachment, false);
+		}
+		else {
+			nonSamplingBuffer->resizeBuffer(imgWidth, imgHeight);
+		}
+	}
+	else if (nonSamplingBuffer != nullptr) {
+		nonSamplingBuffer->destroy();
+		delete nonSamplingBuffer;
+		nonSamplingBuffer = nullptr;
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, ID);
+
+	glGenTextures(1, &colourBufferID);
+
+	if (enableAntiAliasing) {
+		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, colourBufferID);
+		glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, renderConfig.numSmaplesMSAA
+			, GL_RGBA, imgWidth, imgHeight, GL_TRUE);
+	}
+	else {
+		glBindTexture(GL_TEXTURE_2D, colourBufferID);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgWidth, imgHeight, 
+			0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	}
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
+	
+	if (enableAntiAliasing) {
+		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, 
+			colourBufferID, 0);
+	}
+	else {
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 
+			colourBufferID, 0);
+	}
+}
+
+
+void StaticFrameBuffer::attachDepthStencil(int imgWidth, int imgHeight) {
+
+	glGenTextures(1, &depthStencilBufferID);
+	
+	if (enableAntiAliasing) {
+		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, depthStencilBufferID);
+		glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, renderConfig.numSmaplesMSAA, 
+			GL_DEPTH24_STENCIL8, imgWidth, imgHeight, GL_TRUE);
+		}
+
+	else {
+		glBindTexture(GL_TEXTURE_2D, depthStencilBufferID);
+		glTexImage2D(
+			GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, imgWidth, imgHeight, 0,
+			GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
+	}
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	if (enableAntiAliasing) {
+		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, depthStencilBufferID, 0);
+	}else{
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthStencilBufferID, 0);
+	}
+}
+
+
+void StaticFrameBuffer::attachDepthStencilRenderBuffer(int imgWidth, int imgHeight) {
+	
+	glGenRenderbuffers(1, &renderBufferID);
+	glBindRenderbuffer(GL_RENDERBUFFER, renderBufferID);
+	if (enableAntiAliasing) {
+		glRenderbufferStorageMultisample(GL_RENDERBUFFER, renderConfig.numSmaplesMSAA
+			, GL_DEPTH24_STENCIL8, imgWidth, imgHeight);
+	}
+	else {
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, imgWidth, imgHeight);
+	}
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderBufferID);
+}
+
+
+
 void StaticFrameBuffer::resizeBuffer(int imgWidth, int imgHeight) {
-	glDeleteTextures(1, &colourBufferID);
-	glDeleteRenderbuffers(1, &renderBufferID);
+	if (hasColourAttachment) { glDeleteTextures(1, &colourBufferID); }
+	if (hasDepthAttachment) { glDeleteTextures(1, &depthStencilBufferID); }
+	else { glDeleteRenderbuffers(1, &renderBufferID); }
 
 	initBuffer(imgWidth, imgHeight, clearCol);
 
@@ -151,13 +220,17 @@ void StaticFrameBuffer::resizeBuffer(int imgWidth, int imgHeight) {
 
 void StaticFrameBuffer::destroy() {
 
-	if (enableAntiAliasing) {
-		nonSamplingBuffer->destroy();
-		delete nonSamplingBuffer;
+	if (hasColourAttachment) { 
+		if (enableAntiAliasing) {
+			nonSamplingBuffer->destroy();
+			delete nonSamplingBuffer;
+		}
+		glDeleteTextures(1, &colourBufferID); 
 	}
 
-	glDeleteTextures(1, &colourBufferID);
-	glDeleteRenderbuffers(1, &renderBufferID);
+	if (hasDepthAttachment) { glDeleteTextures(1, &depthStencilBufferID); }
+	else { glDeleteRenderbuffers(1, &renderBufferID); }
+
 	glDeleteFramebuffers(1, &ID);
 	FrameBuffer::destroy();
 }
@@ -174,10 +247,23 @@ unsigned int StaticFrameBuffer::getTextureOutput() {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		
 		return nonSamplingBuffer->getTextureOutput();
-		
 	}
-	
 	return colourBufferID; 
+}
+
+
+unsigned int StaticFrameBuffer::getDepthOutput() {
+	if (enableAntiAliasing) {
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, ID);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, nonSamplingBuffer->getID());
+
+		glBlitFramebuffer(0, 0, width, height, 0, 0, width, height,
+			GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		return nonSamplingBuffer->getTextureOutput();
+	}	
+	return depthStencilBufferID;
 }
 
 void FrameBuffer::setClearColour(glm::vec3 clearColour) { clearCol = clearColour; }

@@ -1,6 +1,9 @@
 #version 330 core
 out vec4 FragColor;
 
+
+//Minimal shader to draw objects on the scene
+
 #define MAX_POINT_LIGHTS 8
 #define MAX_SPOT_LIGHTS 8
 #define MAX_DIRECTIONAL_LIGHTS 8
@@ -68,6 +71,7 @@ uniform vec3 cameraPos;
 
 
 void main() {
+    //Combine diffuse maps for ambient light and output
     vec3 mergedTexture = vec3(1,1,1);
     for (int i=0; i < material.numDiffuseMaps; ++i){ mergedTexture *= texture(material.diffuseMaps[i], texUV).xyz; }
     FragColor = vec4(mergedTexture,1);

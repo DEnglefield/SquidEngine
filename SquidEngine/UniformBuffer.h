@@ -2,6 +2,7 @@
 #include <glad/glad.h>
 #include <vector>
 
+//UniformBuffer representation used to store shader values on the GPU persistently
 class UniformBuffer{
 protected:
 	unsigned int bufferID;

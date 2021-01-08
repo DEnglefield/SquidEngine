@@ -10,9 +10,11 @@
 #include "UniformBuffer.h"
 
 Cube* testCube;
+Cube* ground;
 Model* building;
 Model* bauble;
 Material* testMat;
+Material* groundMat;
 SkyboxLightingShader* lightingShader;
 SkyBox* skybox;
 DirectionalLight dirLight(-1.0f,-0.25f,0.0f);
@@ -24,13 +26,17 @@ glm::mat4 lightRotator(1.0f);
 glm::vec3 lightDir1(0, 0, 0);
 glm::vec3 lightDir2(0, 0, 0);
 
+//Called on engine initialisation
 void Game::onInit() {
-	cam.setRenderDistance(0.01f,500.0f);
+	cam.setRenderDistance(0.01f,100.0f);
 
+	//Create and load scene shapes
 	testCube = new Cube(0,0,0);
-	building = new Model(-5,0,5,"Resources/Models/Buildings/Residential Buildings 001.obj");
-	//bauble = new Model(0, 5, 0,"Resources/Models/BigModels/Bauble/Christmastree_Ball.obj");
+	ground = new Cube(0, -1, 0);
+	ground->setScale(100,1,100);
+	building = new Model(-5,1.6f,5,"Resources/Models/Buildings/Residential Buildings 001.obj");
 
+	//Load skybox images
 	std::vector<std::string> skyboxImages = {
 		"Resources/Textures/skybox/right.jpg",
 		"Resources/Textures/skybox/left.jpg",
@@ -42,51 +48,54 @@ void Game::onInit() {
 
 	skybox = new SkyBox(skyboxImages);
 
+	//Create scene materials
 	testMat = new Material(
 		"Resources/Textures/star.png", 
 		"Resources/Textures/starSpecular.bmp", 
 		64);
 
+	groundMat = new Material(glm::vec3(0.5f, 0.9f, 0.5f), glm::vec3(0.45f, 0.8f, 0.45f), 32);
+	ground->setMaterial(*groundMat);
 	testCube->setMaterial(*testMat);
 
+	//Create scene lighting shader
 	lightingShader = new SkyboxLightingShader();
 	lightingShader->onInit();
-	
-
 	lightingShader->setMainCamera(cam);
 
+	//Add shapes to created lighting shader
 	lightingShader->addShape(*testCube);
 	lightingShader->addModel(*building);
+	lightingShader->addShape(*ground);
 
+	//Add directional light and skybox to shader
 	lightingShader->addDirectionalLight(dirLight);
 	lightingShader->setSkybox(*skybox);
 
-	ViewPort views[] = { 
-		ViewPort(0,0,0.5f,1.0f),
-		ViewPort(0.5f,0,0.5f,1.0f)
-	};
-
-	//setViewPorts(views,2);
+	//Pre-compute rotation matrix to rotate directional light
 	lightRotator = glm::rotate(lightRotator, 0.01f, glm::vec3(0, 0, 1));
 	lightDir1 = dirLight.direction;
 	lightDir2 = -dirLight.direction;
 }
 
 
+//Called on each draw call
+//Implements real-time scene transformations
 void Game::onDraw(double deltaTime, int viewID, ViewPort& view) {
 	cam.updateFrameTime(deltaTime);
 	cam.setView(view);
 
-	//float rotationSpeed = 1 * deltaTime;
+	//Scale light rotation (day/night cycle) with current frame time
 	float angle = 0.75f * (float)deltaTime;
 	lightRotator = glm::mat4(1.0f);
 	lightRotator = glm::rotate(lightRotator, angle, glm::vec3(0, 0, 1));
 
-
+	//Rotate light clockwise on first screen partition
 	if (viewID == 0) {
 		lightDir1 = glm::vec4(lightDir1, 1) * lightRotator;
 		dirLight.direction = lightDir1;
 	}
+	//Rotate light anti-clockwise on second screen partition
 	else {
 		lightDir2 = glm::vec4(lightDir2, 1) * lightRotator;
 		dirLight.direction = lightDir2;
@@ -95,8 +104,9 @@ void Game::onDraw(double deltaTime, int viewID, ViewPort& view) {
 }
 
 
+//Called on input check event
 void Game::onInputCheck(GLFWwindow* window) {
-
+	//Test camera control keys
 	if (glfwGetKey(window, GLFW_KEY_W) == true) { cam.moveForward(); }
 	if (glfwGetKey(window, GLFW_KEY_S) == true) { cam.moveBackward(); }
 	if (glfwGetKey(window, GLFW_KEY_A) == true) { cam.moveLeft(); }
@@ -107,27 +117,39 @@ void Game::onInputCheck(GLFWwindow* window) {
 }
 
 
+//Called on mosue move event
 void Game::onMouseMove(int mouseX, int mouseY) {
+	//Update camera's known mouse position
 	cam.updateCursorPos(mouseX, mouseY, isWindowFocused());
 }
 
 
+//Called on scroll wheel moved
 void Game::onMouseScroll(double scrollX, double scrollY) {
+	//Adjust base camera movement speed
 	cam.setMoveSpeed(cam.getMoveSpeed() + (scrollY*0.5f));
 }
 
-
+//Called on window and framebuffer resize
 void Game::onWindowResize(int width, int height) { 
+	//Update camera with new render area
 	cam.setView(width,height);
 }
 
 
+//Called when render window is closed
 void Game::onClose() {
 	testCube->destroy();
 	testMat->destroy();
+	ground->destroy();
+	groundMat->destroy();
+	building->destroy();
 	lightingShader->destroy();
 	delete testCube;
 	delete testMat;
+	delete ground;
+	delete groundMat;
+	delete building;
 	delete lightingShader;
 }
 

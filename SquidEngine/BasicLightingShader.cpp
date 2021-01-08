@@ -41,7 +41,7 @@ void SkyboxLightingShader::onInit() {
 	finishShaderPass();
 	
 	skyboxLightingBuffer = new StaticFrameBuffer(
-		renderConfig.targetWidth, renderConfig.targetHeight,false);
+		renderConfig.targetWidth, renderConfig.targetHeight,true,false,false);
 }
 
 

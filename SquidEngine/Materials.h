@@ -15,8 +15,6 @@ protected:
 	void initMaterial();
 public:
 
-	//std::list<Drawable*> boundShapes;
-
 	std::vector<Texture> materialTextures;
 	float highlight;
 	float reflectivity, refractivity, refractiveIndex;
@@ -30,7 +28,6 @@ public:
 	inline void addTexture(Texture texture) { materialTextures.push_back(texture); };
 
 	void destroy();
-
 };
 
 

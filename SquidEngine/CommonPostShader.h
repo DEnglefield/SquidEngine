@@ -3,7 +3,7 @@
 #include "ShaderProgram2.h"
 #include "ScreenQuad.h"
 
-
+//Shader pipeline template used for implementing post processing effects
 class PostProcessShader : public ShaderProgram2 {
 private:
 	unsigned int inputRenderTextureID;
@@ -18,9 +18,9 @@ public:
 };
 
 
+//A post process shader used to implement most common post processing effects
 class CommonPostShader : public PostProcessShader {
 private:
-	
 	void onNextPass(int shaderStage, unsigned int shaderID) override;
 public:
 	inline CommonPostShader() : PostProcessShader() { enableShader(false); }

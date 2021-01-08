@@ -4,7 +4,7 @@
 #include "Materials.h"
 #include <vector>
 
-
+//Base class for 3D objects that can be rendered to the screen
 class Drawable : public Object3D {
 private:
 	//Flag to indicate object is visable
@@ -47,6 +47,6 @@ public:
 	//get this shape's material
 	inline Material getMaterial() { return material; }
 
-
+	//Deallocate shape buffers
 	void destroy();
 };

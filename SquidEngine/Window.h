@@ -3,7 +3,7 @@
 #include <glad\glad.h>
 #include <GLFW\glfw3.h>
 
-
+//Viewport representation which describes a partition of the screen
 typedef struct ViewPort {
 	float windowPercentX, windowPercentY;
 	float windowWidthPercent, windowHeightPercent;
@@ -18,7 +18,7 @@ typedef struct ViewPort {
 }ViewPort;
 
 
-//Window object acting as a container for viewports
+//Window object acting as a container for viewports and rendering area
 class Window {
 protected:
 	int windowWidth, windowHeight;

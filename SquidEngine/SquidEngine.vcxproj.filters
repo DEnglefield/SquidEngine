@@ -16,15 +16,6 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{650f9927-45a1-4ea9-a005-58428eb0e97e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shaders\BasicShader">
-      <UniqueIdentifier>{36e58ffa-5eb6-4794-8075-87d1434072ad}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\LightingShader">
-      <UniqueIdentifier>{1d6bfd15-1181-45a8-84fa-8842463d9e06}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\DepthShader">
-      <UniqueIdentifier>{52cb4df8-2fd8-4bd8-b439-04ebb0ebc57c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="App">
       <UniqueIdentifier>{965fb4d5-e18b-4fa2-91fc-f1dc4fcedbbf}</UniqueIdentifier>
     </Filter>
@@ -62,9 +53,6 @@
     </ClCompile>
     <ClCompile Include="Texture.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MarchingCubeLookup.h">
-      <Filter>Header Files</Filter>
     </ClCompile>
     <ClCompile Include="Model.cpp">
       <Filter>Source Files</Filter>
@@ -173,9 +161,6 @@
     <ClInclude Include="BasicLightingShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="App.h">
       <Filter>App</Filter>
     </ClInclude>
@@ -193,24 +178,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\BasicShader\BasicShader.vert">
-      <Filter>Shaders\BasicShader</Filter>
-    </None>
-    <None Include="Shaders\BasicShader\BasicShader.frag">
-      <Filter>Shaders\BasicShader</Filter>
-    </None>
-    <None Include="Shaders\LightingShader\LightingShader.vert">
-      <Filter>Shaders\LightingShader</Filter>
-    </None>
-    <None Include="Shaders\LightingShader\LightingShader.frag">
-      <Filter>Shaders\LightingShader</Filter>
-    </None>
-    <None Include="Shaders\DepthShader\DepthShader.vert">
-      <Filter>Shaders\DepthShader</Filter>
-    </None>
-    <None Include="Shaders\DepthShader\DepthShader.frag">
-      <Filter>Shaders\DepthShader</Filter>
-    </None>
     <None Include="Shaders\SkyboxLightingShader\SkyboxShader.frag">
       <Filter>Shaders\SkyboxLightingShader</Filter>
     </None>

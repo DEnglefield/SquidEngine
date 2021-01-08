@@ -3,6 +3,7 @@
 #include <string>
 #include "Cube.h"
 
+//A sampleable 3D cube texture build using a collection of 2D images
 class CubeMap {
 protected:
 	unsigned int textureID;
@@ -15,6 +16,7 @@ public:
 };
 
 
+//A skybox which can be sampled as a cubemap
 class SkyBox : public CubeMap, public Cube {
 public:
 	inline SkyBox(std::vector<std::string>& cubeImages) : 

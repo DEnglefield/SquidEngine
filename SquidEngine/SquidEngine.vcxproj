@@ -166,7 +166,6 @@
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="GlobalConfig.cpp" />
-    <ClCompile Include="MarchingCubeLookup.h" />
     <ClCompile Include="Materials.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Object3D.cpp" />
@@ -197,7 +196,6 @@
     <ClInclude Include="PerlinNoise.hpp" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="ScreenQuad.h" />
-    <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderProgram2.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="SquidEngine.h" />
@@ -209,14 +207,8 @@
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\BasicShader\BasicShader.frag" />
-    <None Include="Shaders\BasicShader\BasicShader.vert" />
     <None Include="Shaders\CommonPostShader\CommonPostShader.frag" />
     <None Include="Shaders\CommonPostShader\CommonPostShader.vert" />
-    <None Include="Shaders\DepthShader\DepthShader.frag" />
-    <None Include="Shaders\DepthShader\DepthShader.vert" />
-    <None Include="Shaders\LightingShader\LightingShader.frag" />
-    <None Include="Shaders\LightingShader\LightingShader.vert" />
     <None Include="Shaders\SkyboxLightingShader\SkyboxLightingShader.frag" />
     <None Include="Shaders\SkyboxLightingShader\SkyBoxLightingShader.vert" />
     <None Include="Shaders\SkyboxLightingShader\SkyboxReflectionShader.frag" />

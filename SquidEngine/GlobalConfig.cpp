@@ -8,8 +8,11 @@ GlobalConfig::GlobalConfig() {
 	gamma = 2.2f;
 	targetWidth = 1920;
 	targetHeight = 1080;
-	targetFPS = 15;
+	shadowWidth = 1024;
+	shadowHeight = 1024;
+	targetFPS = 60;
 	enableMSAA = true;
 	numSmaplesMSAA = 4;
+	enableVSync = false;
 }
 

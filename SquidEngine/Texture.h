@@ -14,7 +14,7 @@
 #define TEXTURE_COLOUR_BUFFER 2
 #define TEXTURE_NORMAL_MAP 3
 
-
+//Representation of a single texture with controls to modify scaling, wrapping etc.
 class Texture {
 protected:
 	unsigned int textureID = 0;

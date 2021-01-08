@@ -2,6 +2,7 @@
 
 #include "Window.h"
 
+//Base interface for application instances utilizing the game engine
 class EngineInstance {
 public:
 	virtual void onInit() = 0;
