@@ -1,6 +1,8 @@
 #version 330 core
 out vec4 FragColor;
 
+//Shader used to implement blinn-phong lighting and sample from skybox reflections
+
 #define MAX_POINT_LIGHTS 8
 #define MAX_SPOT_LIGHTS 8
 #define MAX_DIRECTIONAL_LIGHTS 8
@@ -8,6 +10,7 @@ out vec4 FragColor;
 #define MAX_DIFFUSE_MAPS 8 
 #define MAX_SPECULAR_MAPS 8
 
+//Material definition
 struct Material {
     int numDiffuseMaps;
     int numSpecularMaps;
@@ -19,7 +22,7 @@ struct Material {
     sampler2D specularMaps[MAX_SPECULAR_MAPS];
 }; 
 
-
+//Point light definition
 struct PointLight {
     vec3 position;
     vec3 ambient;
@@ -30,6 +33,7 @@ struct PointLight {
 }; 
 
 
+//Spot light definition
 struct SpotLight {
     vec3 position;
     vec3 direction;
@@ -43,6 +47,7 @@ struct SpotLight {
 }; 
 
 
+//Directional lght definition
 struct DirectionalLight {
     vec3 direction;
     vec3 ambient;
@@ -51,17 +56,22 @@ struct DirectionalLight {
 }; 
 
 
+//Point light instances
 uniform int numPointLights;
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
 
+//Spot light instances
 uniform int numSpotLights;
 uniform SpotLight spotLights[MAX_SPOT_LIGHTS];
 
+//Directional light instances
 uniform int numDirectionalLights;
 uniform DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS];
 
+//Current material instance
 uniform Material material;
 
+//Skybox reflection map (1:1 scale)
 uniform sampler2D skyboxReflections;
 
 in vec3 fragPos;
@@ -83,29 +93,37 @@ vec3 applyDirectionalLight(DirectionalLight light, vec3 viewVec);
 void main() {
     vec3 lighting = vec3(0,0,0);
 
+    //Get vector of sight
     vec3 viewVec = normalize(cameraPos - fragPos);
    
+    //Average all point light illumination
     for (int i=0; i < numPointLights; ++i){
         lighting += applyPointLight(pointLights[i], viewVec);
     }   
 
+    //Average all spot light illumination
     for (int i=0; i < numSpotLights; ++i){
         lighting += applySpotLight(spotLights[i], viewVec);
     }   
 
+    //Average all directional light illumination
     for (int i=0; i < numDirectionalLights; ++i){
         lighting += applyDirectionalLight(directionalLights[i], viewVec);
     }  
     
     //vec2 texcoord = ((gl_FragCoord.xy - adjust.xy) / scale.xy) / textureSize(sampler0); 
-    //lighting += texelFetch( skyboxReflections, ivec2(gl_FragCoord.xy), 0 ).rgb;
 
+    //Sample skybox reflection map
+    lighting += texelFetch( skyboxReflections, ivec2(gl_FragCoord.xy), 0 ).rgb;
+
+    //Output total light
     FragColor = vec4(lighting, material.opacity); 
  
     //FragColor = vec4(screenPos.xy,0, 1); 
 } 
 
 
+//Calculate illumination for a single point light
 vec3 applyPointLight(PointLight light, vec3 viewVec){
 
     vec3 lightVec = normalize(light.position - fragPos);
@@ -122,7 +140,7 @@ vec3 applyPointLight(PointLight light, vec3 viewVec){
 }
 
 
-
+//Calculate illumination for a single spot light
 vec3 applySpotLight(SpotLight light, vec3 viewVec){
 
     vec3 lightVec = normalize(light.position - fragPos);
@@ -147,6 +165,7 @@ vec3 applySpotLight(SpotLight light, vec3 viewVec){
 }
 
 
+//Calculate illumination for a single directional light
 vec3 applyDirectionalLight(DirectionalLight light, vec3 viewVec){
 
     vec3 lightVec = normalize(-light.direction);
@@ -159,17 +178,22 @@ vec3 applyDirectionalLight(DirectionalLight light, vec3 viewVec){
 }
 
 
+//Calculate illumination for ambient light for a single light source
 vec3 getAmbientLight() { 
     vec3 diffuseMapping = vec3(1,1,1);
     for (int i=0; i < material.numDiffuseMaps; ++i){ diffuseMapping *= texture(material.diffuseMaps[i], texUV).xyz; }
     return diffuseMapping;
 }
 
+
+//Calculate illumination for diffuse light for a single light source
 vec3 getDiffuseLight(vec3 lightVec) {
     float lightAngle = clamp(dot(fragNormal, lightVec),0.0,1.0);
     return lightAngle * getAmbientLight();
 }
 
+
+//Calculate illumination for specular light for a single light source
 vec3 getSpecularLight(vec3 lightVec, vec3 viewVec) {
 
     vec3 reflectDir = reflect(-lightVec, fragNormal);
@@ -181,6 +205,7 @@ vec3 getSpecularLight(vec3 lightVec, vec3 viewVec) {
 }
 
 
+//Get lighting attenuation for point and spot light area
 float getAttenuation(vec3 lightPos, float linearFallOff, float quadraticFallOff){
     float fragDistance = length(lightPos - fragPos);
     return 1.0 / (1.0f + linearFallOff * fragDistance + quadraticFallOff * pow(fragDistance,2)); 
