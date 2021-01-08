@@ -74,8 +74,14 @@ void Game::onInit() {
 
 
 void Game::onDraw(double deltaTime, int viewID, ViewPort& view) {
-	cam.updateFPS(60);
+	cam.updateFrameTime(deltaTime);
 	cam.setView(view);
+
+	//float rotationSpeed = 1 * deltaTime;
+	float angle = 0.75f * (float)deltaTime;
+	lightRotator = glm::mat4(1.0f);
+	lightRotator = glm::rotate(lightRotator, angle, glm::vec3(0, 0, 1));
+
 
 	if (viewID == 0) {
 		lightDir1 = glm::vec4(lightDir1, 1) * lightRotator;

@@ -5,10 +5,11 @@
 
 //Create a camera using eye and look target vector
 CameraFPS::CameraFPS(float eyeX, float eyeY, float eyeZ,float lookX, float lookY, float lookZ)
-	: Camera(eyeX, eyeY, eyeZ, lookX, lookY, lookZ) { updateFPS(60); }
+	: Camera(eyeX, eyeY, eyeZ, lookX, lookY, lookZ) {
+	updateFrameTime(0.016); }
 
 //Create a camera using eye position and look/target vector as vectors
-CameraFPS::CameraFPS(glm::vec3 eye, glm::vec3 look) : Camera(eye, look) { updateFPS(60); }
+CameraFPS::CameraFPS(glm::vec3 eye, glm::vec3 look) : Camera(eye, look) { updateFrameTime(0.016); }
 
 //Move the camera forward
 void CameraFPS::moveForward() { eyePos += adjustedSpeed * lookVec; }
@@ -43,9 +44,8 @@ void CameraFPS::setMoveSpeed(float newSpeed) {
 	if (newSpeed < 0) { moveSpeed = 0; };
 }
 
-
-//Update the adjusted speed of the camera movement using FPS
-void CameraFPS::updateFPS(float FPS) { adjustedSpeed = moveSpeed / FPS;}
+//Update the adjusted speed of the camera movement using current frametime
+void CameraFPS::updateFrameTime(float frameTime) { adjustedSpeed = moveSpeed * frameTime; }
 
 //Set the camera mouse movement sensitivity
 void CameraFPS::setSensitivity(float cameraSensitivity) {

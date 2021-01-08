@@ -12,6 +12,8 @@ struct GlobalConfig {
 
 	bool enableMSAA;
 	int numSmaplesMSAA;
+
+	float gamma;
 };
 
 extern GlobalConfig renderConfig;

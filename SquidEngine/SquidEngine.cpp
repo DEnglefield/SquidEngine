@@ -149,7 +149,7 @@ void runEngine(EngineInstance& instance) {
 		stbi_write_jpg("test.jpg", renderFrameBuffer.getWidth(), renderFrameBuffer.getHeight(), 4, imageData,100);
 		break;
 		*/
-
+		postProcessShader.setFloat(0,"gamma",renderConfig.gamma,-1);
 		postProcessShader.setInputRender(renderFrameBuffer.getTextureOutput()); //800,600
 		postProcessShader.draw(*screenFrameBuffer);
 

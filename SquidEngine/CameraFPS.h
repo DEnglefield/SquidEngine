@@ -45,8 +45,8 @@ public:
 	//Move the camera down
 	void moveDown();
 
-	//Update the adjusted speed of the camera movement using FPS
-	void updateFPS(float FPS);
+	//Update the adjusted speed of the camera movement using current frametime
+	void updateFrameTime(float frameTime);
 
 	//Set the camera mouse movement sensitivity
 	void setSensitivity(float cameraSensitivity);

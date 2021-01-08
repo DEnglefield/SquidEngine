@@ -4,10 +4,11 @@
 GlobalConfig renderConfig;
 
 GlobalConfig::GlobalConfig() {
-	renderConfig.defaultTextureID = 31;
+	defaultTextureID = 31;
+	gamma = 2.2f;
 	targetWidth = 1920;
 	targetHeight = 1080;
-	targetFPS = 60;
+	targetFPS = 15;
 	enableMSAA = true;
 	numSmaplesMSAA = 4;
 }
