@@ -55,6 +55,7 @@ void Game::onInit() {
 		64);
 
 	groundMat = new Material(glm::vec3(0.5f, 0.9f, 0.5f), glm::vec3(0.45f, 0.8f, 0.45f), 32);
+	groundMat->reflectivity = 0;
 	ground->setMaterial(*groundMat);
 	testCube->setMaterial(*testMat);
 
@@ -158,11 +159,9 @@ void Game::onClose() {
 
 
 int main() {
+	//Create and run game engine instance
 	Game gameInstance;
 	createEngineWindow(800, 600, "SquidEngine");
-
-
-
 	runEngine(gameInstance);
 
 	return 0;
