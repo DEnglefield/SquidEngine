@@ -13,7 +13,7 @@ public:
 class SkyboxLightingShader : public ShaderProgram2 {
 private:
 	SkyBox* sceneSkyBox;
-	ScaledFrameBuffer* skyboxLightingBuffer;
+	StaticFrameBuffer* skyboxLightingBuffer;
 	void onNextPass(int shaderStage, unsigned int shaderID) override;
 public:
 	void onInit() override;

@@ -111,7 +111,9 @@ void Game::onMouseScroll(double scrollX, double scrollY) {
 }
 
 
-void Game::onWindowResize(int width, int height) {  }
+void Game::onWindowResize(int width, int height) { 
+	cam.setView(width,height);
+}
 
 
 void Game::onClose() {

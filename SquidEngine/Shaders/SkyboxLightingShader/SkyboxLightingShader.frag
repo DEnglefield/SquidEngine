@@ -98,7 +98,7 @@ void main() {
     }  
     
     //vec2 texcoord = ((gl_FragCoord.xy - adjust.xy) / scale.xy) / textureSize(sampler0); 
-    lighting += texelFetch( skyboxReflections, ivec2(gl_FragCoord.xy), 0 ).rgb;
+    //lighting += texelFetch( skyboxReflections, ivec2(gl_FragCoord.xy), 0 ).rgb;
 
     FragColor = vec4(lighting, material.opacity); 
  

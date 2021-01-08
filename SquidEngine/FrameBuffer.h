@@ -16,7 +16,6 @@ protected:
 	int width, height;
 public:
 	void use();
-	void use(struct ViewPort& viewPort);
 	void setClearColour(glm::vec3 clearColour);
 	inline int getHeight() { return height; }
 	inline int getWidth() { return width; }
@@ -25,15 +24,18 @@ public:
 };
 
 class StaticFrameBuffer : public FrameBuffer {
+private:
+	bool enableAntiAliasing;
 protected:
 	
 	unsigned int colourBufferID;
 	unsigned int renderBufferID;
-	unsigned int numMultiSamples;
-	bool enableAntiAliasing;
+
+
 	StaticFrameBuffer* nonSamplingBuffer;
 	
 	void initBuffer(int imgWidth, int imgHeight, glm::vec3& clearColour);
+	void setAntiAliasing(bool state);
 
 public:
 
@@ -55,8 +57,8 @@ private:
 public:
 	static std::list<ScaledFrameBuffer*> scaledFrameBuffers;
 	ScaledFrameBuffer();
-	ScaledFrameBuffer(ViewPort& view);
-	ScaledFrameBuffer(float widthPercent, float heightPercent);
+	ScaledFrameBuffer(ViewPort& view, bool doAntiAliasing);
+	ScaledFrameBuffer(float widthPercent, float heightPercent, bool doAntiAliasing);
 	void resizeBuffer(int imgWidth, int imgHeight);
 	void destroy();
 };
@@ -65,6 +67,7 @@ public:
 class DrawFrameBuffer : public FrameBuffer {
 public:
 	DrawFrameBuffer();
+	void updateScreenSize(int screenWidth, int screenHeight);
 };
 
 

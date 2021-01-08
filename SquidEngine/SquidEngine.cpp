@@ -13,12 +13,14 @@
 #include "Materials.h"
 #include "Shape.h"
 #include "CommonPostShader.h"
+#include "GlobalConfig.h"
+#include "stb_image_write.h"
 
 
 bool windowFocused = false;
 Window mainWindow(800, 600, "SquidEngine");
 EngineInstance* currentInstance;
-
+DrawFrameBuffer* screenFrameBuffer;
 
 
 std::vector<ViewPort> viewPorts = { ViewPort(0.0f, 0.0f, 1.0f, 1.0f) };
@@ -26,6 +28,7 @@ std::vector<ViewPort> viewPorts = { ViewPort(0.0f, 0.0f, 1.0f, 1.0f) };
 
 void mainResizeEvent(GLFWwindow* window, int width, int height) {
 	std::cout << "Resize event: " << width << ", " << height << std::endl;
+	screenFrameBuffer->updateScreenSize(width, height);
 	resizeFrameBuffers(width, height);
 	currentInstance->onWindowResize(width, height);
 }
@@ -96,17 +99,23 @@ void runEngine(EngineInstance& instance) {
 
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_SCISSOR_TEST);
+	//glEnable(GL_SCISSOR_TEST);
 	//glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 
-	DrawFrameBuffer screenFrameBuffer;
+	screenFrameBuffer = new DrawFrameBuffer;
 
-	ScaledFrameBuffer renderFrameBuffer(1, 1);
+	StaticFrameBuffer renderFrameBuffer(renderConfig.targetWidth
+		,renderConfig.targetHeight ,true);
 
 	CommonPostShader postProcessShader;
+
+	int winWidth, winHeight;
+	mainWindow.getWindowSize(&winWidth, &winHeight);
+	mainResizeEvent(mainWindow.form, winWidth, winHeight);
+
 	postProcessShader.onInit();
 
 	currentInstance->onInit();
@@ -116,6 +125,7 @@ void runEngine(EngineInstance& instance) {
 	double frameStart = glfwGetTime();
 	double frameTime = 0;
 	while (!mainWindow.closing()) {
+		glfwPollEvents();
 		currentInstance->onInputCheck(mainWindow.form);
 
 		for (int i = 0; i < viewPorts.size(); ++i) {
@@ -125,23 +135,33 @@ void runEngine(EngineInstance& instance) {
 			for (auto const& shader : ShaderProgram2::sceneShaders) {
 				if (shader->isEnabled()) {
 					shader->draw(renderFrameBuffer);
-				}
-				
+				}	
 			}
-			
-
 		}
 
+		//postProcessShader.setInputRender(test.getID()); //1920, 1080
+		//postProcessShader.draw(renderFrameBuffer);
+		
+		/*
+		unsigned char* imageData = new unsigned char[4*(renderFrameBuffer.getWidth() * renderFrameBuffer.getHeight())];
+		glBindTexture(GL_TEXTURE_2D, renderFrameBuffer.getTextureOutput());
+		glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
+		stbi_write_jpg("test.jpg", renderFrameBuffer.getWidth(), renderFrameBuffer.getHeight(), 4, imageData,100);
+		break;
+		*/
 
-		postProcessShader.setInputRender(renderFrameBuffer.getTextureOutput());
-		postProcessShader.draw(screenFrameBuffer);
+		postProcessShader.setInputRender(renderFrameBuffer.getTextureOutput()); //800,600
+		postProcessShader.draw(*screenFrameBuffer);
 
-		glfwSwapInterval(1);
+		glfwSwapInterval(0);
 		glfwSwapBuffers(glfwGetCurrentContext());
-		glfwPollEvents();
+		
 
 		frameTime = glfwGetTime() - frameStart;
+		while (frameTime < 1.0f/renderConfig.targetFPS) { frameTime = glfwGetTime() - frameStart; }
 		frameStart = glfwGetTime();
+
+		//std::cout << "FPS: " << 1 / frameTime << std::endl;
 	}	
 
 	//postProcessShader.destroy();

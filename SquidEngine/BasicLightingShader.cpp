@@ -1,5 +1,6 @@
 #include "BasicLightingShader.h"
 #include <iostream>
+#include "GlobalConfig.h"
 
 void BasicLightingShader::onInit() {
 	
@@ -21,27 +22,26 @@ void BasicLightingShader::onNextPass(int shaderStage, unsigned int shaderID) {
 
 void SkyboxLightingShader::onInit() {
 	
-
+	//Get skybox reflection map
 	newShaderPass(
 		"Shaders/SkyboxLightingShader/SkyboxReflectionShader.vert",
 		"Shaders/SkyboxLightingShader/SkyboxReflectionShader.frag");
-
 	finishShaderPass();
 	
+	//Draw Skybox
 	newShaderPass(
 		"Shaders/SkyboxLightingShader/SkyboxShader.vert",
 		"Shaders/SkyboxLightingShader/SkyboxShader.frag");
-
 	finishShaderPass();
 	
+	//Sample reflection map and apply lighting
 	newShaderPass(
 		"Shaders/SkyboxLightingShader/SkyboxLightingShader.vert",
 		"Shaders/SkyboxLightingShader/SkyboxLightingShader.frag");
-
 	finishShaderPass();
 	
-	skyboxLightingBuffer = new ScaledFrameBuffer(1,1);
-	
+	skyboxLightingBuffer = new StaticFrameBuffer(
+		renderConfig.targetWidth, renderConfig.targetHeight,false);
 }
 
 

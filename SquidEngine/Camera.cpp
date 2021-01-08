@@ -41,6 +41,7 @@ void Camera::setRenderDistance(float near, float far) { minRender = near; maxRen
 void Camera::setProjection(int viewWidth, int viewHeight, float near, float far) {
 	if (viewPerspective == CAMERA_PERSPECTIVE) {
 		projMatrix = glm::perspective(glm::radians(fieldOfView), (float)viewWidth / (float)viewHeight, near, far);
+
 	}
 	else if (viewPerspective == CAMERA_ORTHOGRAPHIC) {
 		projMatrix = glm::ortho(0.0f, (float)viewWidth, (float)viewHeight, 0.0f, near,far);

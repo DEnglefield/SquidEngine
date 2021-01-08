@@ -77,8 +77,8 @@ void ViewPort::use() {
 	width = winWidth * windowWidthPercent;
 	height = winHeight * windowHeightPercent;
 
-	glViewport(xPos, yPos, width, height);
-	glScissor(xPos, yPos, width, height);
+	//glViewport(xPos, yPos, width, height);
+	//glScissor(xPos, yPos, width, height);
 	activeViewPort = this;
 }
 

@@ -2,20 +2,22 @@
 #include <iostream>
 #include "FrameBuffer.h"
 #include "Texture.h"
+#include "GlobalConfig.h"
 
 std::list<ScaledFrameBuffer*> ScaledFrameBuffer::scaledFrameBuffers;
 
 ScaledFrameBuffer::ScaledFrameBuffer() : StaticFrameBuffer() {};
 
-ScaledFrameBuffer::ScaledFrameBuffer(ViewPort& view) : StaticFrameBuffer(view.width, view.height, false) {
+ScaledFrameBuffer::ScaledFrameBuffer(ViewPort& view, bool doAntiAliasing) 
+	: StaticFrameBuffer(view.width, view.height, doAntiAliasing) {
 	scaledFrameBuffers.push_back(this);
 	percentWidth = view.windowWidthPercent;
 	percentHeight = view.windowHeightPercent;
 }
 
 
-ScaledFrameBuffer::ScaledFrameBuffer(float widthPercent, float heightPercent) 
-	: StaticFrameBuffer(widthPercent * 800, heightPercent * 600, false) {
+ScaledFrameBuffer::ScaledFrameBuffer(float widthPercent, float heightPercent, bool doAntiAliasing)
+	: StaticFrameBuffer(widthPercent * 800, heightPercent * 600, doAntiAliasing) {
 	scaledFrameBuffers.push_back(this);
 	percentWidth = widthPercent;
 	percentHeight = heightPercent;
@@ -38,8 +40,7 @@ StaticFrameBuffer::StaticFrameBuffer() : FrameBuffer() {}
 StaticFrameBuffer::StaticFrameBuffer(int imgWidth, int imgHeight, bool doAntiAliasing) : FrameBuffer() {
 	clearCol = glm::vec3(0.43f, 0.71f, 0.86f);
 	glGenFramebuffers(1, &ID);
-	enableAntiAliasing = doAntiAliasing;
-	numMultiSamples = 4;
+	setAntiAliasing(doAntiAliasing);
 	nonSamplingBuffer = nullptr;
 	initBuffer(imgWidth, imgHeight, clearCol);
 }
@@ -48,17 +49,28 @@ StaticFrameBuffer::StaticFrameBuffer(int imgWidth, int imgHeight, bool doAntiAli
 StaticFrameBuffer::StaticFrameBuffer(int imgWidth, int imgHeight, bool doAntiAliasing, glm::vec3& clearColour)
 	: FrameBuffer() {
 	glGenFramebuffers(1, &ID);
-	enableAntiAliasing = doAntiAliasing;
-	numMultiSamples = 4;
+	setAntiAliasing(doAntiAliasing);
 	nonSamplingBuffer = nullptr;
 	initBuffer(imgWidth, imgHeight, clearColour);
 }
 
 
 void StaticFrameBuffer::doAntiAliasing(bool state, unsigned int samples) {
-	enableAntiAliasing = state;
-	numMultiSamples = samples;
-	resizeBuffer(width, height);
+	bool aaEnabled = enableAntiAliasing;
+	setAntiAliasing(state);
+	if (enableAntiAliasing != aaEnabled) {
+		resizeBuffer(width, height);
+	}
+}
+
+
+void StaticFrameBuffer::setAntiAliasing(bool state) {
+	if (state && renderConfig.enableMSAA) {
+		enableAntiAliasing = true;
+	}
+	else {
+		enableAntiAliasing = false;
+	}
 }
 
 
@@ -66,7 +78,6 @@ void StaticFrameBuffer::initBuffer(int imgWidth, int imgHeight, glm::vec3& clear
 	setClearColour(clearColour);
 	width = imgWidth;
 	height = imgHeight;
-
 
 	if (enableAntiAliasing) {
 		if (nonSamplingBuffer == nullptr) {
@@ -88,7 +99,8 @@ void StaticFrameBuffer::initBuffer(int imgWidth, int imgHeight, glm::vec3& clear
 		glGenTextures(1, &colourBufferID);
 		
 		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, colourBufferID);
-		glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, numMultiSamples, GL_RGBA, width, height, GL_TRUE);
+		glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, renderConfig.numSmaplesMSAA
+			, GL_RGBA, width, height, GL_TRUE);
 		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
 	}
 	else {
@@ -108,7 +120,8 @@ void StaticFrameBuffer::initBuffer(int imgWidth, int imgHeight, glm::vec3& clear
 	glBindRenderbuffer(GL_RENDERBUFFER, renderBufferID);
 
 	if (enableAntiAliasing) {
-		glRenderbufferStorageMultisample(GL_RENDERBUFFER, numMultiSamples, GL_DEPTH24_STENCIL8, width, height);
+		glRenderbufferStorageMultisample(GL_RENDERBUFFER, renderConfig.numSmaplesMSAA
+			, GL_DEPTH24_STENCIL8, width, height);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, colourBufferID, 0);
 	}
 	else {
@@ -170,29 +183,30 @@ unsigned int StaticFrameBuffer::getTextureOutput() {
 void FrameBuffer::setClearColour(glm::vec3 clearColour) { clearCol = clearColour; }
 
 void FrameBuffer::use() {
+
+	if (ID == 0) {
+		//std::cout << width << ", " << height << std::endl;
+	}
+
 	glBindFramebuffer(GL_FRAMEBUFFER, ID);
-	glViewport(0, 0, width, height);
-	glScissor(0, 0, width, height);
+	glViewport(0,0,width,height);
 	glClearColor(clearCol.x, clearCol.y, clearCol.z, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //GL_STENCIL_BUFFER_BIT
 }
-
-
-void FrameBuffer::use(struct ViewPort& viewport) {
-	glBindFramebuffer(GL_FRAMEBUFFER, ID);
-	viewport.use();
-	//glViewport(viewport.xPos, viewport.yPos, viewport.width, viewport.height);
-	glClearColor(clearCol.x, clearCol.y, clearCol.z, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-}
-
-
 
 
 DrawFrameBuffer::DrawFrameBuffer() {
 	setClearColour(glm::vec3(0.43f, 0.71f, 0.86f));
 	ID = 0;
 }
+
+
+void DrawFrameBuffer::updateScreenSize(int screenWidth, int screenHeight) {
+	width = screenWidth;
+	height = screenHeight;
+}
+
+
 
 void resizeFrameBuffers(int width, int height) {
 	std::cout << "Framebuffer resize all: " << width << ", " << height << std::endl;

@@ -15,13 +15,13 @@
 #define TEXTURE_NORMAL_MAP 3
 
 
-extern int defaultTextureID;
-
 class Texture {
 protected:
 	unsigned int textureID = 0;
 	std::string imagePath;
 	int textureType;
+	int texWidth;
+	int texHeight;
 	bool doGammarCorrection();
 	void createTexImage(int width, int height, const void* imageData);
 	void createBlankTexture(int imgWidth, int imgHeight);
@@ -31,7 +31,7 @@ public:
 	Texture(float red, float green, float blue, int imgWidth, int imgHeight, int type);
 	Texture(const char* textureFile, int type);
 	bool openFile(const char* fileName);
-
+	void saveToJPG(const char* fileName);
 	unsigned int getID();
 	std::string getImagePath();
 
@@ -47,6 +47,9 @@ public:
 	void initTexture();
 
 	inline int getTextureType() { return textureType; };
+
+	inline int getWidth() { return texWidth; };
+	inline int getHeight() { return texHeight; };
 
 	void destroy();
 };

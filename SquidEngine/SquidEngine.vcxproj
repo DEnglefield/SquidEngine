@@ -165,6 +165,7 @@
     <ClCompile Include="Drawable.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="GlobalConfig.cpp" />
     <ClCompile Include="MarchingCubeLookup.h" />
     <ClCompile Include="Materials.cpp" />
     <ClCompile Include="Model.cpp" />
@@ -188,6 +189,7 @@
     <ClInclude Include="Drawable.h" />
     <ClInclude Include="EngineInstance.h" />
     <ClInclude Include="FrameBuffer.h" />
+    <ClInclude Include="GlobalConfig.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Materials.h" />
     <ClInclude Include="Model.h" />
