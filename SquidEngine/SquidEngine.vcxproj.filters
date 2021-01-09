@@ -28,6 +28,9 @@
     <Filter Include="Shaders\CommonPostShader">
       <UniqueIdentifier>{96e89672-e0cc-44b4-b4a9-981b9e633a99}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\ShadowMapShader">
+      <UniqueIdentifier>{3563f525-2f99-408e-9945-a0b9716118a1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SquidEngine.cpp">
@@ -201,6 +204,12 @@
     </None>
     <None Include="Shaders\CommonPostShader\CommonPostShader.vert">
       <Filter>Shaders\CommonPostShader</Filter>
+    </None>
+    <None Include="Shaders\ShadowMapShader\ShadowMapShader.vert">
+      <Filter>Shaders\ShadowMapShader</Filter>
+    </None>
+    <None Include="Shaders\ShadowMapShader\ShadowMapShader.frag">
+      <Filter>Shaders\ShadowMapShader</Filter>
     </None>
   </ItemGroup>
 </Project>

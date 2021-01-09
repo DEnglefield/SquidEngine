@@ -209,6 +209,8 @@
   <ItemGroup>
     <None Include="Shaders\CommonPostShader\CommonPostShader.frag" />
     <None Include="Shaders\CommonPostShader\CommonPostShader.vert" />
+    <None Include="Shaders\ShadowMapShader\ShadowMapShader.frag" />
+    <None Include="Shaders\ShadowMapShader\ShadowMapShader.vert" />
     <None Include="Shaders\SkyboxLightingShader\SkyboxLightingShader.frag" />
     <None Include="Shaders\SkyboxLightingShader\SkyBoxLightingShader.vert" />
     <None Include="Shaders\SkyboxLightingShader\SkyboxReflectionShader.frag" />

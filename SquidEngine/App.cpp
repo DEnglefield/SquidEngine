@@ -9,18 +9,19 @@
 #include "Light.h"
 #include "UniformBuffer.h"
 
+Cube* lightCube;
 Cube* testCube;
 Cube* ground;
 Model* building;
 Model* bauble;
 Material* testMat;
+Material* lightMat;
 Material* groundMat;
 SkyboxLightingShader* lightingShader;
 SkyBox* skybox;
-DirectionalLight dirLight(-1.0f,-0.25f,0.0f);
+DirectionalLight dirLight(0.0f,0.0f,-1.0f);
 CameraFPS cam(0, 0, 3, 0, 0, -1);
 Model* cottage;
-
 
 glm::mat4 lightRotator(1.0f);
 glm::vec3 lightDir1(0, 0, 0);
@@ -28,11 +29,14 @@ glm::vec3 lightDir2(0, 0, 0);
 
 //Called on engine initialisation
 void Game::onInit() {
-	cam.setRenderDistance(0.01f,100.0f);
+	//cam.setRenderDistance(0.01f,100.0f);
+	cam.setRenderDistance(1.0f, 7.5f);
 
 	//Create and load scene shapes
 	testCube = new Cube(0,0,0);
 	ground = new Cube(0, -1, 0);
+	lightCube = new Cube(0,0,0);
+	lightCube->setScale(0.25f,0.25f,0.25f);
 	ground->setScale(100,1,100);
 	building = new Model(-5,1.6f,5,"Resources/Models/Buildings/Residential Buildings 001.obj");
 
@@ -56,8 +60,16 @@ void Game::onInit() {
 
 	groundMat = new Material(glm::vec3(0.5f, 0.9f, 0.5f), glm::vec3(0.45f, 0.8f, 0.45f), 32);
 	groundMat->reflectivity = 0;
+
+	lightMat = new Material(
+		"Resources/Textures/square.png",
+		"Resources/Textures/square.png",
+		64);
+
 	ground->setMaterial(*groundMat);
 	testCube->setMaterial(*testMat);
+	lightCube->setMaterial(*lightMat);
+	
 
 	//Create scene lighting shader
 	lightingShader = new SkyboxLightingShader();
@@ -68,6 +80,7 @@ void Game::onInit() {
 	lightingShader->addShape(*testCube);
 	lightingShader->addModel(*building);
 	lightingShader->addShape(*ground);
+	//lightingShader->addShape(*lightCube);
 
 	//Add directional light and skybox to shader
 	lightingShader->addDirectionalLight(dirLight);
@@ -93,14 +106,16 @@ void Game::onDraw(double deltaTime, int viewID, ViewPort& view) {
 
 	//Rotate light clockwise on first screen partition
 	if (viewID == 0) {
-		lightDir1 = glm::vec4(lightDir1, 1) * lightRotator;
-		dirLight.direction = lightDir1;
+		//lightDir1 = glm::vec4(lightDir1, 1) * lightRotator;
+		//dirLight.direction = lightDir1;
+		lightCube->setPosition(0,0.0f,3);
 	}
 	//Rotate light anti-clockwise on second screen partition
 	else {
 		lightDir2 = glm::vec4(lightDir2, 1) * lightRotator;
 		dirLight.direction = lightDir2;
 	}
+
 
 }
 

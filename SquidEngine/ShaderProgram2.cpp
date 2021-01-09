@@ -85,8 +85,8 @@ unsigned int ShaderProgram2::createShaderProgram() {
 	unsigned int ID = glCreateProgram();
 
 	//Attach Shaders
-	glAttachShader(ID, vertexID);
-	glAttachShader(ID, fragmentID);
+	if (vertexID != -1) { glAttachShader(ID, vertexID); }
+	if (fragmentID != -1) { glAttachShader(ID, fragmentID); }
 	if (geometryID != -1) { glAttachShader(ID, geometryID); }
 
 	//Link the program to the application
@@ -108,11 +108,9 @@ unsigned int ShaderProgram2::createShaderProgram() {
 	std::cout << "Program Created" << std::endl;
 
 	//Delete each shader as they have been linked and are no longer needed
-	glDeleteShader(vertexID);
-	glDeleteShader(fragmentID);
-	if (geometryID != -1) {
-		glDeleteShader(geometryID);
-	}
+	if (vertexID != -1) { glDeleteShader(vertexID); }
+	if (fragmentID != -1) { glDeleteShader(fragmentID); }
+	if (geometryID != -1) { glDeleteShader(geometryID); }
 
 	return ID;
 }
@@ -140,25 +138,40 @@ void ShaderProgram2::destroy() {
 
 
 //Create next shader pass
-void ShaderProgram2::newShaderPass(const char* vertexFile, const char* fragmentFile) {
+void ShaderProgram2::newShaderPass() {
 	if (writingMode) { throw std::runtime_error("Failed to create shader pass: Shader Pipeline is already in write mode"); }
 	writingMode = true;
 
+	vertexID = -1;
+	fragmentID = -1;
+	geometryID = -1;
+}
+
+
+//Attach a vertex shader
+bool ShaderProgram2::attachVertexShader(const char* vertexFile) {
+	if (!writingMode) { throw std::runtime_error("Failed to add vertex shader: Shader Pipeline not in write mode"); }
 	//Load vertex shader
 	vertexID = loadShader(vertexFile, GL_VERTEX_SHADER);
 	if (vertexID != -1) {
 		std::cout << "Vertex Shader Loaded Successfully" << std::endl;
+		return true;
 	}
+	return false;
+}
 
-	//Load fragment shader
+
+//Attach a fragment shader
+bool ShaderProgram2::attachFragmentShader(const char* fragmentFile) {
+	if (!writingMode) { throw std::runtime_error("Failed to add fragment shader: Shader Pipeline not in write mode"); }
+	//Load vertex shader
 	fragmentID = loadShader(fragmentFile, GL_FRAGMENT_SHADER);
 	if (fragmentID != -1) {
 		std::cout << "Fragment Shader Loaded Successfully" << std::endl;
+		return true;
 	}
-
-	geometryID = -1;
+	return false;
 }
-
 
 
 //Attach an optional geometry shader

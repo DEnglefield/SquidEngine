@@ -100,9 +100,13 @@ protected:
 	const char* getMaterialPropertyName(const char* property);
 
 	//Create next shader pass
-	void newShaderPass(const char* vertexFile, const char* fragmentFile);
+	void newShaderPass();
 	//Finish creating a new shader pass ignoring future commands
 	int finishShaderPass();
+	//Attach a vertex shader
+	bool attachVertexShader(const char* vertexFile);
+	//Attach a fragment shader
+	bool attachFragmentShader(const char* fragmentFile);
 	//Attach an optional geometry shader
 	bool attachGeometryShader(const char* geometryFile);
 

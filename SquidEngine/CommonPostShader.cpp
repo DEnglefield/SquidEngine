@@ -24,10 +24,9 @@ void CommonPostShader::onInit() {
 
 	initPostProcess();
 
-	newShaderPass(
-		"Shaders/CommonPostShader/CommonPostShader.vert",
-		"Shaders/CommonPostShader/CommonPostShader.frag");
-
+	newShaderPass();
+	attachVertexShader("Shaders/CommonPostShader/CommonPostShader.vert");
+	attachFragmentShader("Shaders/CommonPostShader/CommonPostShader.frag");
 	finishShaderPass();
 }
 

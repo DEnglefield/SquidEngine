@@ -74,9 +74,13 @@ uniform Material material;
 //Skybox reflection map (1:1 scale)
 uniform sampler2D skyboxReflections;
 
+//Shadow map
+uniform sampler2D shadowMap;
+
 in vec3 fragPos;
 in vec3 fragNormal;
 in vec2 texUV;
+in vec4 lightFragPos;
 
 uniform vec3 cameraPos;
 
@@ -89,6 +93,7 @@ vec3 applyPointLight(PointLight light, vec3 viewVec);
 vec3 applySpotLight(SpotLight light, vec3 viewVec);
 vec3 applyDirectionalLight(DirectionalLight light, vec3 viewVec); 
 
+bool isInShadow();
 
 void main() {
     vec3 lighting = vec3(0,0,0);
@@ -119,7 +124,7 @@ void main() {
     //Output total light
     FragColor = vec4(lighting, material.opacity); 
  
-    //FragColor = vec4(screenPos.xy,0, 1); 
+    //FragColor = vec4(vec3(texture(shadowMap,texUV).r), 1); 
 } 
 
 
@@ -212,3 +217,10 @@ float getAttenuation(vec3 lightPos, float linearFallOff, float quadraticFallOff)
 }
 
 
+//Check if fragment is in shadow using shadow map
+bool isInShadow(){
+     vec3 lightProjCoords = lightFragPos.xyz / lightFragPos.w;
+     return false;
+
+     //Test out orthographic
+}

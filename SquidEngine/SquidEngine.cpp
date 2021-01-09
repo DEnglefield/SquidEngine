@@ -118,7 +118,7 @@ void runEngine(EngineInstance& instance) {
 
 	//FrameBuffer used to hold rendered geometry
 	StaticFrameBuffer renderFrameBuffer(renderConfig.targetWidth
-		,renderConfig.targetHeight, true, false, true);
+		,renderConfig.targetHeight, true, true, false);
 
 	//Post processing shader with common operations (gamma correction)
 	CommonPostShader postProcessShader;
@@ -157,7 +157,7 @@ void runEngine(EngineInstance& instance) {
 
 		//Setup and run post processing shader
 		postProcessShader.setFloat(0,"gamma",renderConfig.gamma,-1);
-		postProcessShader.setInputRender(renderFrameBuffer.getTextureOutput()); //800,600
+		postProcessShader.setInputRender(renderFrameBuffer.getTextureOutput()); 
 		postProcessShader.draw(*screenFrameBuffer);
 
 		glfwSwapInterval(renderConfig.enableVSync);
