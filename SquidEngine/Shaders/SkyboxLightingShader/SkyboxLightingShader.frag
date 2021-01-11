@@ -93,10 +93,18 @@ vec3 applyPointLight(PointLight light, vec3 viewVec);
 vec3 applySpotLight(SpotLight light, vec3 viewVec);
 vec3 applyDirectionalLight(DirectionalLight light, vec3 viewVec); 
 
-bool isInShadow();
+int isInShadow(vec3 lightVec);
 
 void main() {
     vec3 lighting = vec3(0,0,0);
+
+    int shadow = isInShadow(directionalLights[0].direction);
+    if (shadow == 0){
+      FragColor = vec4(1,0,1,1);
+        //return;
+    }
+    
+  
 
     //Get vector of sight
     vec3 viewVec = normalize(cameraPos - fragPos);
@@ -132,7 +140,7 @@ void main() {
 vec3 applyPointLight(PointLight light, vec3 viewVec){
 
     vec3 lightVec = normalize(light.position - fragPos);
-    
+
     vec3 ambientLight = getAmbientLight() * light.ambient;
     vec3 diffuseLight = getDiffuseLight(lightVec) * light.diffuse;
     vec3 specularLight = getSpecularLight(lightVec,viewVec) * light.specular;
@@ -176,10 +184,11 @@ vec3 applyDirectionalLight(DirectionalLight light, vec3 viewVec){
     vec3 lightVec = normalize(-light.direction);
 
     vec3 ambientLight = getAmbientLight() * light.ambient;
+    float shadow = isInShadow(lightVec); //Slow (re-computed for every directional light) (needed for multiple maps)    
     vec3 diffuseLight = getDiffuseLight(lightVec) * light.diffuse;
     vec3 specularLight = getSpecularLight(lightVec,viewVec) * light.specular;
 
-    return (ambientLight + diffuseLight + specularLight);
+    return (ambientLight + (diffuseLight + specularLight) * shadow);
 }
 
 
@@ -218,9 +227,23 @@ float getAttenuation(vec3 lightPos, float linearFallOff, float quadraticFallOff)
 
 
 //Check if fragment is in shadow using shadow map
-bool isInShadow(){
-     vec3 lightProjCoords = lightFragPos.xyz / lightFragPos.w;
-     return false;
+int isInShadow(vec3 lightVec){
 
-     //Test out orthographic
+    //Project light fragment to image plane
+    vec3 lightProjCoords = lightFragPos.xyz / lightFragPos.w;
+    //Clamp from -1-1 to 0-1 for depth comparison
+    lightProjCoords = lightProjCoords * 0.5 + 0.5; 
+    
+    //Get the depth value from the shadow map
+    float closestDepth = texture(shadowMap, lightProjCoords.xy).x;  
+    //Compare with depth from this render in light coordinates
+    float currentDepth = lightProjCoords.z;
+    //Add bias to remove acne
+    float bias = max(0.05 * (1.0 - dot(fragNormal, lightVec)), 0.005);  
+    int isShadow = currentDepth-bias > closestDepth  ? 0 : 1;  
+
+    if(lightProjCoords.z > 1.0){ return 1; }
+
+    return isShadow;   
 }
+

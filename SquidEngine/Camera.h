@@ -15,9 +15,13 @@ private:
 protected:
 	int viewWidth = 800;
 	int viewHeight = 600;
+	float clippingSize = 1.0f;
 
 	glm::mat4 projMatrix;
 	glm::mat4 viewMatrix;
+
+	//Update the currently selected projection matrix with current parameters
+	void updateProjection();
 
 public:
 	//Camera position and target vectors
@@ -36,11 +40,13 @@ public:
 	Camera(glm::vec3 eye, glm::vec3 look);
 
 
-	//Set the type of projection being CAMERA_ORTHOGRAPHIC or CAMERA_PERSPECTIVE
-	void setPerspective(int viewType);
+	//Set camera projection type e.g. CAMERA_ORTHOGRAPHIC
+	void setPerspective(int type);
 	
 	//Set the field of view for the camera
 	void setFOV(float FOV);
+	//Set scale for orthographic clipping space
+	void setClippingSize(float clippingScale);
 	//Update the with and height of the viewport used by this camera
 	//Will update projection matrix
 	void setView(int width, int height);

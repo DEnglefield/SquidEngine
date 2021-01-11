@@ -64,18 +64,27 @@ void SkyboxLightingShader::onNextPass(int shaderStage, unsigned int shaderID) {
 	useCamera(shaderStage, mainCamera);
 
 	if (shaderStage == 0) {
+		glCullFace(GL_FRONT);
 		shadowMapBuffer->use();
 		for (auto const& dLight : directionalLights) {
-			Camera lightCam(glm::vec3(0, 1.0f, 3), glm::vec3(0, -0.5f, -1));
+			Camera lightCam(glm::vec3(3, 7.0f, 0), glm::vec3(-0.25f, -0.25f, 0));
 			lightCam.setView(renderConfig.shadowWidth, renderConfig.shadowHeight);
-			//lightCam.setPerspective(CAMERA_ORTHOGRAPHIC);
-			lightCam.setRenderDistance(1.0f, 7.5f);
+			lightCam.setClippingSize(30);
+			lightCam.setPerspective(CAMERA_ORTHOGRAPHIC);
+			lightCam.setRenderDistance(1.0f, 30.5f);
 			useCamera(shaderStage, &lightCam);
 			drawShapes(shaderStage);
 			break;
 		}
-		
+
+		glBindTexture(GL_TEXTURE_2D,shadowMapBuffer->getDepthOutput());
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+		float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+		glBindTexture(GL_TEXTURE_2D, 0);
 		targetBuffer->use();
+		glCullFace(GL_NONE);
 	}
 	
 
@@ -107,6 +116,16 @@ void SkyboxLightingShader::onNextPass(int shaderStage, unsigned int shaderID) {
 		glBindTexture(GL_TEXTURE_2D, shadowMapBuffer->getDepthOutput());
 		loc = glGetUniformLocation(shaderID, getIndexedUniform("shadowMap", -1).c_str());
 		glUniform1i(loc, 21);
+
+
+		Camera lightCam(glm::vec3(3, 7.0f, 0), glm::vec3(-0.25f, -0.25f, 0));
+		lightCam.setView(renderConfig.shadowWidth, renderConfig.shadowHeight);
+		lightCam.setClippingSize(30);
+		lightCam.setPerspective(CAMERA_ORTHOGRAPHIC);
+		lightCam.setRenderDistance(1.0f, 30.5f);
+
+		setMat4(shaderStage, "lightView",lightCam.getViewMatrix(),-1);
+		setMat4(shaderStage, "lightProj", lightCam.getProjectionMatrix(), -1);
 
 		useLighting(shaderStage);
 		drawShapes(shaderStage);

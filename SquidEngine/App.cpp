@@ -19,7 +19,7 @@ Material* lightMat;
 Material* groundMat;
 SkyboxLightingShader* lightingShader;
 SkyBox* skybox;
-DirectionalLight dirLight(0.0f,0.0f,-1.0f);
+DirectionalLight dirLight(-0.25f, -0.25f, 0);
 CameraFPS cam(0, 0, 3, 0, 0, -1);
 Model* cottage;
 
@@ -29,14 +29,16 @@ glm::vec3 lightDir2(0, 0, 0);
 
 //Called on engine initialisation
 void Game::onInit() {
-	//cam.setRenderDistance(0.01f,100.0f);
-	cam.setRenderDistance(1.0f, 7.5f);
+	cam.setRenderDistance(0.01f,100.0f);
+	//cam.setRenderDistance(1.0f, 7.5f);
+	cam.setPerspective(CAMERA_PERSPECTIVE);
 
 	//Create and load scene shapes
 	testCube = new Cube(0,0,0);
 	ground = new Cube(0, -1, 0);
 	lightCube = new Cube(0,0,0);
 	lightCube->setScale(0.25f,0.25f,0.25f);
+
 	ground->setScale(100,1,100);
 	building = new Model(-5,1.6f,5,"Resources/Models/Buildings/Residential Buildings 001.obj");
 
@@ -57,9 +59,9 @@ void Game::onInit() {
 		"Resources/Textures/star.png", 
 		"Resources/Textures/starSpecular.bmp", 
 		64);
+	testMat->reflectivity = 0.1f;
 
 	groundMat = new Material(glm::vec3(0.5f, 0.9f, 0.5f), glm::vec3(0.45f, 0.8f, 0.45f), 32);
-	groundMat->reflectivity = 0;
 
 	lightMat = new Material(
 		"Resources/Textures/square.png",

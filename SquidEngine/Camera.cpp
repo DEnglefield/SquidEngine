@@ -24,9 +24,10 @@ Camera::Camera(glm::vec3 eye, glm::vec3 look) {
 }
 
 
-
-//Set the type of projection being CAMERA_ORTHOGRAPHIC or CAMERA_PERSPECTIVE
-void Camera::setPerspective(int viewType) { viewPerspective = viewType; }
+//Set camera projection type e.g. CAMERA_ORTHOGRAPHIC
+void Camera::setPerspective(int type) { viewPerspective = type; }
+//Set scale for orthographic clipping space
+void Camera::setClippingSize(float clipScale) {clippingSize = clipScale;}
 //Set the field of view for the camera
 void Camera::setFOV(float FOV) { fieldOfView = FOV; }
 //Update the with and height of the viewport used by this camera
@@ -37,14 +38,14 @@ void Camera::setView(ViewPort& viewPort) { setView(viewPort.width, viewPort.heig
 void Camera::setRenderDistance(float near, float far) { minRender = near; maxRender = far; }
 
 
-//Update the whole projection matrix with the desired perspective type (excluding FOV)
-void Camera::setProjection(int viewWidth, int viewHeight, float near, float far) {
-	if (viewPerspective == CAMERA_PERSPECTIVE) {
-		projMatrix = glm::perspective(glm::radians(fieldOfView), (float)viewWidth / (float)viewHeight, near, far);
-
+//Update current projection matrix
+void Camera::updateProjection() {
+	if (viewPerspective == CAMERA_PERSPECTIVE) { 
+		projMatrix = glm::perspective(glm::radians(fieldOfView), (float)viewWidth / (float)viewHeight, minRender, maxRender); 
 	}
-	else if (viewPerspective == CAMERA_ORTHOGRAPHIC) {
-		projMatrix = glm::ortho(0.0f, (float)viewWidth, (float)viewHeight, 0.0f, near,far);
+
+	if (viewPerspective == CAMERA_ORTHOGRAPHIC) { 
+		projMatrix = glm::ortho(-clippingSize, clippingSize, -clippingSize, clippingSize, minRender, maxRender);
 	}
 }
 
@@ -66,7 +67,7 @@ glm::mat4 Camera::getViewMatrix() {
 
 //Update and return the projection matrix
 glm::mat4 Camera::getProjectionMatrix() {
-	setProjection(viewWidth, viewHeight, minRender, maxRender);
+	updateProjection();
 	return projMatrix;
 }
 

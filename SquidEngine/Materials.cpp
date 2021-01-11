@@ -34,7 +34,7 @@ Material::Material(const char* diffuseMap, const char* specularMap, float matHig
 
 
 void Material::initMaterial() {
-	reflectivity = 0.1f;
+	reflectivity = 0;
 	refractivity = 1;
 	refractiveIndex = 1;
 	opacity = 1;
